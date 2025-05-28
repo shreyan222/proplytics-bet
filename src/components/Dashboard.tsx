@@ -3,15 +3,21 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PropsTable } from './PropsTable';
+import { PropsFilters } from './PropsFilters';
 import { SeedDataButton } from './SeedDataButton';
 import { PropFilters } from '@/types/nba';
-import { BarChart3, Clock, Target, TrendingUp, AlertCircle } from 'lucide-react';
+import { BarChart3, Clock, Target, TrendingUp, AlertCircle, Filter } from 'lucide-react';
 import { usePropsData } from '@/hooks/usePropsData';
+import { useFilteredProps } from '@/hooks/useFilteredProps';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export const Dashboard: React.FC = () => {
   const { data: props = [], isLoading, error } = usePropsData();
   const [filters, setFilters] = useState<PropFilters>({});
+  const [showFilters, setShowFilters] = useState(false);
+  
+  const filteredProps = useFilteredProps(props, filters);
 
   if (error) {
     return (
@@ -92,17 +98,17 @@ export const Dashboard: React.FC = () => {
     );
   }
 
-  // Calculate prop counts by category based on scoring thresholds
-  const propCounts = props.reduce((acc, prop) => {
+  // Calculate prop counts by category based on filtered data
+  const filteredPropCounts = filteredProps.reduce((acc, prop) => {
     acc[prop.odds_type] = (acc[prop.odds_type] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  // Calculate additional statistics
-  const uniqueGames = new Set(props.map(p => p.game_id)).size;
-  const uniquePlayers = new Set(props.map(p => p.player_id)).size;
-  const avgSortingScore = props.length > 0 
-    ? props.reduce((sum, p) => sum + p.sorting_score, 0) / props.length 
+  // Calculate additional statistics from filtered data
+  const uniqueGames = new Set(filteredProps.map(p => p.game_id)).size;
+  const uniquePlayers = new Set(filteredProps.map(p => p.player_id)).size;
+  const avgSortingScore = filteredProps.length > 0 
+    ? filteredProps.reduce((sum, p) => sum + p.sorting_score, 0) / filteredProps.length 
     : 0;
   const lastUpdate = new Date();
 
@@ -113,21 +119,32 @@ export const Dashboard: React.FC = () => {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">NBA Props Dashboard</h2>
           <p className="text-muted-foreground">
-            Advanced scoring algorithm analyzing {props.length} props across {uniqueGames} games
+            Advanced scoring algorithm analyzing {filteredProps.length} of {props.length} props across {uniqueGames} games
           </p>
         </div>
-        <SeedDataButton />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </Button>
+          <SeedDataButton />
+        </div>
       </div>
 
       {/* Enhanced Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Standard Props</CardTitle>
             <BarChart3 className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{propCounts.standard || 0}</div>
+            <div className="text-2xl font-bold">{filteredPropCounts.standard || 0}</div>
             <p className="text-xs text-muted-foreground">
               H2H Score ≥ 75%
             </p>
@@ -140,7 +157,7 @@ export const Dashboard: React.FC = () => {
             <Target className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{propCounts.demon || 0}</div>
+            <div className="text-2xl font-bold">{filteredPropCounts.demon || 0}</div>
             <p className="text-xs text-muted-foreground">
               H2H Score ≥ 75%
             </p>
@@ -153,7 +170,7 @@ export const Dashboard: React.FC = () => {
             <TrendingUp className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{propCounts.goblin || 0}</div>
+            <div className="text-2xl font-bold">{filteredPropCounts.goblin || 0}</div>
             <p className="text-xs text-muted-foreground">
               H2H Score ≥ 87.5%
             </p>
@@ -168,18 +185,37 @@ export const Dashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{avgSortingScore.toFixed(3)}</div>
             <p className="text-xs text-muted-foreground">
-              Last updated: {lastUpdate.toLocaleTimeString()}
+              {uniquePlayers} players
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Last Updated</CardTitle>
+            <Clock className="h-4 w-4 text-gray-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold">{lastUpdate.toLocaleTimeString()}</div>
+            <p className="text-xs text-muted-foreground">
+              Auto-refresh: 60s
             </p>
           </CardContent>
         </Card>
       </div>
 
+      {/* Filters Panel */}
+      {showFilters && (
+        <PropsFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          totalProps={props.length}
+          filteredProps={filteredProps.length}
+        />
+      )}
+
       {/* Main Props Table */}
-      <PropsTable 
-        props={props} 
-        filters={filters} 
-        onFiltersChange={setFilters} 
-      />
+      <PropsTable props={filteredProps} />
     </div>
   );
 };
