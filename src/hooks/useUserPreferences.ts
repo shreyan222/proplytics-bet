@@ -19,6 +19,29 @@ export interface UserPreferences {
   notification_settings: NotificationSettings;
 }
 
+// Helper function to safely parse notification settings
+const parseNotificationSettings = (rawSettings: any): NotificationSettings => {
+  // Check if it's an object and has the expected structure
+  if (rawSettings && typeof rawSettings === 'object' && !Array.isArray(rawSettings)) {
+    return {
+      new_props: rawSettings.new_props ?? true,
+      removed_props: rawSettings.removed_props ?? true,
+      line_changes: rawSettings.line_changes ?? true,
+      odds_changes: rawSettings.odds_changes ?? true,
+      favorite_players_only: rawSettings.favorite_players_only ?? false,
+    };
+  }
+  
+  // Return default settings if parsing fails
+  return {
+    new_props: true,
+    removed_props: true,
+    line_changes: true,
+    odds_changes: true,
+    favorite_players_only: false,
+  };
+};
+
 export const useUserPreferences = () => {
   const { user } = useSupabaseAuth();
   const queryClient = useQueryClient();
@@ -41,16 +64,8 @@ export const useUserPreferences = () => {
 
       if (!data) return null;
 
-      // Safely parse notification_settings from JSONB
-      const notificationSettings: NotificationSettings = typeof data.notification_settings === 'object' && data.notification_settings !== null
-        ? data.notification_settings as NotificationSettings
-        : {
-            new_props: true,
-            removed_props: true,
-            line_changes: true,
-            odds_changes: true,
-            favorite_players_only: false,
-          };
+      // Safely parse notification_settings using the helper function
+      const notificationSettings = parseNotificationSettings(data.notification_settings);
 
       return {
         id: data.id,
