@@ -1,0 +1,119 @@
+
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Prop } from '@/types/nba';
+
+interface PropWithRelations {
+  id: string;
+  external_id: string | null;
+  stat_type: string;
+  line_score: number;
+  odds_type: string;
+  h2h_array: number[];
+  l5_array: number[];
+  h2h_avg: number;
+  l5_avg: number;
+  h2h_score: number;
+  l5_score: number;
+  sample_size: number;
+  sorting_score: number;
+  created_at: string;
+  updated_at: string;
+  player: {
+    id: string;
+    display_name: string;
+    position: string | null;
+    team: {
+      abbreviation: string;
+    } | null;
+  };
+  game: {
+    id: string;
+    start_time: string;
+    home_team: {
+      abbreviation: string;
+    };
+    away_team: {
+      abbreviation: string;
+    };
+  };
+}
+
+export const usePropsData = () => {
+  return useQuery({
+    queryKey: ['props'],
+    queryFn: async (): Promise<Prop[]> => {
+      const { data, error } = await supabase
+        .from('props')
+        .select(`
+          id,
+          external_id,
+          stat_type,
+          line_score,
+          odds_type,
+          h2h_array,
+          l5_array,
+          h2h_avg,
+          l5_avg,
+          h2h_score,
+          l5_score,
+          sample_size,
+          sorting_score,
+          created_at,
+          updated_at,
+          player:players (
+            id,
+            display_name,
+            position,
+            team:teams (
+              abbreviation
+            )
+          ),
+          game:games (
+            id,
+            start_time,
+            home_team:home_team_id (
+              abbreviation
+            ),
+            away_team:away_team_id (
+              abbreviation
+            )
+          )
+        `)
+        .order('sorting_score', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching props:', error);
+        throw error;
+      }
+
+      // Transform the data to match our Prop interface
+      const transformedData: Prop[] = (data as PropWithRelations[]).map((prop) => ({
+        prop_id: prop.id,
+        player_id: prop.player.id,
+        player_name: prop.player.display_name,
+        position: prop.player.position || 'N/A',
+        team: prop.player.team?.abbreviation || 'N/A',
+        against_team: prop.player.team?.abbreviation === prop.game.home_team.abbreviation 
+          ? prop.game.away_team.abbreviation 
+          : prop.game.home_team.abbreviation,
+        stat_type: prop.stat_type,
+        line_score: Number(prop.line_score),
+        odds_type: prop.odds_type as 'standard' | 'demon' | 'goblin',
+        game_id: prop.game.id,
+        start_time: prop.game.start_time,
+        h2h_array: prop.h2h_array.map(Number),
+        l5_array: prop.l5_array.map(Number),
+        h2h_avg: Number(prop.h2h_avg),
+        l5_avg: Number(prop.l5_avg),
+        h2h_score: Number(prop.h2h_score),
+        l5_score: Number(prop.l5_score),
+        sample_size: prop.sample_size,
+        sorting_score: Number(prop.sorting_score),
+      }));
+
+      return transformedData;
+    },
+    refetchInterval: 60000, // Refetch every minute for real-time updates
+  });
+};

@@ -9,7 +9,256 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      change_notifications: {
+        Row: {
+          change_type: string
+          changes: Json | null
+          created_at: string | null
+          id: string
+          prop_id: string | null
+        }
+        Insert: {
+          change_type: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          prop_id?: string | null
+        }
+        Update: {
+          change_type?: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          prop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "change_notifications_prop_id_fkey"
+            columns: ["prop_id"]
+            isOneToOne: false
+            referencedRelation: "props"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      games: {
+        Row: {
+          away_team_id: string
+          created_at: string | null
+          external_id: string | null
+          home_team_id: string
+          id: string
+          start_time: string
+          status: string | null
+        }
+        Insert: {
+          away_team_id: string
+          created_at?: string | null
+          external_id?: string | null
+          home_team_id: string
+          id?: string
+          start_time: string
+          status?: string | null
+        }
+        Update: {
+          away_team_id?: string
+          created_at?: string | null
+          external_id?: string | null
+          home_team_id?: string
+          id?: string
+          start_time?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "games_away_team_id_fkey"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_home_team_id_fkey"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          created_at: string | null
+          display_name: string
+          external_id: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          position: string | null
+          team_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name: string
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          position?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          position?: string | null
+          team_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      props: {
+        Row: {
+          created_at: string | null
+          external_id: string | null
+          game_id: string
+          h2h_array: number[]
+          h2h_avg: number
+          h2h_score: number
+          id: string
+          l5_array: number[]
+          l5_avg: number
+          l5_score: number
+          line_score: number
+          odds_type: string
+          player_id: string
+          sample_size: number
+          sorting_score: number
+          stat_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          external_id?: string | null
+          game_id: string
+          h2h_array: number[]
+          h2h_avg: number
+          h2h_score: number
+          id?: string
+          l5_array: number[]
+          l5_avg: number
+          l5_score: number
+          line_score: number
+          odds_type: string
+          player_id: string
+          sample_size: number
+          sorting_score: number
+          stat_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          external_id?: string | null
+          game_id?: string
+          h2h_array?: number[]
+          h2h_avg?: number
+          h2h_score?: number
+          id?: string
+          l5_array?: number[]
+          l5_avg?: number
+          l5_score?: number
+          line_score?: number
+          odds_type?: string
+          player_id?: string
+          sample_size?: number
+          sorting_score?: number
+          stat_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "props_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "props_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          abbreviation: string
+          city: string
+          created_at: string | null
+          full_name: string
+          id: string
+        }
+        Insert: {
+          abbreviation: string
+          city: string
+          created_at?: string | null
+          full_name: string
+          id?: string
+        }
+        Update: {
+          abbreviation?: string
+          city?: string
+          created_at?: string | null
+          full_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          favorite_players: string[] | null
+          favorite_props: string[] | null
+          id: string
+          notification_settings: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          favorite_players?: string[] | null
+          favorite_props?: string[] | null
+          id?: string
+          notification_settings?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          favorite_players?: string[] | null
+          favorite_props?: string[] | null
+          id?: string
+          notification_settings?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
