@@ -3,7 +3,25 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Prop } from '@/types/nba';
 
-interface PropWithRelations {
+interface SupabaseTeam {
+  abbreviation: string;
+}
+
+interface SupabasePlayer {
+  id: string;
+  display_name: string;
+  position: string | null;
+  team: SupabaseTeam | null;
+}
+
+interface SupabaseGame {
+  id: string;
+  start_time: string;
+  home_team: SupabaseTeam;
+  away_team: SupabaseTeam;
+}
+
+interface SupabaseProp {
   id: string;
   external_id: string | null;
   stat_type: string;
@@ -19,24 +37,8 @@ interface PropWithRelations {
   sorting_score: number;
   created_at: string;
   updated_at: string;
-  player: {
-    id: string;
-    display_name: string;
-    position: string | null;
-    team: {
-      abbreviation: string;
-    } | null;
-  };
-  game: {
-    id: string;
-    start_time: string;
-    home_team: {
-      abbreviation: string;
-    };
-    away_team: {
-      abbreviation: string;
-    };
-  };
+  player: SupabasePlayer;
+  game: SupabaseGame;
 }
 
 export const usePropsData = () => {
@@ -87,8 +89,12 @@ export const usePropsData = () => {
         throw error;
       }
 
+      if (!data) {
+        return [];
+      }
+
       // Transform the data to match our Prop interface
-      const transformedData: Prop[] = (data as PropWithRelations[]).map((prop) => ({
+      const transformedData: Prop[] = data.map((prop: any) => ({
         prop_id: prop.id,
         player_id: prop.player.id,
         player_name: prop.player.display_name,

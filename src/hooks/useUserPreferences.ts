@@ -3,18 +3,20 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from './useSupabaseAuth';
 
+interface NotificationSettings {
+  new_props: boolean;
+  removed_props: boolean;
+  line_changes: boolean;
+  odds_changes: boolean;
+  favorite_players_only: boolean;
+}
+
 export interface UserPreferences {
   id: string;
   user_id: string;
   favorite_players: string[];
   favorite_props: string[];
-  notification_settings: {
-    new_props: boolean;
-    removed_props: boolean;
-    line_changes: boolean;
-    odds_changes: boolean;
-    favorite_players_only: boolean;
-  };
+  notification_settings: NotificationSettings;
 }
 
 export const useUserPreferences = () => {
@@ -37,7 +39,26 @@ export const useUserPreferences = () => {
         throw error;
       }
 
-      return data || null;
+      if (!data) return null;
+
+      // Safely parse notification_settings from JSONB
+      const notificationSettings: NotificationSettings = typeof data.notification_settings === 'object' && data.notification_settings !== null
+        ? data.notification_settings as NotificationSettings
+        : {
+            new_props: true,
+            removed_props: true,
+            line_changes: true,
+            odds_changes: true,
+            favorite_players_only: false,
+          };
+
+      return {
+        id: data.id,
+        user_id: data.user_id,
+        favorite_players: data.favorite_players || [],
+        favorite_props: data.favorite_props || [],
+        notification_settings: notificationSettings,
+      };
     },
     enabled: !!user,
   });
