@@ -92,12 +92,18 @@ export const Dashboard: React.FC = () => {
     );
   }
 
+  // Calculate prop counts by category based on scoring thresholds
   const propCounts = props.reduce((acc, prop) => {
     acc[prop.odds_type] = (acc[prop.odds_type] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
+  // Calculate additional statistics
   const uniqueGames = new Set(props.map(p => p.game_id)).size;
+  const uniquePlayers = new Set(props.map(p => p.player_id)).size;
+  const avgSortingScore = props.length > 0 
+    ? props.reduce((sum, p) => sum + p.sorting_score, 0) / props.length 
+    : 0;
   const lastUpdate = new Date();
 
   return (
@@ -107,13 +113,13 @@ export const Dashboard: React.FC = () => {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">NBA Props Dashboard</h2>
           <p className="text-muted-foreground">
-            Analyze NBA player props with advanced scoring algorithms
+            Advanced scoring algorithm analyzing {props.length} props across {uniqueGames} games
           </p>
         </div>
         <SeedDataButton />
       </div>
 
-      {/* Stats Grid */}
+      {/* Enhanced Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -123,7 +129,7 @@ export const Dashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{propCounts.standard || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Score ≥ 0.75
+              H2H Score ≥ 75%
             </p>
           </CardContent>
         </Card>
@@ -136,7 +142,7 @@ export const Dashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{propCounts.demon || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Score ≥ 0.875
+              H2H Score ≥ 75%
             </p>
           </CardContent>
         </Card>
@@ -149,18 +155,18 @@ export const Dashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold">{propCounts.goblin || 0}</div>
             <p className="text-xs text-muted-foreground">
-              Premium tier
+              H2H Score ≥ 87.5%
             </p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Games</CardTitle>
+            <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
             <Clock className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{uniqueGames}</div>
+            <div className="text-2xl font-bold">{avgSortingScore.toFixed(3)}</div>
             <p className="text-xs text-muted-foreground">
               Last updated: {lastUpdate.toLocaleTimeString()}
             </p>

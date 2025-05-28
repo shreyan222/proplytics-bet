@@ -23,10 +23,13 @@ export class ScoringAlgorithm {
       if (h2hArray[j] >= line) {
         h2hTemp += 1;
       } else if (h2hInjury < 1) {
-        // Note: In your Python code, you check minutes < 20 for injury
-        // For now, we'll skip this check as we don't have minute data
-        h2hInjury += 0; 
+        // In Python you check for minutes < 20 for injury detection
+        // For now we'll implement basic injury detection based on very low scores
+        if (h2hArray[j] < (line * 0.3)) {
+          h2hInjury += 0.5; // Partial credit for potential injury games
+        }
       } else if (!['Blks+Stls', 'Steals', 'Blocked Shots', 'Turnovers'].includes(statType)) {
+        // Give partial credit for close misses (within 1 of the line)
         if (h2hArray[j] + 1 >= line) {
           h2hTemp += 0.5;
         }
@@ -36,11 +39,11 @@ export class ScoringAlgorithm {
     h2hTemp = h2hTemp + h2hInjury;
     const h2hScore = h2hTemp / h2hSize;
     
-    // Determine threshold based on odds type
+    // Determine threshold based on odds type - exact from Python
     const threshold = oddsType === 'goblin' ? 0.875 : 0.75;
     const h2hAvg = h2hArray.reduce((sum, val) => sum + val, 0) / h2hArray.length;
     
-    // Check if prop meets threshold criteria
+    // Check if prop meets threshold criteria - exact from Python
     if (h2hScore < threshold || (h2hAvg - line) < 0) {
       return null;
     }
@@ -62,7 +65,7 @@ export class ScoringAlgorithm {
     const l5Score = l5Size > 0 ? l5Temp / l5Size : 0;
     const l5Avg = l5Array.length > 0 ? l5Array.reduce((sum, val) => sum + val, 0) / l5Array.length : 0;
     
-    // Calculate differences and percentages
+    // Calculate differences and percentages - exact formulas from Python
     const h2hDiff = h2hAvg - line;
     const h2hRelativeDiff = (h2hAvg - line) / (line + 5);
     const h2hPercent = 100 * (h2hAvg - line) / line;
@@ -71,7 +74,8 @@ export class ScoringAlgorithm {
     const l5RelativeDiff = (l5Avg - line) / (line + 5);
     const l5Percent = 100 * (l5Avg - line) / line;
     
-    // Calculate final sorting score using your exact formula
+    // Calculate final sorting score using your exact formula:
+    // H2H 45%, relative diff 20%, sample size 20%, L5 10%, L5 relative diff 5%
     const sortingScore = (
       (h2hTemp / h2hSize) * 0.45 +
       (h2hRelativeDiff * 0.20) +
@@ -114,5 +118,40 @@ export class ScoringAlgorithm {
       l5_relative_diff: Math.round(l5RelativeDiff * 1000) / 1000,
       l5_percent: Math.round(l5Percent * 1000) / 1000,
     };
+  }
+
+  // Helper function to categorize props based on scoring thresholds
+  static categorizeProp(h2hScore: number, h2hAvg: number, line: number): 'standard' | 'demon' | 'goblin' | null {
+    // First check if prop meets minimum criteria
+    if ((h2hAvg - line) < 0) return null;
+    
+    if (h2hScore >= 0.875) {
+      return 'goblin';
+    } else if (h2hScore >= 0.75) {
+      return 'demon';
+    } else if (h2hScore >= 0.75) {
+      return 'standard';
+    }
+    
+    return null;
+  }
+
+  // Process all supported stat types
+  static getSupportedStatTypes(): string[] {
+    return [
+      'Points',
+      'Rebounds', 
+      'Assists',
+      'Pts+Rebs',
+      'Pts+Asts',
+      'Rebs+Asts',
+      'Pts+Rebs+Asts',
+      'Steals',
+      'Blocked Shots',
+      'Turnovers',
+      'Blks+Stls',
+      '3-PT Made',
+      'Fantasy Points'
+    ];
   }
 }

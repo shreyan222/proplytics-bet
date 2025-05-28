@@ -48,6 +48,17 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, filters, onFilter
     }
   };
 
+  const formatArray = (arr: number[]) => {
+    if (!Array.isArray(arr) || arr.length === 0) return '[]';
+    return `[${arr.join(', ')}]`;
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 0.875) return 'text-red-600 font-bold'; // Goblin
+    if (score >= 0.75) return 'text-orange-600 font-semibold'; // Demon  
+    return 'text-blue-600'; // Standard
+  };
+
   const SortableHeader = ({ column, children }: { column: keyof Prop; children: React.ReactNode }) => (
     <TableHead>
       <Button
@@ -81,46 +92,60 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, filters, onFilter
               <TableRow>
                 <SortableHeader column="player_name">Player</SortableHeader>
                 <TableHead>Position</TableHead>
-                <TableHead>Teams</TableHead>
+                <TableHead>Matchup</TableHead>
                 <SortableHeader column="stat_type">Stat</SortableHeader>
                 <SortableHeader column="line_score">Line</SortableHeader>
-                <TableHead>Odds</TableHead>
-                <TableHead>H2H Array</TableHead>
-                <TableHead>L5 Array</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>H2H Data</TableHead>
+                <TableHead>L5 Data</TableHead>
                 <SortableHeader column="h2h_avg">H2H Avg</SortableHeader>
                 <SortableHeader column="l5_avg">L5 Avg</SortableHeader>
+                <SortableHeader column="h2h_score">H2H Score</SortableHeader>
+                <SortableHeader column="l5_score">L5 Score</SortableHeader>
                 <SortableHeader column="sample_size">Sample</SortableHeader>
-                <SortableHeader column="sorting_score">Score</SortableHeader>
+                <SortableHeader column="sorting_score">Final Score</SortableHeader>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedProps.map((prop, index) => (
                 <TableRow key={`${prop.prop_id}-${index}`}>
                   <TableCell className="font-medium">{prop.player_name}</TableCell>
-                  <TableCell>{prop.position}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{prop.position}</Badge>
+                  </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      <div>{prop.team} vs {prop.against_team}</div>
+                      <div className="font-medium">{prop.team} vs {prop.against_team}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{prop.stat_type}</TableCell>
-                  <TableCell className="font-mono">{prop.line_score}</TableCell>
+                  <TableCell className="font-medium">{prop.stat_type}</TableCell>
+                  <TableCell className="font-mono font-semibold">{prop.line_score}</TableCell>
                   <TableCell>
                     <Badge className={getOddsColor(prop.odds_type)}>
-                      {prop.odds_type}
+                      {prop.odds_type.toUpperCase()}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {JSON.stringify(prop.h2h_array)}
+                  <TableCell className="font-mono text-xs max-w-32">
+                    <div className="truncate" title={formatArray(prop.h2h_array)}>
+                      {formatArray(prop.h2h_array)}
+                    </div>
                   </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {JSON.stringify(prop.l5_array)}
+                  <TableCell className="font-mono text-xs max-w-32">
+                    <div className="truncate" title={formatArray(prop.l5_array)}>
+                      {formatArray(prop.l5_array)}
+                    </div>
                   </TableCell>
-                  <TableCell className="font-mono">{prop.h2h_avg}</TableCell>
-                  <TableCell className="font-mono">{prop.l5_avg}</TableCell>
-                  <TableCell>{prop.sample_size}</TableCell>
-                  <TableCell className="font-mono font-semibold">
-                    {prop.sorting_score}
+                  <TableCell className="font-mono">{prop.h2h_avg.toFixed(1)}</TableCell>
+                  <TableCell className="font-mono">{prop.l5_avg.toFixed(1)}</TableCell>
+                  <TableCell className={`font-mono ${getScoreColor(prop.h2h_score)}`}>
+                    {(prop.h2h_score * 100).toFixed(1)}%
+                  </TableCell>
+                  <TableCell className={`font-mono ${getScoreColor(prop.l5_score)}`}>
+                    {(prop.l5_score * 100).toFixed(1)}%
+                  </TableCell>
+                  <TableCell className="font-mono">{prop.sample_size}</TableCell>
+                  <TableCell className={`font-mono font-bold ${getScoreColor(prop.sorting_score)}`}>
+                    {prop.sorting_score.toFixed(3)}
                   </TableCell>
                 </TableRow>
               ))}
