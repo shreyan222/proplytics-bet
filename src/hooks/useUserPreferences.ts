@@ -71,7 +71,9 @@ export const useUserPreferences = () => {
         .from('user_preferences')
         .insert({
           user_id: user.id,
-          ...preferences,
+          favorite_players: preferences.favorite_players,
+          favorite_props: preferences.favorite_props,
+          notification_settings: preferences.notification_settings as any,
         })
         .select()
         .single();
@@ -88,9 +90,14 @@ export const useUserPreferences = () => {
     mutationFn: async (preferences: Partial<UserPreferences>) => {
       if (!user) throw new Error('User not authenticated');
 
+      const updateData: any = {};
+      if (preferences.favorite_players) updateData.favorite_players = preferences.favorite_players;
+      if (preferences.favorite_props) updateData.favorite_props = preferences.favorite_props;
+      if (preferences.notification_settings) updateData.notification_settings = preferences.notification_settings;
+
       const { data, error } = await supabase
         .from('user_preferences')
-        .update(preferences)
+        .update(updateData)
         .eq('user_id', user.id)
         .select()
         .single();
