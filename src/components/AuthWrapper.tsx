@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { Dashboard } from './Dashboard';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const AuthWrapper: React.FC = () => {
   const { user, loading, signIn, signUp, signOut } = useSupabaseAuth();
@@ -14,6 +16,7 @@ export const AuthWrapper: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -30,18 +33,26 @@ export const AuthWrapper: React.FC = () => {
     const handleAuth = async (e: React.FormEvent) => {
       e.preventDefault();
       setAuthLoading(true);
+      setError(null);
       
       try {
-        const { error } = isSignUp 
+        console.log(`Attempting to ${isSignUp ? 'sign up' : 'sign in'} with email:`, email);
+        
+        const result = isSignUp 
           ? await signUp(email, password)
           : await signIn(email, password);
         
-        if (error) {
-          console.error('Auth error:', error.message);
-          // You'd show this to user in a real app
+        console.log('Auth result:', result);
+        
+        if (result.error) {
+          console.error('Auth error:', result.error);
+          setError(result.error.message);
+        } else if (isSignUp && !result.data.user?.email_confirmed_at) {
+          setError('Please check your email to confirm your account before signing in.');
         }
       } catch (err) {
         console.error('Auth error:', err);
+        setError('An unexpected error occurred. Please try again.');
       } finally {
         setAuthLoading(false);
       }
@@ -57,6 +68,13 @@ export const AuthWrapper: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {error && (
+              <Alert className="mb-4" variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
             <form onSubmit={handleAuth} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -66,6 +84,7 @@ export const AuthWrapper: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  placeholder="Enter your email"
                 />
               </div>
               <div className="space-y-2">
@@ -76,19 +95,32 @@ export const AuthWrapper: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  placeholder="Enter your password"
+                  minLength={6}
                 />
               </div>
               <Button type="submit" className="w-full" disabled={authLoading}>
                 {authLoading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
               </Button>
             </form>
+            
             <div className="mt-4 text-center">
               <Button 
                 variant="link" 
-                onClick={() => setIsSignUp(!isSignUp)}
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setError(null);
+                }}
               >
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </Button>
+            </div>
+            
+            {/* Debug info */}
+            <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
+              <p><strong>Debug info:</strong></p>
+              <p>Supabase URL: {import.meta.env.VITE_SUPABASE_URL ? 'Configured' : 'Missing'}</p>
+              <p>Supabase Key: {import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Configured' : 'Missing'}</p>
             </div>
           </CardContent>
         </Card>
