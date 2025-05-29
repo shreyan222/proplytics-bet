@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BarChart3, Target, TrendingUp, Zap } from "lucide-react";
-import { StatsGrid } from "@/components/StatsGrid";
 import { FeatureCard } from "@/components/FeatureCard";
 import { HeroSection } from "@/components/HeroSection";
 
@@ -31,12 +30,37 @@ const Index = () => {
     }
   ];
 
+  // Landing page stats (static for marketing purposes)
+  const stats = [
+    { label: "Props Analyzed", value: "10,000+", suffix: "" },
+    { label: "Success Rate", value: "78", suffix: "%" },
+    { label: "Active Users", value: "2,500+", suffix: "" },
+    { label: "Data Points", value: "1M+", suffix: "" },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="container mx-auto px-4 py-12">
         <HeroSection />
         
-        <StatsGrid />
+        {/* Landing Page Stats */}
+        <section className="py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {stats.map((stat, index) => (
+              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-3xl font-bold text-slate-800">
+                    {stat.value}
+                    <span className="text-blue-600">{stat.suffix}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-600 font-medium">{stat.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
         
         {/* Features Section */}
         <section className="py-20">
