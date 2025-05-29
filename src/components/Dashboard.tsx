@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { PropsTable } from './PropsTable';
 import { PropsFilters } from './PropsFilters';
 import { SeedDataButton } from './SeedDataButton';
+import { NotificationCenter } from './NotificationCenter';
 import { PropFilters } from '@/types/nba';
 import { BarChart3, Clock, Target, TrendingUp, AlertCircle, Filter } from 'lucide-react';
 import { usePropsData } from '@/hooks/usePropsData';
@@ -16,6 +17,7 @@ export const Dashboard: React.FC = () => {
   const { data: props = [], isLoading, error } = usePropsData();
   const [filters, setFilters] = useState<PropFilters>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   
   const filteredProps = useFilteredProps(props, filters);
 
@@ -114,7 +116,7 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Seed Button */}
+      {/* Header with Seed Button and Notifications */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">NBA Props Dashboard</h2>
@@ -122,7 +124,7 @@ export const Dashboard: React.FC = () => {
             Advanced scoring algorithm analyzing {filteredProps.length} of {props.length} props across {uniqueGames} games
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative">
           <Button
             variant="outline"
             size="sm"
@@ -133,6 +135,10 @@ export const Dashboard: React.FC = () => {
             {showFilters ? 'Hide Filters' : 'Show Filters'}
           </Button>
           <SeedDataButton />
+          <NotificationCenter 
+            isOpen={showNotifications} 
+            onToggle={() => setShowNotifications(!showNotifications)} 
+          />
         </div>
       </div>
 

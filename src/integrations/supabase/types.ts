@@ -15,21 +15,30 @@ export type Database = {
           changes: Json | null
           created_at: string | null
           id: string
+          previous_data: Json | null
+          prop_data: Json | null
           prop_id: string | null
+          user_id: string | null
         }
         Insert: {
           change_type: string
           changes?: Json | null
           created_at?: string | null
           id?: string
+          previous_data?: Json | null
+          prop_data?: Json | null
           prop_id?: string | null
+          user_id?: string | null
         }
         Update: {
           change_type?: string
           changes?: Json | null
           created_at?: string | null
           id?: string
+          previous_data?: Json | null
+          prop_data?: Json | null
           prop_id?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
