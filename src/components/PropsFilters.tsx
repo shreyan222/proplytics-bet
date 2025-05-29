@@ -13,6 +13,7 @@ import { X, Filter } from 'lucide-react';
 interface PropsFiltersProps {
   filters: PropFilters;
   onFiltersChange: (filters: PropFilters) => void;
+  onClearFilters: () => void;
   totalProps: number;
   filteredProps: number;
 }
@@ -20,6 +21,7 @@ interface PropsFiltersProps {
 export const PropsFilters: React.FC<PropsFiltersProps> = ({
   filters,
   onFiltersChange,
+  onClearFilters,
   totalProps,
   filteredProps
 }) => {
@@ -53,10 +55,6 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
     updateFilter(key, currentArray.filter(item => item !== value));
   };
 
-  const clearFilters = () => {
-    onFiltersChange({});
-  };
-
   const hasActiveFilters = Object.keys(filters).length > 0;
 
   return (
@@ -71,7 +69,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
             {filteredProps} of {totalProps} props
           </Badge>
           {hasActiveFilters && (
-            <Button variant="outline" size="sm" onClick={clearFilters}>
+            <Button variant="outline" size="sm" onClick={onClearFilters}>
               Clear All
             </Button>
           )}

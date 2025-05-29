@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,11 +13,23 @@ import { usePropsData } from '@/hooks/usePropsData';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
 import { Users, BarChart3, Settings, Bell, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { PropFilters } from '@/types/nba';
 
 export const Dashboard: React.FC = () => {
   const { data: props = [], isLoading, error } = usePropsData();
-  const { filteredProps, filters, updateFilters, clearFilters } = useFilteredProps(props);
+  const [filters, setFilters] = useState<PropFilters>({});
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  
+  const filteredProps = useFilteredProps(props, filters);
   const navigate = useNavigate();
+
+  const updateFilters = (newFilters: PropFilters) => {
+    setFilters(newFilters);
+  };
+
+  const clearFilters = () => {
+    setFilters({});
+  };
 
   if (error) {
     return (
@@ -41,12 +53,15 @@ export const Dashboard: React.FC = () => {
             Real-time prop analysis and tracking
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 relative">
           <Button variant="outline" onClick={() => navigate('/players')}>
             <Users className="h-4 w-4 mr-2" />
             Players
           </Button>
-          <NotificationCenter />
+          <NotificationCenter 
+            isOpen={isNotificationOpen} 
+            onToggle={() => setIsNotificationOpen(!isNotificationOpen)} 
+          />
         </div>
       </div>
 
@@ -86,7 +101,7 @@ export const Dashboard: React.FC = () => {
             totalProps={props.length}
             filteredProps={filteredProps.length}
           />
-          <PropsTable props={filteredProps} isLoading={isLoading} />
+          <PropsTable props={filteredProps} />
         </TabsContent>
 
         <TabsContent value="players" className="space-y-4">

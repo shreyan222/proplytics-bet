@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
@@ -91,11 +91,11 @@ export const PlayerPerformanceChart: React.FC<PlayerPerformanceChartProps> = ({
                     name
                   ]}
                 />
-                <Bar 
-                  dataKey="actual" 
-                  fill={(entry: any) => entry.resultColor}
-                  name="Actual Performance"
-                />
+                <Bar dataKey="actual" name="Actual Performance">
+                  {processedData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.resultColor} />
+                  ))}
+                </Bar>
               </BarChart>
             )}
           </ResponsiveContainer>
