@@ -1,31 +1,94 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { TrendingUp, Users, Target, Award } from 'lucide-react';
+import { Prop } from '@/types/nba';
 
-export const StatsGrid = () => {
-  const stats = [
-    { label: "Props Analyzed", value: "10,000+", suffix: "" },
-    { label: "Success Rate", value: "78", suffix: "%" },
-    { label: "Active Users", value: "2,500+", suffix: "" },
-    { label: "Data Points", value: "1M+", suffix: "" },
-  ];
+interface StatsGridProps {
+  props: Prop[];
+  isLoading: boolean;
+}
 
-  return (
-    <section className="py-16">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-        {stats.map((stat, index) => (
-          <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-3xl font-bold text-slate-800">
-                {stat.value}
-                <span className="text-blue-600">{stat.suffix}</span>
-              </CardTitle>
+export const StatsGrid: React.FC<StatsGridProps> = ({ props, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Loading...</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-600 font-medium">{stat.label}</p>
+              <div className="text-2xl font-bold">--</div>
+              <p className="text-xs text-muted-foreground">Loading data...</p>
             </CardContent>
           </Card>
         ))}
       </div>
-    </section>
+    );
+  }
+
+  const totalProps = props.length;
+  const goblinProps = props.filter(p => p.odds_type === 'goblin').length;
+  const demonProps = props.filter(p => p.odds_type === 'demon').length;
+  const avgScore = props.length > 0 
+    ? props.reduce((sum, p) => sum + p.sorting_score, 0) / props.length 
+    : 0;
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total Props</CardTitle>
+          <Target className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{totalProps}</div>
+          <p className="text-xs text-muted-foreground">
+            Active propositions
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Goblin Props</CardTitle>
+          <Award className="h-4 w-4 text-red-500" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-red-600">{goblinProps}</div>
+          <p className="text-xs text-muted-foreground">
+            High confidence picks
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Demon Props</CardTitle>
+          <TrendingUp className="h-4 w-4 text-orange-500" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-orange-600">{demonProps}</div>
+          <p className="text-xs text-muted-foreground">
+            Medium confidence picks
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Avg Score</CardTitle>
+          <Users className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{avgScore.toFixed(3)}</div>
+          <p className="text-xs text-muted-foreground">
+            Overall confidence
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
