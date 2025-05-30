@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -108,17 +107,17 @@ export const ChangeHistoryTable: React.FC = () => {
                           <div className="text-xs space-y-1">
                             {Object.entries(notification.changes).map(([field, change]) => (
                               <div key={field}>
-                                <span className="font-medium">{field}:</span>{' '}
-                                <span className="text-red-600">{change.previous}</span> →{' '}
-                                <span className="text-green-600">{change.current}</span>
+                                <span className="font-medium text-foreground">{field}:</span>{' '}
+                                <span className="text-red-600/90">{change.previous}</span> →{' '}
+                                <span className="text-green-600/90">{change.current}</span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground">-</span>
+                          <span className="text-muted-foreground/80">-</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="text-sm text-muted-foreground/80">
                         {formatTimestamp(notification.timestamp)}
                       </TableCell>
                     </TableRow>
