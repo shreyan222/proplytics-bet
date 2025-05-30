@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -48,8 +47,8 @@ export const AnalyticsPage: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Analytics & Export</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold text-foreground">Analytics & Export</h1>
+        <p className="text-base text-muted-foreground/80">
           Performance insights and data export tools
         </p>
       </div>
