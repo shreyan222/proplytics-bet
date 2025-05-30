@@ -11,7 +11,7 @@ import { PlayerDetail } from "./pages/PlayerDetail";
 import { SettingsPage } from "./pages/SettingsPage";
 import { DataProcessingPage } from "./pages/DataProcessingPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
-import { NotFound } from "./pages/NotFound";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
