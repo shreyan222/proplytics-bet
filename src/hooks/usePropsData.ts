@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Prop } from '@/types/nba';
+import { sampleProps } from '@/utils/sampleData';
 
 interface SupabaseTeam {
   abbreviation: string;
@@ -88,12 +89,13 @@ export const usePropsData = () => {
 
       if (error) {
         console.error('Error fetching props:', error);
-        throw error;
+        console.log('Using sample data instead...');
+        return sampleProps;
       }
 
-      if (!data) {
-        console.log('No props data returned from Supabase');
-        return [];
+      if (!data || data.length === 0) {
+        console.log('No props data returned from Supabase, using sample data');
+        return sampleProps;
       }
 
       console.log(`Successfully fetched ${data.length} props from Supabase`);

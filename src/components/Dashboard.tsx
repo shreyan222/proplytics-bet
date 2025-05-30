@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { PropsTable } from './PropsTable';
 import { PropsFilters } from './PropsFilters';
 import { StatsGrid } from './StatsGrid';
@@ -13,14 +14,16 @@ import { RealtimeStats } from './RealtimeStats';
 import { LiveNotifications } from './LiveNotifications';
 import { usePropsData } from '@/hooks/usePropsData';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
-import { Users, BarChart3, Settings, Bell, History, Activity, Zap, TrendingUp } from 'lucide-react';
+import { Users, BarChart3, Settings, Bell, History, Activity, Zap, TrendingUp, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PropFilters } from '@/types/nba';
 
 export const Dashboard: React.FC = () => {
-  const { data: props = [], isLoading, error } = usePropsData();
+  const { data: props = [], isLoading, error, refetch } = usePropsData();
   const [filters, setFilters] = useState<PropFilters>({});
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   
   const filteredProps = useFilteredProps(props, filters);
   const navigate = useNavigate();
@@ -33,29 +36,66 @@ export const Dashboard: React.FC = () => {
     setFilters({});
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setLastUpdated(new Date());
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
+
+  // Auto-refresh every 2 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleRefresh();
+    }, 120000); // 2 minutes
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (error) {
     return (
       <div className="container mx-auto p-6">
         <Card>
           <CardContent className="text-center py-8">
-            <p className="text-red-500">Error loading data: {error.message}</p>
+            <p className="text-destructive">Error loading data: {error.message}</p>
           </CardContent>
         </Card>
       </div>
     );
   }
 
+  // Count props by odds type for the header
+  const propCounts = {
+    standard: props.filter(p => p.odds_type === 'standard').length,
+    demon: props.filter(p => p.odds_type === 'demon').length,
+    goblin: props.filter(p => p.odds_type === 'goblin').length,
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header with Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">NBA Props Dashboard</h1>
           <p className="text-muted-foreground">
             Real-time prop analysis and tracking
           </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-sm text-muted-foreground">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className={isRefreshing ? 'auto-refresh-indicator' : ''}
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2 relative">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => navigate('/players')}>
             <Users className="h-4 w-4 mr-2" />
             Players
@@ -73,6 +113,54 @@ export const Dashboard: React.FC = () => {
             onToggle={() => setIsNotificationOpen(!isNotificationOpen)} 
           />
         </div>
+      </div>
+
+      {/* Props Count Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Props</p>
+                <p className="text-2xl font-bold">{props.length}</p>
+              </div>
+              <Activity className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Standard</p>
+                <p className="text-2xl font-bold text-blue-600">{propCounts.standard}</p>
+              </div>
+              <Badge className="odds-standard">STD</Badge>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Demon</p>
+                <p className="text-2xl font-bold text-red-600">{propCounts.demon}</p>
+              </div>
+              <Badge className="odds-demon">DMN</Badge>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Goblin</p>
+                <p className="text-2xl font-bold text-green-600">{propCounts.goblin}</p>
+              </div>
+              <Badge className="odds-goblin">GBL</Badge>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Real-time Stats Overview */}
@@ -165,15 +253,19 @@ export const Dashboard: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Update Frequency:</span>
-                    <span className="font-mono">Real-time</span>
+                    <span className="font-mono">2 minutes</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Data Source:</span>
-                    <span className="font-mono">WebSocket</span>
+                    <span className="font-mono">Supabase + Sample</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Latency:</span>
                     <span className="font-mono">&lt; 100ms</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <Badge variant="outline" className="text-green-600">Active</Badge>
                   </div>
                 </div>
               </CardContent>

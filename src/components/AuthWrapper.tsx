@@ -23,10 +23,10 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-600">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">NBA Props Analyzer</CardTitle>
@@ -120,7 +120,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
             </div>
             
             {/* Debug info */}
-            <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
+            <div className="mt-4 p-2 bg-muted rounded text-xs text-muted-foreground">
               <p><strong>Debug info:</strong></p>
               <p>Supabase URL: {import.meta.env.VITE_SUPABASE_URL ? 'Configured' : 'Missing'}</p>
               <p>Supabase Key: {import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Configured' : 'Missing'}</p>
@@ -132,12 +132,12 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-background">
+      <header className="bg-card shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-slate-800">NBA Props Analyzer</h1>
+          <h1 className="text-2xl font-bold">NBA Props Analyzer</h1>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">Welcome, {user.email}</span>
+            <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
             <Button variant="outline" size="sm" onClick={signOut}>
               Sign Out
             </Button>
@@ -145,9 +145,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-8">
-        {children}
-      </main>
+      {children}
     </div>
   );
 };

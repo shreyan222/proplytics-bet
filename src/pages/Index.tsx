@@ -5,8 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BarChart3, Target, TrendingUp, Zap } from "lucide-react";
 import { FeatureCard } from "@/components/FeatureCard";
 import { HeroSection } from "@/components/HeroSection";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const features = [
     {
       icon: BarChart3,
@@ -39,9 +42,9 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
-        <HeroSection />
+        <HeroSection onStartAnalyzing={() => navigate('/analytics')} onViewSample={() => navigate('/players')} />
         
         {/* Landing Page Stats */}
         <section className="py-16">
@@ -49,13 +52,13 @@ const Index = () => {
             {stats.map((stat, index) => (
               <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-3xl font-bold text-slate-800">
+                  <CardTitle className="text-3xl font-bold text-foreground">
                     {stat.value}
-                    <span className="text-blue-600">{stat.suffix}</span>
+                    <span className="text-primary">{stat.suffix}</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-600 font-medium">{stat.label}</p>
+                  <p className="text-muted-foreground font-medium">{stat.label}</p>
                 </CardContent>
               </Card>
             ))}
@@ -65,10 +68,10 @@ const Index = () => {
         {/* Features Section */}
         <section className="py-20">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-800 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Why Choose Our Analysis
             </h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               Leverage cutting-edge statistical models to make informed decisions on NBA props
             </p>
           </div>
@@ -83,7 +86,7 @@ const Index = () => {
         {/* How It Works */}
         <section className="py-20">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-800 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               How It Works
             </h2>
           </div>
@@ -91,8 +94,8 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <Card className="text-center border-0 shadow-lg">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-blue-600 font-bold text-lg">1</span>
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-primary font-bold text-lg">1</span>
                 </div>
                 <CardTitle className="text-lg">Data Collection</CardTitle>
               </CardHeader>
@@ -105,7 +108,7 @@ const Index = () => {
 
             <Card className="text-center border-0 shadow-lg">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-green-600 font-bold text-lg">2</span>
                 </div>
                 <CardTitle className="text-lg">Statistical Analysis</CardTitle>
@@ -119,7 +122,7 @@ const Index = () => {
 
             <Card className="text-center border-0 shadow-lg">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-purple-600 font-bold text-lg">3</span>
                 </div>
                 <CardTitle className="text-lg">Best Props Delivered</CardTitle>
@@ -135,22 +138,27 @@ const Index = () => {
 
         {/* CTA Section */}
         <section className="py-20 text-center">
-          <Card className="max-w-2xl mx-auto border-0 shadow-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <Card className="max-w-2xl mx-auto border-0 shadow-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
             <CardHeader className="pb-6">
               <CardTitle className="text-2xl font-bold">
                 Ready to Start Winning?
               </CardTitle>
-              <CardDescription className="text-blue-100">
+              <CardDescription className="text-primary-foreground/80">
                 Join thousands of users who trust our statistical analysis for NBA props
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Button size="lg" variant="secondary" className="font-semibold">
+                <Button 
+                  size="lg" 
+                  variant="secondary" 
+                  className="font-semibold"
+                  onClick={() => navigate('/analytics')}
+                >
                   Get Started Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <p className="text-sm text-blue-100">
+                <p className="text-sm text-primary-foreground/70">
                   No credit card required • Free analysis included
                 </p>
               </div>
