@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, BarChart3 } from "lucide-react";
@@ -12,7 +11,7 @@ export const HeroSection = ({ onStartAnalyzing, onViewSample }: HeroSectionProps
   return (
     <section className="text-center py-20">
       <div className="max-w-4xl mx-auto">
-        <Badge variant="secondary" className="mb-6 text-sm font-medium">
+        <Badge variant="secondary" className="mb-6 text-sm font-medium text-foreground">
           <BarChart3 className="w-3 h-3 mr-1" />
           NBA Statistical Analysis Platform
         </Badge>
@@ -35,7 +34,7 @@ export const HeroSection = ({ onStartAnalyzing, onViewSample }: HeroSectionProps
             Start Analyzing
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <Button variant="outline" size="lg" className="font-semibold text-lg px-8 py-3" onClick={onViewSample}>
+          <Button variant="outline" size="lg" className="font-semibold text-lg px-8 py-3 text-foreground" onClick={onViewSample}>
             View Sample Analysis
           </Button>
         </div>
