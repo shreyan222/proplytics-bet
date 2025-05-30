@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -189,8 +188,8 @@ export const LiveNotifications: React.FC = () => {
                         </span>
                       </div>
                       
-                      <div className="text-sm font-medium">{notification.title}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
+                      <div className="text-sm font-medium text-foreground">{notification.title}</div>
+                      <div className="text-xs text-muted-foreground/80 mt-1">
                         {notification.description}
                       </div>
                     </div>
