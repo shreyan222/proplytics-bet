@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -66,18 +65,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
               </span>
             </div>
             
-            <div className="text-sm font-medium">
+            <div className="text-sm font-medium text-foreground">
               {prop.player_name} - {prop.stat_type}
             </div>
             
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground/80 mt-1">
               {prop.team} vs {prop.against_team} • Line: {prop.line_score} • {prop.odds_type}
             </div>
 
             {notification.type === 'changed' && notification.changes && (
               <div className="mt-2 text-xs">
                 {Object.entries(notification.changes).map(([field, change]) => (
-                  <div key={field} className="text-muted-foreground">
+                  <div key={field} className="text-muted-foreground/80">
                     {field}: {change.previous} → {change.current}
                   </div>
                 ))}
