@@ -1,4 +1,3 @@
-
 import { Home, Users, Settings, BarChart3, Database, Activity } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -14,6 +13,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 const items = [
   { title: "Dashboard", url: "/", icon: Home },
@@ -33,13 +33,20 @@ export function AppSidebar() {
     active ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "hover:bg-sidebar-accent/50";
 
   return (
-    <Sidebar className="border-r">
-      <SidebarHeader className="border-b px-6 py-4">
-        <div className="flex items-center gap-2">
-          <Activity className="h-6 w-6 text-primary" />
-          <h2 className="text-lg font-semibold">NBA Props</h2>
+    <Sidebar className="border-r" collapsible="icon">
+      <SidebarHeader className="border-b">
+        <div className={cn(
+          "flex items-center gap-2 px-6 py-4",
+          "group-data-[collapsible=icon]:px-2",
+          "group-data-[collapsible=icon]:justify-center"
+        )}>
+          <Activity className="h-6 w-6 text-primary shrink-0 group-data-[collapsible=icon]:hidden" />
+          <h2 className="text-lg font-semibold transition-all group-data-[collapsible=icon]:hidden">NBA Props</h2>
+          <SidebarTrigger className={cn(
+            "ml-auto",
+            "group-data-[collapsible=icon]:ml-0"
+          )} />
         </div>
-        <SidebarTrigger className="ml-auto" />
       </SidebarHeader>
 
       <SidebarContent>
@@ -53,6 +60,7 @@ export function AppSidebar() {
                     asChild
                     isActive={isActive(item.url)}
                     className={getNavCls(isActive(item.url))}
+                    tooltip={item.title}
                   >
                     <NavLink to={item.url} end>
                       <item.icon className="h-4 w-4" />
