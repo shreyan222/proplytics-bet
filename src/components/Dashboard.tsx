@@ -13,7 +13,7 @@ import { RealtimeStats } from './RealtimeStats';
 import { LiveNotifications } from './LiveNotifications';
 import { usePropsData } from '@/hooks/usePropsData';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
-import { Users, BarChart3, Settings, Bell, History, Activity, Zap } from 'lucide-react';
+import { Users, BarChart3, Settings, Bell, History, Activity, Zap, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PropFilters } from '@/types/nba';
 
@@ -59,6 +59,10 @@ export const Dashboard: React.FC = () => {
           <Button variant="outline" onClick={() => navigate('/players')}>
             <Users className="h-4 w-4 mr-2" />
             Players
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/analytics')}>
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Analytics
           </Button>
           <Button variant="outline" onClick={() => navigate('/settings')}>
             <Settings className="h-4 w-4 mr-2" />
