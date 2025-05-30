@@ -33,7 +33,7 @@ export const SettingsPage: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold">Settings</h1>
             <p className="text-muted-foreground">
-              Manage your preferences, alerts, and favorites
+              
             </p>
           </div>
         </div>
