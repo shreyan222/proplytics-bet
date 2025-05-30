@@ -36,7 +36,7 @@ const Index = () => {
   // Landing page stats (static for marketing purposes)
   const stats = [
     { label: "Props Analyzed", value: "10,000+", suffix: "" },
-    { label: "Success Rate", value: "78", suffix: "%" },
+    { label: "Success Rate", value: "78%", suffix: "" },
     { label: "Active Users", value: "2,500+", suffix: "" },
     { label: "Data Points", value: "1M+", suffix: "" },
   ];
