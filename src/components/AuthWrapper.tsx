@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -135,7 +134,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     <div className="min-h-screen bg-background">
       <header className="bg-card shadow-sm border-b">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">NBA Props Analyzer</h1>
+          <h1 className="text-2xl font-bold text-foreground">NBA Props Analyzer</h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
             <Button variant="outline" size="sm" onClick={signOut}>
