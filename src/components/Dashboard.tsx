@@ -9,9 +9,11 @@ import { StatsGrid } from './StatsGrid';
 import { NotificationCenter } from './NotificationCenter';
 import { NotificationSettings } from './NotificationSettings';
 import { ChangeHistoryTable } from './ChangeHistoryTable';
+import { RealtimeStats } from './RealtimeStats';
+import { LiveNotifications } from './LiveNotifications';
 import { usePropsData } from '@/hooks/usePropsData';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
-import { Users, BarChart3, Settings, Bell, History } from 'lucide-react';
+import { Users, BarChart3, Settings, Bell, History, Activity, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PropFilters } from '@/types/nba';
 
@@ -69,12 +71,12 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <StatsGrid props={filteredProps} isLoading={isLoading} />
+      {/* Real-time Stats Overview */}
+      <RealtimeStats />
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="props" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="props" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Props
@@ -82,6 +84,14 @@ export const Dashboard: React.FC = () => {
           <TabsTrigger value="players" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Players
+          </TabsTrigger>
+          <TabsTrigger value="realtime" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Real-time
+          </TabsTrigger>
+          <TabsTrigger value="live-notifications" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            Live
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -119,6 +129,56 @@ export const Dashboard: React.FC = () => {
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="realtime" className="space-y-4">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  Real-time Overview
+                </CardTitle>
+                <CardDescription>
+                  Live prop counts and active games monitoring
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Real-time statistics and connection status are displayed above.
+                  This includes live prop counts by category, active games, and connection health.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Metrics</CardTitle>
+                <CardDescription>
+                  System performance and update frequency
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Update Frequency:</span>
+                    <span className="font-mono">Real-time</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Data Source:</span>
+                    <span className="font-mono">WebSocket</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Latency:</span>
+                    <span className="font-mono">&lt; 100ms</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="live-notifications" className="space-y-4">
+          <LiveNotifications />
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
