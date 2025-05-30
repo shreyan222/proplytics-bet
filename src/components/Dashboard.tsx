@@ -58,6 +58,10 @@ export const Dashboard: React.FC = () => {
             <Users className="h-4 w-4 mr-2" />
             Players
           </Button>
+          <Button variant="outline" onClick={() => navigate('/settings')}>
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
           <NotificationCenter 
             isOpen={isNotificationOpen} 
             onToggle={() => setIsNotificationOpen(!isNotificationOpen)} 
@@ -70,7 +74,7 @@ export const Dashboard: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="props" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="props" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Props
@@ -86,10 +90,6 @@ export const Dashboard: React.FC = () => {
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="h-4 w-4" />
             History
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Settings
           </TabsTrigger>
         </TabsList>
 
@@ -127,21 +127,6 @@ export const Dashboard: React.FC = () => {
 
         <TabsContent value="history" className="space-y-4">
           <ChangeHistoryTable />
-        </TabsContent>
-
-        <TabsContent value="settings" className="space-y-4">
-          <NotificationSettings />
-          <Card>
-            <CardHeader>
-              <CardTitle>Application Settings</CardTitle>
-              <CardDescription>
-                Configure your preferences and data settings
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Additional settings will be available here.</p>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

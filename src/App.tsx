@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthWrapper } from "./components/AuthWrapper";
 import { PlayerDetail } from "./pages/PlayerDetail";
 import { PlayersPage } from "./pages/PlayersPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<AuthWrapper />} />
           <Route path="/players" element={<PlayersPage />} />
           <Route path="/player/:playerId" element={<PlayerDetail />} />
+          <Route path="/settings" element={<SettingsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
