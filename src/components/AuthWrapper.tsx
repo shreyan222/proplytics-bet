@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
-import { Dashboard } from './Dashboard';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-export const AuthWrapper: React.FC = () => {
+interface AuthWrapperProps {
+  children: React.ReactNode;
+}
+
+export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const { user, loading, signIn, signUp, signOut } = useSupabaseAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -143,7 +146,7 @@ export const AuthWrapper: React.FC = () => {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        <Dashboard />
+        {children}
       </main>
     </div>
   );
