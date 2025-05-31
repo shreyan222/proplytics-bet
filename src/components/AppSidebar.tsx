@@ -1,6 +1,14 @@
 
-import { Home, Users, Settings, BarChart3, Database, Activity, TrendingUp } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import {
+  Home,
+  Activity,
+  Trophy,
+  Users,
+  BarChart3,
+  Settings,
+  Database,
+} from "lucide-react"
+
 import {
   Sidebar,
   SidebarContent,
@@ -10,64 +18,67 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+} from "@/components/ui/sidebar"
+import { Link, useLocation } from "react-router-dom"
 
 const items = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Props Tracker", url: "/tracker", icon: TrendingUp },
-  { title: "Players", url: "/players", icon: Users },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
-  { title: "Data Processing", url: "/data-processing", icon: Database },
-  { title: "Settings", url: "/settings", icon: Settings },
-];
+  {
+    title: "Dashboard",
+    url: "/",
+    icon: Home,
+  },
+  {
+    title: "Props Tracker",
+    url: "/tracker",
+    icon: Activity,
+  },
+  {
+    title: "Best Props",
+    url: "/best-props",
+    icon: Trophy,
+  },
+  {
+    title: "Players",
+    url: "/players",
+    icon: Users,
+  },
+  {
+    title: "Analytics",
+    url: "/analytics",
+    icon: BarChart3,
+  },
+  {
+    title: "Data Processing",
+    url: "/data-processing",
+    icon: Database,
+  },
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: Settings,
+  },
+]
 
 export function AppSidebar() {
-  const { state } = useSidebar();
-  const location = useLocation();
-  const currentPath = location.pathname;
-
-  const isActive = (path: string) => currentPath === path;
-  const getNavCls = (active: boolean) =>
-    active ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "hover:bg-sidebar-accent/50";
+  const location = useLocation()
 
   return (
-    <Sidebar className="border-r" collapsible="icon">
-      <SidebarHeader className="border-b">
-        <div className={cn(
-          "flex items-center gap-2 px-6 py-4",
-          "group-data-[collapsible=icon]:px-2",
-          "group-data-[collapsible=icon]:justify-center"
-        )}>
-          <Activity className="h-6 w-6 text-primary shrink-0 group-data-[collapsible=icon]:hidden" />
-          <h2 className="text-lg font-semibold transition-all group-data-[collapsible=icon]:hidden">NBA Props</h2>
-          <SidebarTrigger className={cn(
-            "ml-auto",
-            "group-data-[collapsible=icon]:ml-0"
-          )} />
-        </div>
-      </SidebarHeader>
-
+    <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>NBA Props Analytics</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
-                    asChild
-                    isActive={isActive(item.url)}
-                    className={getNavCls(isActive(item.url))}
-                    tooltip={item.title}
+                    asChild 
+                    isActive={location.pathname === item.url}
                   >
-                    <NavLink to={item.url} end>
-                      <item.icon className="h-4 w-4" />
+                    <Link to={item.url}>
+                      <item.icon />
                       <span>{item.title}</span>
-                    </NavLink>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -76,5 +87,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
+  )
 }
