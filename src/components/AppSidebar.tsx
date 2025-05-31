@@ -1,4 +1,3 @@
-
 import {
   Home,
   Activity,
@@ -66,7 +65,11 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>NBA Props Analytics</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+              Proplytics
+            </span>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
