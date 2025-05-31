@@ -5,8 +5,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 235 20% 12%;
+    --foreground: 0 0% 95%;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -91,8 +91,29 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: linear-gradient(
+      135deg,
+      hsl(263, 60%, 18%),
+      hsl(235, 20%, 12%),
+      hsl(210, 25%, 15%)
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
   }
+  
+  .dark body {
+    background: linear-gradient(
+      135deg,
+      hsl(263, 60%, 18%),
+      hsl(235, 20%, 12%),
+      hsl(210, 25%, 15%)
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  
 }
 
 /* Custom styles for prop odds types */
@@ -126,3 +147,15 @@
 .recently-changed {
   @apply bg-yellow-100 dark:bg-yellow-900/20 transition-colors duration-1000;
 }
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
