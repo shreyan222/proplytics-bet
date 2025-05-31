@@ -1,4 +1,5 @@
-import { Home, Users, Settings, BarChart3, Database, Activity } from "lucide-react";
+
+import { Home, Users, Settings, BarChart3, Database, Activity, TrendingUp } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -17,6 +18,7 @@ import { cn } from "@/lib/utils";
 
 const items = [
   { title: "Dashboard", url: "/", icon: Home },
+  { title: "Props Tracker", url: "/tracker", icon: TrendingUp },
   { title: "Players", url: "/players", icon: Users },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Data Processing", url: "/data-processing", icon: Database },

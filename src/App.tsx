@@ -9,6 +9,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Dashboard } from "@/components/Dashboard";
 import LandingPage from "./pages/LandingPage";
+import { PropsTrackerPage } from "./pages/PropsTrackerPage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { PlayerDetail } from "./pages/PlayerDetail";
 import { SettingsPage } from "./pages/SettingsPage";
@@ -38,6 +39,7 @@ const App = () => (
                     <main className="flex-1">
                       <Routes>
                         <Route path="/" element={<Dashboard />} />
+                        <Route path="/tracker" element={<PropsTrackerPage />} />
                         <Route path="/players" element={<PlayersPage />} />
                         <Route path="/players/:playerId" element={<PlayerDetail />} />
                         <Route path="/settings" element={<SettingsPage />} />
