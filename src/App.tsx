@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
 import { PropsTrackerPage } from "./pages/PropsTrackerPage";
 import { BestPropsPage } from "./pages/BestPropsPage";
 import { PlayersPage } from "./pages/PlayersPage";
@@ -22,26 +23,34 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <BrowserRouter>
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full">
-            <AppSidebar />
-            <main className="flex-1">
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/tracker" element={<PropsTrackerPage />} />
-                <Route path="/best-props" element={<BestPropsPage />} />
-                <Route path="/players" element={<PlayersPage />} />
-                <Route path="/players/:id" element={<PlayerDetail />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/data-processing" element={<DataProcessingPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-          </div>
-        </SidebarProvider>
+        <Routes>
+          {/* Landing page - accessible but not linked from main app */}
+          <Route path="/landing" element={<LandingPage />} />
+          
+          {/* Main app with sidebar */}
+          <Route path="/*" element={
+            <SidebarProvider>
+              <div className="min-h-screen flex w-full">
+                <AppSidebar />
+                <main className="flex-1">
+                  <Toaster />
+                  <Sonner />
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/tracker" element={<PropsTrackerPage />} />
+                    <Route path="/best-props" element={<BestPropsPage />} />
+                    <Route path="/players" element={<PlayersPage />} />
+                    <Route path="/players/:id" element={<PlayerDetail />} />
+                    <Route path="/analytics" element={<AnalyticsPage />} />
+                    <Route path="/data-processing" element={<DataProcessingPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+              </div>
+            </SidebarProvider>
+          } />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
