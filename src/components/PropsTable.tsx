@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -53,22 +52,28 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
         <div className="cursor-pointer">
           {viewMode === 'table' ? (
             <TableRow className="hover:bg-muted/50 transition-colors cursor-pointer">
-              <TableCell className="font-medium flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4" />
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <span className="font-medium">{prop.player_name}</span>
                 </div>
-                {prop.player_name}
               </TableCell>
               <TableCell>{prop.team}</TableCell>
               <TableCell>{prop.position}</TableCell>
               <TableCell>{prop.stat_type}</TableCell>
-              <TableCell className="text-lg font-bold">{prop.line_score}</TableCell>
-              <TableCell>{getOddsTypeBadge(prop.odds_type)}</TableCell>
-              <TableCell>{formatTime(prop.start_time)}</TableCell>
-              <TableCell>
-                <Button variant="outline" size="sm">
-                  View Details
-                </Button>
+              <TableCell className="text-center font-bold">{prop.line_score}</TableCell>
+              <TableCell className="text-center">
+                <div className="flex justify-center">{getOddsTypeBadge(prop.odds_type)}</div>
+              </TableCell>
+              <TableCell className="text-center">{formatTime(prop.start_time)}</TableCell>
+              <TableCell className="text-center">
+                <div className="flex justify-center">
+                  <Button variant="outline" size="sm">
+                    View Details
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ) : (
@@ -215,15 +220,15 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Player</TableHead>
-            <TableHead>Team</TableHead>
-            <TableHead>Position</TableHead>
-            <TableHead>Stat Type</TableHead>
-            <TableHead>Line Score</TableHead>
-            <TableHead>Odds Type</TableHead>
-            <TableHead>Start Time</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="bg-muted/50">
+            <TableHead className="w-[200px]">Player</TableHead>
+            <TableHead className="w-[80px]">Team</TableHead>
+            <TableHead className="w-[80px]">Position</TableHead>
+            <TableHead className="w-[120px]">Stat Type</TableHead>
+            <TableHead className="w-[80px] text-center">Line Score</TableHead>
+            <TableHead className="w-[100px] text-center">Odds Type</TableHead>
+            <TableHead className="w-[100px] text-center">Start Time</TableHead>
+            <TableHead className="w-[100px] text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
