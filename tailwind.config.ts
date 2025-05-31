@@ -61,6 +61,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// ✅ Brand colors (based on your logo)
+				brand: {
+					blue: '#2D7FF9',
+					green: '#00D26A',
+					dark: '#001219',
+					mid: '#0A2E36'
 				}
 			},
 			borderRadius: {
