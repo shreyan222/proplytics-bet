@@ -84,7 +84,7 @@ const mockTrackerData = {
   recent_activities: [
     {
       id: "act_1",
-      type: "new",
+      type: "new" as const,
       player: "LeBron James",
       team: "LAL",
       statType: "Points",
@@ -92,7 +92,7 @@ const mockTrackerData = {
     },
     {
       id: "act_2",
-      type: "changed",
+      type: "changed" as const,
       player: "Luka Dončić",
       team: "DAL",
       statType: "Assists",
@@ -101,7 +101,7 @@ const mockTrackerData = {
     },
     {
       id: "act_3",
-      type: "removed",
+      type: "removed" as const,
       player: "Jayson Tatum",
       team: "BOS",
       statType: "Points",
@@ -109,7 +109,7 @@ const mockTrackerData = {
     },
     {
       id: "act_4",
-      type: "new",
+      type: "new" as const,
       player: "Stephen Curry",
       team: "GSW",
       statType: "3-Pointers Made",
@@ -117,7 +117,7 @@ const mockTrackerData = {
     },
     {
       id: "act_5",
-      type: "changed",
+      type: "changed" as const,
       player: "Nikola Jokić",
       team: "DEN",
       statType: "Double-Double",
