@@ -7,7 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthWrapper } from "@/components/AuthWrapper";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import Index from "./pages/Index";
+import { Dashboard } from "@/components/Dashboard";
+import LandingPage from "./pages/LandingPage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { PlayerDetail } from "./pages/PlayerDetail";
 import { SettingsPage } from "./pages/SettingsPage";
@@ -24,25 +25,33 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthWrapper>
-            <SidebarProvider>
-              <div className="min-h-screen flex w-full bg-background">
-                <AppSidebar />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/players" element={<PlayersPage />} />
-                    <Route path="/players/:playerId" element={<PlayerDetail />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/data-processing" element={<DataProcessingPage />} />
-                    <Route path="/analytics" element={<AnalyticsPage />} />
-                    <Route path="/404" element={<NotFound />} />
-                    <Route path="*" element={<Navigate to="/404" replace />} />
-                  </Routes>
-                </main>
-              </div>
-            </SidebarProvider>
-          </AuthWrapper>
+          <Routes>
+            {/* Landing page - separate route */}
+            <Route path="/landing" element={<LandingPage />} />
+            
+            {/* Main app with sidebar */}
+            <Route path="/*" element={
+              <AuthWrapper>
+                <SidebarProvider>
+                  <div className="min-h-screen flex w-full bg-background">
+                    <AppSidebar />
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/players" element={<PlayersPage />} />
+                        <Route path="/players/:playerId" element={<PlayerDetail />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/data-processing" element={<DataProcessingPage />} />
+                        <Route path="/analytics" element={<AnalyticsPage />} />
+                        <Route path="/404" element={<NotFound />} />
+                        <Route path="*" element={<Navigate to="/404" replace />} />
+                      </Routes>
+                    </main>
+                  </div>
+                </SidebarProvider>
+              </AuthWrapper>
+            } />
+          </Routes>
         </BrowserRouter>
       </div>
     </TooltipProvider>
