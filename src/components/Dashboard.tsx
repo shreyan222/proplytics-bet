@@ -51,11 +51,11 @@ export const Dashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#1a1d2e] via-[#0f1419] to-[#1a1d2e]">
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         {/* Animated background elements */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#00ff88] opacity-20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-40 right-10 w-80 h-80 bg-[#00cc6a] opacity-15 rounded-full blur-2xl animate-ping" />
-        <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-blue-500 opacity-10 rounded-full blur-2xl animate-pulse transform -translate-x-1/2" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 opacity-20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-40 right-10 w-80 h-80 bg-blue-600 opacity-15 rounded-full blur-2xl animate-ping" />
+        <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-slate-600 opacity-10 rounded-full blur-2xl animate-pulse transform -translate-x-1/2" />
         
         <div className="relative z-10 container mx-auto p-6">
           <div className="flex items-center justify-center h-64">
@@ -66,9 +66,9 @@ export const Dashboard: React.FC = () => {
                   alt="Loading" 
                   className="h-12 w-12 mx-auto mb-4 animate-spin"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88] to-[#00cc6a] opacity-50 rounded-full blur-md animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 opacity-50 rounded-full blur-md animate-pulse" />
               </div>
-              <p className="text-white/80 text-lg">Loading props data...</p>
+              <p className="text-slate-300 text-lg">Loading props data...</p>
             </div>
           </div>
         </div>
@@ -78,9 +78,9 @@ export const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#1a1d2e] via-[#0f1419] to-[#1a1d2e]">
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="relative z-10 container mx-auto p-6">
-          <Card className="bg-white/5 backdrop-blur-xl border border-red-500/30 shadow-2xl">
+          <Card className="glass-card border border-red-500/30 shadow-2xl">
             <CardContent className="text-center py-8">
               <p className="text-red-400">Error loading data: {error.message}</p>
             </CardContent>
@@ -97,24 +97,18 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#1a1d2e] via-[#0f1419] to-[#1a1d2e]">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Enhanced animated background shapes */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#00ff88] opacity-20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute top-40 right-10 w-80 h-80 bg-[#00cc6a] opacity-15 rounded-full blur-2xl animate-ping" />
-      <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-blue-500 opacity-10 rounded-full blur-2xl animate-pulse transform -translate-x-1/2" />
-      <div className="absolute top-20 left-1/4 w-64 h-64 bg-gradient-to-r from-[#00ff88] to-blue-400 opacity-10 rounded-full blur-3xl animate-bounce" style={{ animationDuration: '3s' }} />
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 opacity-20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute top-40 right-10 w-80 h-80 bg-blue-600 opacity-15 rounded-full blur-2xl animate-ping" />
+      <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-slate-600 opacity-10 rounded-full blur-2xl animate-pulse transform -translate-x-1/2" />
+      <div className="absolute top-20 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-500 to-blue-700 opacity-10 rounded-full blur-3xl animate-bounce" style={{ animationDuration: '3s' }} />
       
-      {/* Floating geometric patterns */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-1/3 w-32 h-32 border border-[#00ff88] rounded-full animate-spin" style={{ animationDuration: '20s' }} />
-        <div className="absolute bottom-1/3 right-1/4 w-24 h-24 border border-blue-400 rotate-45 animate-pulse" />
-      </div>
-
-      {/* Content container with enhanced frosted effect */}
+      {/* Content container */}
       <div className="relative z-10 container mx-auto p-6 space-y-6">
         
-        {/* Enhanced Header */}
-        <div className="border-b border-white/10 pb-6 bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/10">
+        {/* Header */}
+        <div className="border-b border-slate-700 pb-6 glass-card p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <img 
@@ -123,33 +117,33 @@ export const Dashboard: React.FC = () => {
                 className="w-12 h-12"
               />
               <div>
-                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                   NBA Props Dashboard
                 </h1>
-                <p className="text-xl text-white/60 mt-2">
+                <p className="text-xl text-slate-400 mt-2">
                   Professional prop analysis and real-time tracking
                 </p>
-                <div className="flex items-center gap-2 mt-3 text-sm text-white/50">
+                <div className="flex items-center gap-2 mt-3 text-sm text-slate-500">
                   Last updated: {lastUpdated.toLocaleTimeString()}
                 </div>
               </div>
             </div>
-            <Badge className="bg-gradient-to-r from-[#00ff88] to-[#00cc6a] text-[#1a1d2e] border-none px-4 py-2 font-semibold">
+            <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none px-4 py-2 font-semibold">
               <Activity className="h-3 w-3 mr-1" />
               Live
             </Badge>
           </div>
         </div>
 
-        {/* Enhanced Stats Cards */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             { 
               label: 'Total Props', 
               value: props.length, 
-              icon: <BarChart3 className="h-8 w-8 text-[#00ff88]" />,
-              gradient: 'from-[#00ff88]/20 to-[#00cc6a]/20',
-              border: 'border-[#00ff88]/30'
+              icon: <BarChart3 className="h-8 w-8 text-blue-400" />,
+              gradient: 'from-blue-500/20 to-blue-600/20',
+              border: 'border-blue-500/30'
             },
             { 
               label: 'Standard', 
@@ -168,16 +162,16 @@ export const Dashboard: React.FC = () => {
             { 
               label: 'Goblin', 
               value: propCounts.goblin, 
-              icon: <div className="w-6 h-6 bg-gradient-to-r from-[#00ff88] to-[#00cc6a] rounded-full flex items-center justify-center text-xs font-bold text-[#1a1d2e]">G</div>,
-              gradient: 'from-[#00ff88]/20 to-[#00cc6a]/20',
-              border: 'border-[#00ff88]/30'
+              icon: <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white">G</div>,
+              gradient: 'from-green-500/20 to-green-600/20',
+              border: 'border-green-500/30'
             }
           ].map(({ label, value, icon, gradient, border }) => (
             <Card key={label} className={`bg-gradient-to-br ${gradient} backdrop-blur-xl border ${border} shadow-2xl rounded-2xl hover:scale-105 transition-all duration-300 group`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white/70">{label}</p>
+                    <p className="text-sm font-medium text-slate-400">{label}</p>
                     <p className="text-3xl font-bold text-white mt-1">{value}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
@@ -189,8 +183,8 @@ export const Dashboard: React.FC = () => {
           ))}
         </div>
 
-        {/* Enhanced Props Table & Filters */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-6 space-y-6">
+        {/* Props Table & Filters */}
+        <div className="glass-card border border-slate-700 p-6 space-y-6">
           <PropsFilters
             filters={filters}
             onFiltersChange={updateFilters}

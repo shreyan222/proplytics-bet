@@ -63,13 +63,32 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// ✅ Enhanced PROPLYTICS brand colors
-				proplytics: {
-					green: '#00ff88',
-					'green-dark': '#00cc6a',
-					navy: '#1a1d2e',
-					dark: '#0f1419',
-					blue: '#2D7FF9'
+				// Professional color scheme
+				slate: {
+					50: '#f8fafc',
+					100: '#f1f5f9',
+					200: '#e2e8f0',
+					300: '#cbd5e1',
+					400: '#94a3b8',
+					500: '#64748b',
+					600: '#475569',
+					700: '#334155',
+					800: '#1e293b',
+					900: '#0f172a',
+					950: '#020617'
+				},
+				blue: {
+					50: '#eff6ff',
+					100: '#dbeafe',
+					200: '#bfdbfe',
+					300: '#93c5fd',
+					400: '#60a5fa',
+					500: '#3b82f6',
+					600: '#2563eb',
+					700: '#1d4ed8',
+					800: '#1e40af',
+					900: '#1e3a8a',
+					950: '#172554'
 				}
 			},
 			borderRadius: {
@@ -99,26 +118,15 @@ export default {
 						transform: 'translateY(0px)'
 					},
 					'50%': {
-						transform: 'translateY(-20px)'
+						transform: 'translateY(-10px)'
 					}
 				},
 				glow: {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)'
+						boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(0, 255, 136, 0.6)'
-					}
-				},
-				'gradient-shift': {
-					'0%': {
-						backgroundPosition: '0% 50%'
-					},
-					'50%': {
-						backgroundPosition: '100% 50%'
-					},
-					'100%': {
-						backgroundPosition: '0% 50%'
+						boxShadow: '0 0 30px rgba(59, 130, 246, 0.5)'
 					}
 				}
 			},
@@ -126,15 +134,11 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				float: 'float 6s ease-in-out infinite',
-				glow: 'glow 2s ease-in-out infinite',
-				'gradient-shift': 'gradient-shift 15s ease infinite'
+				glow: 'glow 2s ease-in-out infinite'
 			},
 			fontFamily: {
 				'inter': ['Inter', 'system-ui', 'sans-serif'],
 				'poppins': ['Poppins', 'system-ui', 'sans-serif']
-			},
-			backdropBlur: {
-				xs: '2px'
 			}
 		}
 	},

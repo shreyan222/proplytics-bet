@@ -31,9 +31,9 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   const getOddsTypeBadge = (oddsType: string) => {
     switch (oddsType) {
       case 'demon':
-        return <Badge className="bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-300 border border-red-500/30 backdrop-blur-sm hover:from-red-500/30 hover:to-red-600/30">Demon</Badge>;
+        return <Badge className="bg-red-500/20 text-red-300 border border-red-500/30 backdrop-blur-sm hover:bg-red-500/30">Demon</Badge>;
       case 'goblin':
-        return <Badge className="bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 text-[#00ff88] border border-[#00ff88]/30 backdrop-blur-sm hover:from-[#00ff88]/30 hover:to-[#00cc6a]/30">Goblin</Badge>;
+        return <Badge className="bg-green-500/20 text-green-300 border border-green-500/30 backdrop-blur-sm hover:bg-green-500/30">Goblin</Badge>;
       default:
         return <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-sm hover:bg-blue-500/30">Standard</Badge>;
     }
@@ -50,52 +50,52 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   const PropDetailDialog = ({ prop }: { prop: Prop }) => (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="cursor-pointer">
+        <div className="cursor-pointer w-full">
           {viewMode === 'table' ? (
-            <TableRow className="hover:bg-white/10 transition-all duration-300 cursor-pointer border-b border-white/10 group">
-              <TableCell className="py-4">
+            <TableRow className="hover:bg-slate-800/50 transition-all duration-300 cursor-pointer border-b border-slate-700 group">
+              <TableCell className="py-4 align-middle">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 rounded-full flex items-center justify-center flex-shrink-0 border border-[#00ff88]/30">
-                    <User className="h-5 w-5 text-[#00ff88]" />
+                  <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-blue-500/30">
+                    <User className="h-5 w-5 text-blue-400" />
                   </div>
-                  <span className="font-medium text-white group-hover:text-[#00ff88] transition-colors">{prop.player_name}</span>
+                  <span className="font-medium text-white group-hover:text-blue-400 transition-colors">{prop.player_name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-white/80">{prop.team}</TableCell>
-              <TableCell className="text-white/80">{prop.position}</TableCell>
-              <TableCell className="text-white/80">{prop.stat_type}</TableCell>
-              <TableCell className="text-center font-bold text-xl text-[#00ff88]">{prop.line_score}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-slate-300 align-middle">{prop.team}</TableCell>
+              <TableCell className="text-slate-300 align-middle">{prop.position}</TableCell>
+              <TableCell className="text-slate-300 align-middle">{prop.stat_type}</TableCell>
+              <TableCell className="text-center align-middle font-bold text-xl text-blue-400">{prop.line_score}</TableCell>
+              <TableCell className="text-center align-middle">
                 <div className="flex justify-center">{getOddsTypeBadge(prop.odds_type)}</div>
               </TableCell>
-              <TableCell className="text-center text-white/80">{formatTime(prop.start_time)}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center align-middle text-slate-300">{formatTime(prop.start_time)}</TableCell>
+              <TableCell className="text-center align-middle">
                 <div className="flex justify-center">
-                  <Button variant="outline" size="sm" className="glass-button text-white border-[#00ff88]/30 hover:border-[#00ff88]/50 hover:text-[#00ff88]">
+                  <Button variant="outline" size="sm" className="glass-button text-white border-blue-500/30 hover:border-blue-400/50 hover:text-blue-400">
                     View Details
                   </Button>
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            <Card className="glass-card hover:scale-105 hover-glow transition-all duration-300 cursor-pointer group">
+            <Card className="glass-card hover:scale-105 transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 rounded-full flex items-center justify-center border border-[#00ff88]/30 group-hover:border-[#00ff88]/50 transition-colors">
-                    <User className="h-6 w-6 text-[#00ff88]" />
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/30 group-hover:border-blue-400/50 transition-colors">
+                    <User className="h-6 w-6 text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white group-hover:text-[#00ff88] transition-colors">{prop.player_name}</h3>
-                    <p className="text-sm text-white/60">{prop.position} • {prop.team}</p>
+                    <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{prop.player_name}</h3>
+                    <p className="text-sm text-slate-400">{prop.position} • {prop.team}</p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/70">{prop.stat_type}</span>
+                    <span className="text-sm text-slate-400">{prop.stat_type}</span>
                     {getOddsTypeBadge(prop.odds_type)}
                   </div>
-                  <div className="text-3xl font-bold proplytics-text-gradient">{prop.line_score}</div>
-                  <div className="flex items-center gap-2 text-sm text-white/60">
+                  <div className="text-3xl font-bold text-blue-400">{prop.line_score}</div>
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
                     <Clock className="h-4 w-4" />
                     {formatTime(prop.start_time)}
                   </div>
@@ -105,15 +105,15 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl glass border border-white/20">
+      <DialogContent className="max-w-2xl glass border border-slate-700">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-white">
-            <div className="w-12 h-12 bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 rounded-full flex items-center justify-center border border-[#00ff88]/30">
-              <User className="h-6 w-6 text-[#00ff88]" />
+            <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/30">
+              <User className="h-6 w-6 text-blue-400" />
             </div>
             <div>
               <div className="text-xl text-white">{prop.player_name}</div>
-              <div className="text-sm text-white/60">{prop.team} • {prop.position}</div>
+              <div className="text-sm text-slate-400">{prop.team} • {prop.position}</div>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -122,14 +122,14 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           <div className="grid grid-cols-2 gap-4">
             <Card className="glass-card">
               <CardContent className="p-4">
-                <div className="text-sm text-white/60 mb-1">Stat Type</div>
+                <div className="text-sm text-slate-400 mb-1">Stat Type</div>
                 <div className="text-2xl font-bold text-white">{prop.stat_type}</div>
               </CardContent>
             </Card>
             <Card className="glass-card">
               <CardContent className="p-4">
-                <div className="text-sm text-white/60 mb-1">Line Score</div>
-                <div className="text-2xl font-bold proplytics-text-gradient">{prop.line_score}</div>
+                <div className="text-sm text-slate-400 mb-1">Line Score</div>
+                <div className="text-2xl font-bold text-blue-400">{prop.line_score}</div>
               </CardContent>
             </Card>
           </div>
@@ -140,19 +140,19 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
               <h3 className="font-semibold mb-3 text-white">Game Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-white/60">Start Time:</span>
+                  <span className="text-slate-400">Start Time:</span>
                   <div className="text-white">{formatTime(prop.start_time)}</div>
                 </div>
                 <div>
-                  <span className="text-white/60">Opponent:</span>
+                  <span className="text-slate-400">Opponent:</span>
                   <div className="text-white">{prop.against_team}</div>
                 </div>
                 <div>
-                  <span className="text-white/60">Odds Type:</span>
+                  <span className="text-slate-400">Odds Type:</span>
                   <div>{getOddsTypeBadge(prop.odds_type)}</div>
                 </div>
                 <div>
-                  <span className="text-white/60">Sample Size:</span>
+                  <span className="text-slate-400">Sample Size:</span>
                   <div className="text-white">{prop.sample_size} games</div>
                 </div>
               </div>
@@ -163,24 +163,24 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           <Card className="glass-card">
             <CardContent className="p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2 text-white">
-                <TrendingUp className="h-4 w-4 text-[#00ff88]" />
+                <TrendingUp className="h-4 w-4 text-blue-400" />
                 Performance Analytics
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-white/60">H2H Average:</span>
+                  <span className="text-slate-400">H2H Average:</span>
                   <div className="font-medium text-white">{prop.h2h_avg?.toFixed(1) || 'N/A'}</div>
                 </div>
                 <div>
-                  <span className="text-white/60">L5 Average:</span>
+                  <span className="text-slate-400">L5 Average:</span>
                   <div className="font-medium text-white">{prop.l5_avg?.toFixed(1) || 'N/A'}</div>
                 </div>
                 <div>
-                  <span className="text-white/60">H2H Score:</span>
+                  <span className="text-slate-400">H2H Score:</span>
                   <div className="font-medium text-white">{prop.h2h_score?.toFixed(1) || 'N/A'}</div>
                 </div>
                 <div>
-                  <span className="text-white/60">Sorting Score:</span>
+                  <span className="text-slate-400">Sorting Score:</span>
                   <div className="font-medium text-white">{prop.sorting_score?.toFixed(1) || 'N/A'}</div>
                 </div>
               </div>
@@ -192,12 +192,12 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
             <Button
               variant={favorites.has(prop.prop_id) ? "default" : "outline"}
               onClick={() => toggleFavorite(prop.prop_id)}
-              className={`flex-1 ${favorites.has(prop.prop_id) ? 'proplytics-gradient' : 'glass-button border-[#00ff88]/30 text-white hover:border-[#00ff88]/50'}`}
+              className={`flex-1 ${favorites.has(prop.prop_id) ? 'bg-blue-600 hover:bg-blue-700' : 'glass-button border-blue-500/30 text-white hover:border-blue-400/50'}`}
             >
               <Heart className={`h-4 w-4 mr-2 ${favorites.has(prop.prop_id) ? 'fill-current' : ''}`} />
               {favorites.has(prop.prop_id) ? 'Favorited' : 'Add to Favorites'}
             </Button>
-            <Button className="glass-button border-[#00ff88]/30 text-white hover:border-[#00ff88]/50">
+            <Button className="glass-button border-blue-500/30 text-white hover:border-blue-400/50">
               <ExternalLink className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -218,18 +218,18 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   }
 
   return (
-    <div className="glass-card border border-white/10">
+    <div className="glass-card border border-slate-700 overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="border-b border-white/10 hover:bg-white/5">
-            <TableHead className="text-white/80 font-semibold">Player</TableHead>
-            <TableHead className="text-white/80 font-semibold">Team</TableHead>
-            <TableHead className="text-white/80 font-semibold">Position</TableHead>
-            <TableHead className="text-white/80 font-semibold">Stat Type</TableHead>
-            <TableHead className="text-center text-white/80 font-semibold">Line Score</TableHead>
-            <TableHead className="text-center text-white/80 font-semibold">Odds Type</TableHead>
-            <TableHead className="text-center text-white/80 font-semibold">Start Time</TableHead>
-            <TableHead className="text-center text-white/80 font-semibold">Actions</TableHead>
+          <TableRow className="border-b border-slate-700 hover:bg-slate-800/30">
+            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Player</TableHead>
+            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Team</TableHead>
+            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Position</TableHead>
+            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Stat Type</TableHead>
+            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Line Score</TableHead>
+            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Odds Type</TableHead>
+            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Start Time</TableHead>
+            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
