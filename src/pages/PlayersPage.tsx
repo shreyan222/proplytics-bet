@@ -55,7 +55,7 @@ export const PlayersPage: React.FC = () => {
   if (propsLoading || teamsLoading) {
     return (
       <div className="container mx-auto p-6">
-        <div className="text-center py-8">Loading players...</div>
+        <div className="text-center py-8 text-white">Loading players...</div>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export const PlayersPage: React.FC = () => {
       {/* Header */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <Users className="h-5 w-5" />
             Players ({filteredPlayers.length})
           </CardTitle>
@@ -73,16 +73,16 @@ export const PlayersPage: React.FC = () => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search players..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-white"
               />
             </div>
             <Select value={selectedTeam} onValueChange={setSelectedTeam}>
-              <SelectTrigger>
+              <SelectTrigger className="text-white">
                 <SelectValue placeholder="Select team" />
               </SelectTrigger>
               <SelectContent>
@@ -95,7 +95,7 @@ export const PlayersPage: React.FC = () => {
               </SelectContent>
             </Select>
             <Select value={selectedPosition} onValueChange={setSelectedPosition}>
-              <SelectTrigger>
+              <SelectTrigger className="text-white">
                 <SelectValue placeholder="Select position" />
               </SelectTrigger>
               <SelectContent>
@@ -130,7 +130,7 @@ export const PlayersPage: React.FC = () => {
       {filteredPlayers.length === 0 && (
         <Card>
           <CardContent className="text-center py-8">
-            <p className="text-muted-foreground">No players found matching your criteria.</p>
+            <p className="text-gray-400">No players found matching your criteria.</p>
           </CardContent>
         </Card>
       )}

@@ -7,7 +7,6 @@ import {
   Users,
   BarChart3,
   Settings,
-  Database,
 } from "lucide-react"
 
 import {
@@ -54,11 +53,6 @@ const items = [
     icon: BarChart3,
   },
   {
-    title: "Data Processing",
-    url: "/data-processing",
-    icon: Database,
-  },
-  {
     title: "Settings",
     url: "/settings",
     icon: Settings,
@@ -69,7 +63,7 @@ export function AppSidebar() {
   const location = useLocation()
 
   return (
-    <Sidebar className="border-r border-gray-700 bg-gray-900/95 backdrop-blur-xl">
+    <Sidebar className="border-r border-gray-700 bg-gray-800/95 backdrop-blur-xl">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 py-6">
@@ -91,7 +85,7 @@ export function AppSidebar() {
                   <SidebarMenuButton 
                     asChild 
                     isActive={location.pathname === item.url}
-                    className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:bg-gray-800/50 data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-600/20 data-[active=true]:to-purple-600/20 data-[active=true]:border data-[active=true]:border-blue-500/30"
+                    className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:bg-gray-700/50 data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-600/20 data-[active=true]:to-purple-600/20 data-[active=true]:border data-[active=true]:border-blue-500/30"
                   >
                     <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
                       <item.icon className="h-5 w-5 text-gray-400 group-hover:text-blue-400 group-data-[active=true]:text-blue-400 transition-colors" />

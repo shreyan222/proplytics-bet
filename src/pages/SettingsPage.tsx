@@ -7,8 +7,9 @@ import { NotificationSettings } from '@/components/NotificationSettings';
 import { FavoritePlayersManager } from '@/components/FavoritePlayersManager';
 import { FilterPresetsManager } from '@/components/FilterPresetsManager';
 import { AlertsManager } from '@/components/AlertsManager';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings, Bell, Users, Filter, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Settings, Bell, Users, Filter, AlertTriangle, Palette } from 'lucide-react';
 import { PropFilters } from '@/types/nba';
 
 export const SettingsPage: React.FC = () => {
@@ -31,17 +32,21 @@ export const SettingsPage: React.FC = () => {
             Back to Dashboard
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Settings</h1>
-            <p className="text-muted-foreground">
-              
+            <h1 className="text-3xl font-bold text-white">Settings</h1>
+            <p className="text-gray-400">
+              Manage your preferences and customization options
             </p>
           </div>
         </div>
       </div>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="notifications" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="appearance" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="appearance" className="flex items-center gap-2">
+            <Palette className="h-4 w-4" />
+            Appearance
+          </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
             Notifications
@@ -59,6 +64,20 @@ export const SettingsPage: React.FC = () => {
             Custom Alerts
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="appearance" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-white">Theme Settings</CardTitle>
+              <CardDescription className="text-gray-400">
+                Customize the appearance of the application
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ThemeToggle />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
           <NotificationSettings />
