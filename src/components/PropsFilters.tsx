@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -75,7 +74,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-card border-border">
       <CardContent className="p-6">
         {/* Top Control Bar */}
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-4">
@@ -86,7 +85,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               placeholder="Search by player name, team, or stat type..."
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-background text-foreground placeholder:text-muted-foreground border-border"
             />
           </div>
 
@@ -98,18 +97,19 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
                 size="sm"
                 onClick={onRefresh}
                 disabled={isRefreshing}
+                className="text-foreground border-border hover:bg-muted"
               >
                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               </Button>
             )}
             
             {onViewModeChange && (
-              <div className="flex border rounded-lg p-1">
+              <div className="flex border border-border rounded-lg p-1 bg-background">
                 <Button
                   variant={viewMode === 'table' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => onViewModeChange('table')}
-                  className="px-3"
+                  className={`px-3 ${viewMode === 'table' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   <Table className="h-4 w-4" />
                 </Button>
@@ -117,7 +117,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
                   variant={viewMode === 'cards' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => onViewModeChange('cards')}
-                  className="px-3"
+                  className={`px-3 ${viewMode === 'cards' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   <Grid className="h-4 w-4" />
                 </Button>
@@ -130,48 +130,48 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
           {/* Team Filter */}
           <Select onValueChange={(value) => handleFilterChange('teams', [value])}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Team" />
             </SelectTrigger>
             <SelectContent>
               {NBA_TEAMS.map((team) => (
-                <SelectItem key={team} value={team}>{team}</SelectItem>
+                <SelectItem key={team} value={team} className="text-foreground hover:bg-muted">{team}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           {/* Stat Type Filter */}
           <Select onValueChange={(value) => handleFilterChange('stat_types', [value])}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Stat Type" />
             </SelectTrigger>
             <SelectContent>
               {STAT_TYPES.map((stat) => (
-                <SelectItem key={stat} value={stat}>{stat}</SelectItem>
+                <SelectItem key={stat} value={stat} className="text-foreground hover:bg-muted">{stat}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           {/* Odds Type Filter */}
           <Select onValueChange={(value) => handleFilterChange('odds_types', [value])}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Odds Type" />
             </SelectTrigger>
             <SelectContent>
               {ODDS_TYPES.map((odds) => (
-                <SelectItem key={odds.value} value={odds.value}>{odds.label}</SelectItem>
+                <SelectItem key={odds.value} value={odds.value} className="text-foreground hover:bg-muted">{odds.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           {/* Position Filter */}
           <Select onValueChange={(value) => handleFilterChange('positions', [value])}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Position" />
             </SelectTrigger>
             <SelectContent>
               {POSITIONS.map((position) => (
-                <SelectItem key={position} value={position}>{position}</SelectItem>
+                <SelectItem key={position} value={position} className="text-foreground hover:bg-muted">{position}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -181,12 +181,12 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
             variant="outline"
             onClick={onClearFilters}
             disabled={activeFiltersCount === 0}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-foreground border-border hover:bg-muted"
           >
             <Filter className="h-4 w-4" />
             Clear
             {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="ml-1">
+              <Badge variant="secondary" className="ml-1 bg-muted text-muted-foreground">
                 {activeFiltersCount}
               </Badge>
             )}
@@ -197,7 +197,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         {activeFiltersCount > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {filters.teams?.map((team) => (
-              <Badge key={`team-${team}`} variant="secondary" className="flex items-center gap-1">
+              <Badge key={`team-${team}`} variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground hover:bg-muted/80">
                 Team: {team}
                 <X 
                   className="h-3 w-3 cursor-pointer" 
@@ -206,7 +206,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               </Badge>
             ))}
             {filters.stat_types?.map((stat) => (
-              <Badge key={`stat-${stat}`} variant="secondary" className="flex items-center gap-1">
+              <Badge key={`stat-${stat}`} variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground hover:bg-muted/80">
                 Stat: {stat}
                 <X 
                   className="h-3 w-3 cursor-pointer" 
@@ -215,7 +215,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               </Badge>
             ))}
             {filters.odds_types?.map((odds) => (
-              <Badge key={`odds-${odds}`} variant="secondary" className="flex items-center gap-1">
+              <Badge key={`odds-${odds}`} variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground hover:bg-muted/80">
                 Odds: {odds}
                 <X 
                   className="h-3 w-3 cursor-pointer" 
@@ -224,7 +224,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               </Badge>
             ))}
             {filters.positions?.map((position) => (
-              <Badge key={`pos-${position}`} variant="secondary" className="flex items-center gap-1">
+              <Badge key={`pos-${position}`} variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground hover:bg-muted/80">
                 Position: {position}
                 <X 
                   className="h-3 w-3 cursor-pointer" 
