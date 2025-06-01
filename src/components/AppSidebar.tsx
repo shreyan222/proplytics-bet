@@ -1,4 +1,3 @@
-
 import {
   Home,
   Activity,
@@ -69,11 +68,11 @@ export function AppSidebar() {
           <SidebarGroupLabel className="px-4 py-6">
             <div className="flex items-center gap-3">
               <img 
-                src="/lovable-uploads/402b1e50-6b1e-40ae-abbb-0c98816bea46.png" 
+                src="final_logo.png" 
                 alt="Proplytics Logo" 
-                className="w-8 h-8"
+                className="w-10 h-10"
               />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-blue-600 bg-clip-text text-transparent">
                 PROPLYTICS
               </span>
             </div>
