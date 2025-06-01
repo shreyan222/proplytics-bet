@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -170,103 +169,105 @@ export const TrackerPropsTable: React.FC<TrackerPropsTableProps> = ({
   }
 
   return (
-    <Card className={`${getTypeColor(type)} border-l-4`}>
-      <CardHeader>
-        <CardTitle className="capitalize">{type} Props ({filteredData.length})</CardTitle>
+    <Card className={`${getTypeColor(type)} border border-border bg-card rounded-lg overflow-hidden`}>
+      <CardHeader className="border-b border-border">
+        <CardTitle className="capitalize text-foreground">{type} Props ({filteredData.length})</CardTitle>
       </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Player</TableHead>
-              <TableHead>Team</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Stat Type</TableHead>
-              <TableHead>Line Score</TableHead>
-              <TableHead>Odds Type</TableHead>
-              <TableHead>Game Time</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredData.map((item, index) => (
-              <TableRow key={index} className="hover:bg-muted/50">
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={`/placeholder-avatar.png`} />
-                      <AvatarFallback className="text-xs">
-                        {(item['Display Name'] || item.Player)?.split(' ').map((n: string) => n[0]).join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{item['Display Name'] || item.Player}</span>
-                  </div>
-                </TableCell>
-                <TableCell>{item['Team Name'] || item.Team}</TableCell>
-                <TableCell>{item.Position}</TableCell>
-                <TableCell>{item['Stat Type']}</TableCell>
-                <TableCell className="font-bold">
-                  {type === 'modified' && item.Changes?.['Line Score'] ? (
+      <CardContent className="p-0">
+        <div className="bg-background">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-border hover:bg-muted/5">
+                <TableHead className="text-muted-foreground font-medium">Player</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Team</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Position</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Stat Type</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Line Score</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Odds Type</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Game Time</TableHead>
+                <TableHead className="text-muted-foreground font-medium">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredData.map((item, index) => (
+                <TableRow key={index} className="border-b border-border/50 hover:bg-muted/5 transition-colors">
+                  <TableCell className="text-foreground">
                     <div className="flex items-center gap-2">
-                      <span className="text-red-500">{item.Changes['Line Score'].previous}</span>
-                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-green-500">{item.Changes['Line Score'].current}</span>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={`/placeholder-avatar.png`} />
+                        <AvatarFallback className="text-xs bg-muted text-muted-foreground">
+                          {(item['Display Name'] || item.Player)?.split(' ').map((n: string) => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium">{item['Display Name'] || item.Player}</span>
                     </div>
-                  ) : (
-                    item['Line Score']
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Badge className={getOddsBadgeColor(item['Odds Type'])}>
-                    {item['Odds Type']?.toUpperCase()}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    {formatTimeUntilGame(item['Start Time'])}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{item['Display Name'] || item.Player}</DialogTitle>
-                        <DialogDescription>Detailed prop information</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm font-medium">Team</p>
-                            <p>{item['Team Name'] || item.Team}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Position</p>
-                            <p>{item.Position}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Stat Type</p>
-                            <p>{item['Stat Type']}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">Line Score</p>
-                            <p className="text-lg font-bold">{item['Line Score']}</p>
+                  </TableCell>
+                  <TableCell className="text-foreground">{item['Team Name'] || item.Team}</TableCell>
+                  <TableCell className="text-foreground">{item.Position}</TableCell>
+                  <TableCell className="text-foreground">{item['Stat Type']}</TableCell>
+                  <TableCell className="font-bold text-foreground">
+                    {type === 'modified' && item.Changes?.['Line Score'] ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-red-400">{item.Changes['Line Score'].previous}</span>
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-green-400">{item.Changes['Line Score'].current}</span>
+                      </div>
+                    ) : (
+                      item['Line Score']
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getOddsBadgeColor(item['Odds Type'])}>
+                      {item['Odds Type']?.toUpperCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      {formatTimeUntilGame(item['Start Time'])}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-foreground border-border hover:bg-muted">
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>{item['Display Name'] || item.Player}</DialogTitle>
+                          <DialogDescription>Detailed prop information</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium">Team</p>
+                              <p>{item['Team Name'] || item.Team}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Position</p>
+                              <p>{item.Position}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Stat Type</p>
+                              <p>{item['Stat Type']}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">Line Score</p>
+                              <p className="text-lg font-bold">{item['Line Score']}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
