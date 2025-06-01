@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,12 +63,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// ✅ Brand colors (based on your logo)
-				brand: {
-					blue: '#2D7FF9',
-					green: '#00D26A',
-					dark: '#001219',
-					mid: '#0A2E36'
+				// ✅ Enhanced PROPLYTICS brand colors
+				proplytics: {
+					green: '#00ff88',
+					'green-dark': '#00cc6a',
+					navy: '#1a1d2e',
+					dark: '#0f1419',
+					blue: '#2D7FF9'
 				}
 			},
 			borderRadius: {
@@ -91,11 +93,48 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				float: {
+					'0%, 100%': {
+						transform: 'translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateY(-20px)'
+					}
+				},
+				glow: {
+					'0%, 100%': {
+						boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)'
+					},
+					'50%': {
+						boxShadow: '0 0 40px rgba(0, 255, 136, 0.6)'
+					}
+				},
+				'gradient-shift': {
+					'0%': {
+						backgroundPosition: '0% 50%'
+					},
+					'50%': {
+						backgroundPosition: '100% 50%'
+					},
+					'100%': {
+						backgroundPosition: '0% 50%'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				float: 'float 6s ease-in-out infinite',
+				glow: 'glow 2s ease-in-out infinite',
+				'gradient-shift': 'gradient-shift 15s ease infinite'
+			},
+			fontFamily: {
+				'inter': ['Inter', 'system-ui', 'sans-serif'],
+				'poppins': ['Poppins', 'system-ui', 'sans-serif']
+			},
+			backdropBlur: {
+				xs: '2px'
 			}
 		}
 	},

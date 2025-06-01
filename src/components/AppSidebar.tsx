@@ -1,3 +1,4 @@
+
 import {
   Home,
   Activity,
@@ -62,25 +63,33 @@ export function AppSidebar() {
   const location = useLocation()
 
   return (
-    <Sidebar>
+    <Sidebar className="border-r border-white/10 bg-gradient-to-b from-[#1a1d2e]/80 to-[#0f1419]/80 backdrop-blur-xl">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Proplytics
-            </span>
+          <SidebarGroupLabel className="px-4 py-6">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/lovable-uploads/402b1e50-6b1e-40ae-abbb-0c98816bea46.png" 
+                alt="Proplytics Logo" 
+                className="w-8 h-8"
+              />
+              <span className="text-2xl font-bold bg-gradient-to-r from-[#00ff88] to-[#00cc6a] bg-clip-text text-transparent">
+                PROPLYTICS
+              </span>
+            </div>
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-2 px-2">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild 
                     isActive={location.pathname === item.url}
+                    className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:bg-white/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-[#00ff88]/20 data-[active=true]:to-[#00cc6a]/20 data-[active=true]:border data-[active=true]:border-[#00ff88]/30"
                   >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+                    <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
+                      <item.icon className="h-5 w-5 text-white/70 group-hover:text-[#00ff88] group-data-[active=true]:text-[#00ff88] transition-colors" />
+                      <span className="text-white/90 group-hover:text-white group-data-[active=true]:text-white transition-colors font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -30,11 +31,11 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   const getOddsTypeBadge = (oddsType: string) => {
     switch (oddsType) {
       case 'demon':
-        return <Badge className="bg-red-600 hover:bg-red-700">Demon</Badge>;
+        return <Badge className="bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-300 border border-red-500/30 backdrop-blur-sm hover:from-red-500/30 hover:to-red-600/30">Demon</Badge>;
       case 'goblin':
-        return <Badge className="bg-green-600 hover:bg-green-700">Goblin</Badge>;
+        return <Badge className="bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 text-[#00ff88] border border-[#00ff88]/30 backdrop-blur-sm hover:from-[#00ff88]/30 hover:to-[#00cc6a]/30">Goblin</Badge>;
       default:
-        return <Badge variant="outline">Standard</Badge>;
+        return <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-sm hover:bg-blue-500/30">Standard</Badge>;
     }
   };
 
@@ -51,50 +52,50 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
       <DialogTrigger asChild>
         <div className="cursor-pointer">
           {viewMode === 'table' ? (
-            <TableRow className="hover:bg-muted/50 transition-colors cursor-pointer">
-              <TableCell>
+            <TableRow className="hover:bg-white/10 transition-all duration-300 cursor-pointer border-b border-white/10 group">
+              <TableCell className="py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="h-4 w-4" />
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 rounded-full flex items-center justify-center flex-shrink-0 border border-[#00ff88]/30">
+                    <User className="h-5 w-5 text-[#00ff88]" />
                   </div>
-                  <span className="font-medium">{prop.player_name}</span>
+                  <span className="font-medium text-white group-hover:text-[#00ff88] transition-colors">{prop.player_name}</span>
                 </div>
               </TableCell>
-              <TableCell>{prop.team}</TableCell>
-              <TableCell>{prop.position}</TableCell>
-              <TableCell>{prop.stat_type}</TableCell>
-              <TableCell className="text-center font-bold">{prop.line_score}</TableCell>
+              <TableCell className="text-white/80">{prop.team}</TableCell>
+              <TableCell className="text-white/80">{prop.position}</TableCell>
+              <TableCell className="text-white/80">{prop.stat_type}</TableCell>
+              <TableCell className="text-center font-bold text-xl text-[#00ff88]">{prop.line_score}</TableCell>
               <TableCell className="text-center">
                 <div className="flex justify-center">{getOddsTypeBadge(prop.odds_type)}</div>
               </TableCell>
-              <TableCell className="text-center">{formatTime(prop.start_time)}</TableCell>
+              <TableCell className="text-center text-white/80">{formatTime(prop.start_time)}</TableCell>
               <TableCell className="text-center">
                 <div className="flex justify-center">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="glass-button text-white border-[#00ff88]/30 hover:border-[#00ff88]/50 hover:text-[#00ff88]">
                     View Details
                   </Button>
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105 cursor-pointer">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <User className="h-6 w-6" />
+            <Card className="glass-card hover:scale-105 hover-glow transition-all duration-300 cursor-pointer group">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 rounded-full flex items-center justify-center border border-[#00ff88]/30 group-hover:border-[#00ff88]/50 transition-colors">
+                    <User className="h-6 w-6 text-[#00ff88]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">{prop.player_name}</h3>
-                    <p className="text-sm text-muted-foreground">{prop.position} • {prop.team}</p>
+                    <h3 className="font-semibold text-white group-hover:text-[#00ff88] transition-colors">{prop.player_name}</h3>
+                    <p className="text-sm text-white/60">{prop.position} • {prop.team}</p>
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">{prop.stat_type}</span>
+                    <span className="text-sm text-white/70">{prop.stat_type}</span>
                     {getOddsTypeBadge(prop.odds_type)}
                   </div>
-                  <div className="text-2xl font-bold text-primary">{prop.line_score}</div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="text-3xl font-bold proplytics-text-gradient">{prop.line_score}</div>
+                  <div className="flex items-center gap-2 text-sm text-white/60">
                     <Clock className="h-4 w-4" />
                     {formatTime(prop.start_time)}
                   </div>
@@ -104,83 +105,83 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl glass border border-white/20">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <User className="h-6 w-6" />
+          <DialogTitle className="flex items-center gap-3 text-white">
+            <div className="w-12 h-12 bg-gradient-to-r from-[#00ff88]/20 to-[#00cc6a]/20 rounded-full flex items-center justify-center border border-[#00ff88]/30">
+              <User className="h-6 w-6 text-[#00ff88]" />
             </div>
             <div>
-              <div className="text-xl">{prop.player_name}</div>
-              <div className="text-sm text-muted-foreground">{prop.team} • {prop.position}</div>
+              <div className="text-xl text-white">{prop.player_name}</div>
+              <div className="text-sm text-white/60">{prop.team} • {prop.position}</div>
             </div>
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
           {/* Stat Information */}
           <div className="grid grid-cols-2 gap-4">
-            <Card>
+            <Card className="glass-card">
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground mb-1">Stat Type</div>
-                <div className="text-2xl font-bold">{prop.stat_type}</div>
+                <div className="text-sm text-white/60 mb-1">Stat Type</div>
+                <div className="text-2xl font-bold text-white">{prop.stat_type}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="glass-card">
               <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground mb-1">Line Score</div>
-                <div className="text-2xl font-bold text-primary">{prop.line_score}</div>
+                <div className="text-sm text-white/60 mb-1">Line Score</div>
+                <div className="text-2xl font-bold proplytics-text-gradient">{prop.line_score}</div>
               </CardContent>
             </Card>
           </div>
 
           {/* Game Details */}
-          <Card>
+          <Card className="glass-card">
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-3">Game Details</h3>
+              <h3 className="font-semibold mb-3 text-white">Game Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Start Time:</span>
-                  <div>{formatTime(prop.start_time)}</div>
+                  <span className="text-white/60">Start Time:</span>
+                  <div className="text-white">{formatTime(prop.start_time)}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Opponent:</span>
-                  <div>{prop.against_team}</div>
+                  <span className="text-white/60">Opponent:</span>
+                  <div className="text-white">{prop.against_team}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Odds Type:</span>
+                  <span className="text-white/60">Odds Type:</span>
                   <div>{getOddsTypeBadge(prop.odds_type)}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Sample Size:</span>
-                  <div>{prop.sample_size} games</div>
+                  <span className="text-white/60">Sample Size:</span>
+                  <div className="text-white">{prop.sample_size} games</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Performance Stats */}
-          <Card>
+          <Card className="glass-card">
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
+              <h3 className="font-semibold mb-3 flex items-center gap-2 text-white">
+                <TrendingUp className="h-4 w-4 text-[#00ff88]" />
                 Performance Analytics
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">H2H Average:</span>
-                  <div className="font-medium">{prop.h2h_avg?.toFixed(1) || 'N/A'}</div>
+                  <span className="text-white/60">H2H Average:</span>
+                  <div className="font-medium text-white">{prop.h2h_avg?.toFixed(1) || 'N/A'}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">L5 Average:</span>
-                  <div className="font-medium">{prop.l5_avg?.toFixed(1) || 'N/A'}</div>
+                  <span className="text-white/60">L5 Average:</span>
+                  <div className="font-medium text-white">{prop.l5_avg?.toFixed(1) || 'N/A'}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">H2H Score:</span>
-                  <div className="font-medium">{prop.h2h_score?.toFixed(1) || 'N/A'}</div>
+                  <span className="text-white/60">H2H Score:</span>
+                  <div className="font-medium text-white">{prop.h2h_score?.toFixed(1) || 'N/A'}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Sorting Score:</span>
-                  <div className="font-medium">{prop.sorting_score?.toFixed(1) || 'N/A'}</div>
+                  <span className="text-white/60">Sorting Score:</span>
+                  <div className="font-medium text-white">{prop.sorting_score?.toFixed(1) || 'N/A'}</div>
                 </div>
               </div>
             </CardContent>
@@ -191,12 +192,12 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
             <Button
               variant={favorites.has(prop.prop_id) ? "default" : "outline"}
               onClick={() => toggleFavorite(prop.prop_id)}
-              className="flex-1"
+              className={`flex-1 ${favorites.has(prop.prop_id) ? 'proplytics-gradient' : 'glass-button border-[#00ff88]/30 text-white hover:border-[#00ff88]/50'}`}
             >
               <Heart className={`h-4 w-4 mr-2 ${favorites.has(prop.prop_id) ? 'fill-current' : ''}`} />
               {favorites.has(prop.prop_id) ? 'Favorited' : 'Add to Favorites'}
             </Button>
-            <Button variant="outline">
+            <Button className="glass-button border-[#00ff88]/30 text-white hover:border-[#00ff88]/50">
               <ExternalLink className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -217,18 +218,18 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="glass-card border border-white/10">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50">
-            <TableHead className="w-[200px]">Player</TableHead>
-            <TableHead className="w-[80px]">Team</TableHead>
-            <TableHead className="w-[80px]">Position</TableHead>
-            <TableHead className="w-[120px]">Stat Type</TableHead>
-            <TableHead className="w-[80px] text-center">Line Score</TableHead>
-            <TableHead className="w-[100px] text-center">Odds Type</TableHead>
-            <TableHead className="w-[100px] text-center">Start Time</TableHead>
-            <TableHead className="w-[100px] text-center">Actions</TableHead>
+          <TableRow className="border-b border-white/10 hover:bg-white/5">
+            <TableHead className="text-white/80 font-semibold">Player</TableHead>
+            <TableHead className="text-white/80 font-semibold">Team</TableHead>
+            <TableHead className="text-white/80 font-semibold">Position</TableHead>
+            <TableHead className="text-white/80 font-semibold">Stat Type</TableHead>
+            <TableHead className="text-center text-white/80 font-semibold">Line Score</TableHead>
+            <TableHead className="text-center text-white/80 font-semibold">Odds Type</TableHead>
+            <TableHead className="text-center text-white/80 font-semibold">Start Time</TableHead>
+            <TableHead className="text-center text-white/80 font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
