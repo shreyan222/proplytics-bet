@@ -3,6 +3,7 @@ import {
   Home,
   Activity,
   Trophy,
+  GitCompare,
   Users,
   BarChart3,
   Settings,
@@ -36,6 +37,11 @@ const items = [
     title: "Best Props",
     url: "/best-props",
     icon: Trophy,
+  },
+  {
+    title: "Compare Props",
+    url: "/compare",
+    icon: GitCompare,
   },
   {
     title: "Players",

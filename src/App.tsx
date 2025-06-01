@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import LandingPage from "./pages/LandingPage";
 import { PropsTrackerPage } from "./pages/PropsTrackerPage";
 import { BestPropsPage } from "./pages/BestPropsPage";
+import { ComparePage } from "./pages/ComparePage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { DataProcessingPage } from "./pages/DataProcessingPage";
@@ -39,6 +40,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/tracker" element={<PropsTrackerPage />} />
                     <Route path="/best-props" element={<BestPropsPage />} />
+                    <Route path="/compare" element={<ComparePage />} />
                     <Route path="/players" element={<PlayersPage />} />
                     <Route path="/players/:id" element={<PlayerDetail />} />
                     <Route path="/analytics" element={<AnalyticsPage />} />
