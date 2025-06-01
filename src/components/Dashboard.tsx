@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -112,9 +111,9 @@ export const Dashboard: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <img 
-                src="/lovable-uploads/402b1e50-6b1e-40ae-abbb-0c98816bea46.png" 
+                src="final_logo.png" 
                 alt="Proplytics Logo" 
-                className="w-12 h-12"
+                className="w-16 h-16"
               />
               <div>
                 <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
@@ -142,28 +141,28 @@ export const Dashboard: React.FC = () => {
               label: 'Total Props', 
               value: props.length, 
               icon: <BarChart3 className="h-8 w-8 text-blue-400" />,
-              gradient: 'from-blue-500/20 to-blue-600/20',
+              gradient: 'from-black-500/80 to-blue-600/80',
               border: 'border-blue-500/30'
             },
             { 
               label: 'Standard', 
               value: propCounts.standard, 
               icon: <TrendingUp className="h-6 w-6 text-blue-400" />,
-              gradient: 'from-blue-500/20 to-blue-600/20',
+              gradient: 'from-blue-500/80 to-blue-600/40',
               border: 'border-blue-500/30'
             },
             { 
               label: 'Demon', 
               value: propCounts.demon, 
               icon: <div className="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white">D</div>,
-              gradient: 'from-red-500/20 to-red-600/20',
+              gradient: 'from-red-500/80 to-red-600/20',
               border: 'border-red-500/30'
             },
             { 
               label: 'Goblin', 
               value: propCounts.goblin, 
               icon: <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white">G</div>,
-              gradient: 'from-green-500/20 to-green-600/20',
+              gradient: 'from-green-500/80 to-green-600/30',
               border: 'border-green-500/30'
             }
           ].map(({ label, value, icon, gradient, border }) => (
@@ -171,7 +170,7 @@ export const Dashboard: React.FC = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-400">{label}</p>
+                    <p className="text-sm font-medium text-white-800">{label}</p>
                     <p className="text-3xl font-bold text-white mt-1">{value}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
