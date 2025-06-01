@@ -35,13 +35,13 @@
 
     --radius: 0.75rem;
 
-    --sidebar-background: 15 23 42;
+    --sidebar-background: 17 24 39;
     --sidebar-foreground: 248 250 252;
     --sidebar-primary: 59 130 246;
     --sidebar-primary-foreground: 248 250 252;
     --sidebar-accent: 51 65 85;
     --sidebar-accent-foreground: 248 250 252;
-    --sidebar-border: 71 85 105;
+    --sidebar-border: 75 85 99;
     --sidebar-ring: 59 130 246;
   }
 
@@ -74,13 +74,13 @@
     --input: 51 65 85;
     --ring: 59 130 246;
 
-    --sidebar-background: 15 23 42;
+    --sidebar-background: 17 24 39;
     --sidebar-foreground: 248 250 252;
     --sidebar-primary: 59 130 246;
     --sidebar-primary-foreground: 248 250 252;
     --sidebar-accent: 51 65 85;
     --sidebar-accent-foreground: 248 250 252;
-    --sidebar-border: 71 85 105;
+    --sidebar-border: 75 85 99;
     --sidebar-ring: 59 130 246;
   }
 }
@@ -96,7 +96,7 @@
       135deg,
       rgb(15, 23, 42),
       rgb(30, 41, 59),
-      rgb(15, 23, 42)
+      rgb(51, 65, 85)
     );
     background-size: 400% 400%;
     animation: gradientShift 20s ease infinite;
@@ -115,6 +115,19 @@
   
   .glass-button {
     @apply backdrop-blur-md bg-white/10 border border-slate-600/50 hover:bg-white/20 transition-all duration-300;
+  }
+
+  /* Professional color coding for odds types */
+  .odds-demon {
+    @apply bg-red-500/20 text-red-300 border border-red-500/30;
+  }
+  
+  .odds-goblin {
+    @apply bg-green-500/20 text-green-300 border border-green-500/30;
+  }
+  
+  .odds-standard {
+    @apply bg-blue-500/20 text-blue-300 border border-blue-500/30;
   }
 }
 

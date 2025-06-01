@@ -69,7 +69,7 @@ export function AppSidebar() {
   const location = useLocation()
 
   return (
-    <Sidebar className="border-r border-slate-700 bg-slate-900/90 backdrop-blur-xl">
+    <Sidebar className="border-r border-gray-700 bg-gray-900/95 backdrop-blur-xl">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 py-6">
@@ -79,7 +79,7 @@ export function AppSidebar() {
                 alt="Proplytics Logo" 
                 className="w-8 h-8"
               />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 PROPLYTICS
               </span>
             </div>
@@ -91,11 +91,11 @@ export function AppSidebar() {
                   <SidebarMenuButton 
                     asChild 
                     isActive={location.pathname === item.url}
-                    className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:bg-slate-800/50 data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-600/20 data-[active=true]:to-blue-500/20 data-[active=true]:border data-[active=true]:border-blue-500/30"
+                    className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:bg-gray-800/50 data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-600/20 data-[active=true]:to-purple-600/20 data-[active=true]:border data-[active=true]:border-blue-500/30"
                   >
                     <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
-                      <item.icon className="h-5 w-5 text-slate-400 group-hover:text-blue-400 group-data-[active=true]:text-blue-400 transition-colors" />
-                      <span className="text-slate-300 group-hover:text-white group-data-[active=true]:text-white transition-colors font-medium">{item.title}</span>
+                      <item.icon className="h-5 w-5 text-gray-400 group-hover:text-blue-400 group-data-[active=true]:text-blue-400 transition-colors" />
+                      <span className="text-gray-300 group-hover:text-white group-data-[active=true]:text-white transition-colors font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

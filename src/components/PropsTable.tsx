@@ -29,13 +29,14 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   };
 
   const getOddsTypeBadge = (oddsType: string) => {
-    switch (oddsType) {
+    switch (oddsType.toLowerCase()) {
       case 'demon':
-        return <Badge className="bg-red-500/20 text-red-300 border border-red-500/30 backdrop-blur-sm hover:bg-red-500/30">Demon</Badge>;
+        return <Badge variant="demon">Demon</Badge>;
       case 'goblin':
-        return <Badge className="bg-green-500/20 text-green-300 border border-green-500/30 backdrop-blur-sm hover:bg-green-500/30">Goblin</Badge>;
+        return <Badge variant="goblin">Goblin</Badge>;
+      case 'standard':
       default:
-        return <Badge className="bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-sm hover:bg-blue-500/30">Standard</Badge>;
+        return <Badge variant="standard">Standard</Badge>;
     }
   };
 

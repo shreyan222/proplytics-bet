@@ -18,10 +18,11 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ props }) => {
   };
 
   const getOddsBadgeVariant = (oddsType: string) => {
-    switch (oddsType) {
-      case 'goblin': return 'destructive';
-      case 'demon': return 'default';
-      default: return 'secondary';
+    switch (oddsType.toLowerCase()) {
+      case 'demon': return 'demon';
+      case 'goblin': return 'goblin';
+      case 'standard':
+      default: return 'standard';
     }
   };
 
