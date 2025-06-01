@@ -294,7 +294,7 @@ export const BestPropsPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-red-600">Demon Props</CardTitle>
               <CardDescription>
-                High-risk, high-reward props with premium analysis
+                High-risk, high-reward props with standard analysis
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -308,7 +308,7 @@ export const BestPropsPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-green-600">Goblin Props</CardTitle>
               <CardDescription>
-                Special value props with enhanced scoring opportunities
+              Low-risk, low-reward props with standard analysis
               </CardDescription>
             </CardHeader>
             <CardContent>
