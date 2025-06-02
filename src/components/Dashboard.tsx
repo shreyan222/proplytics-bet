@@ -6,18 +6,59 @@ import { Button } from '@/components/ui/button';
 import { BarChart3, TrendingUp, Activity, Users, Trophy, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LeagueSelector } from './LeagueSelector';
+import { PropsTable } from './PropsTable';
+import { PropsFilters } from './PropsFilters';
 import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { PropFilters } from '@/types/nba';
 
 export const Dashboard = () => {
   const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<PropFilters>({});
+  
   const props = getPropsForLeague(selectedLeague);
 
   // Calculate stats based on selected league
   const totalProps = props.length;
+  const standardProps = props.filter(p => p.odds_type === 'standard').length;
   const demonProps = props.filter(p => p.odds_type === 'demon').length;
   const goblinProps = props.filter(p => p.odds_type === 'goblin').length;
-  const standardProps = props.filter(p => p.odds_type === 'standard').length;
-  const topScore = Math.max(...props.map(p => p.sorting_score));
+
+  // Filter props based on search and filters
+  const filteredProps = props.filter(prop => {
+    // Search filter
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      if (!prop.player_name.toLowerCase().includes(searchLower) &&
+          !prop.team.toLowerCase().includes(searchLower) &&
+          !prop.stat_type.toLowerCase().includes(searchLower)) {
+        return false;
+      }
+    }
+
+    // Team filter
+    if (filters.teams && filters.teams.length > 0) {
+      if (!filters.teams.includes(prop.team)) return false;
+    }
+
+    // Stat type filter
+    if (filters.stat_types && filters.stat_types.length > 0) {
+      if (!filters.stat_types.includes(prop.stat_type)) return false;
+    }
+
+    // Odds type filter
+    if (filters.odds_types && filters.odds_types.length > 0) {
+      if (!filters.odds_types.includes(prop.odds_type)) return false;
+    }
+
+    // Position filter
+    if (filters.positions && filters.positions.length > 0) {
+      if (!filters.positions.includes(prop.position)) return false;
+    }
+
+    return true;
+  });
 
   const statCards = [
     {
@@ -28,11 +69,11 @@ export const Dashboard = () => {
       color: "text-blue-400"
     },
     {
-      title: "Top Score",
-      value: topScore.toFixed(1),
-      description: "Highest scoring prop today",
+      title: "Standard Props",
+      value: standardProps,
+      description: "Standard confidence props",
       icon: Trophy,
-      color: "text-yellow-400"
+      color: "text-blue-400"
     },
     {
       title: "Demon Props",
@@ -42,9 +83,9 @@ export const Dashboard = () => {
       color: "text-red-400"
     },
     {
-      title: "Active Players",
-      value: new Set(props.map(p => p.player_id)).size,
-      description: `Unique ${selectedLeague} players tracked`,
+      title: "Goblin Props",
+      value: goblinProps,
+      description: "Premium high-confidence props",
       icon: Users,
       color: "text-green-400"
     }
@@ -73,6 +114,15 @@ export const Dashboard = () => {
       color: "bg-purple-600 hover:bg-purple-700"
     }
   ];
+
+  const handleFiltersChange = (newFilters: PropFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({});
+    setSearchQuery('');
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -137,52 +187,33 @@ export const Dashboard = () => {
           ))}
         </div>
 
-        {/* Recent Props Preview */}
+        {/* Props Table Section */}
         <Card className="glass-card border border-slate-700">
           <CardHeader>
-            <CardTitle className="text-white">Top {selectedLeague} Props Today</CardTitle>
+            <CardTitle className="text-white">{selectedLeague} Props Overview</CardTitle>
             <CardDescription className="text-slate-400">
-              Highest scoring props based on our advanced analytics
+              Complete view of all {selectedLeague} props with advanced filtering
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {props.slice(0, 3).map((prop) => (
-                <div key={prop.prop_id} className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700">
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <p className="font-medium text-white">{prop.player_name}</p>
-                      <p className="text-sm text-slate-400">{prop.team} vs {prop.against_team}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-slate-400">{prop.stat_type}</p>
-                    <p className="font-bold text-white">{prop.line_score}</p>
-                  </div>
-                  <div className="text-right">
-                    <Badge 
-                      variant={prop.odds_type === 'demon' ? 'destructive' : prop.odds_type === 'goblin' ? 'secondary' : 'default'}
-                      className={
-                        prop.odds_type === 'demon' ? 'bg-red-600 hover:bg-red-700' :
-                        prop.odds_type === 'goblin' ? 'bg-green-600 hover:bg-green-700' :
-                        'bg-blue-600 hover:bg-blue-700'
-                      }
-                    >
-                      {prop.odds_type}
-                    </Badge>
-                    <p className="text-sm text-slate-400 mt-1">Score: {prop.sorting_score.toFixed(1)}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 text-center">
-              <Link to="/best-props">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  View All {selectedLeague} Props
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
+          <CardContent className="space-y-6">
+            {/* Filters */}
+            <PropsFilters
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              onClearFilters={handleClearFilters}
+              totalProps={totalProps}
+              filteredProps={filteredProps.length}
+              onViewModeChange={setViewMode}
+              viewMode={viewMode}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+            />
+
+            {/* Props Table */}
+            <PropsTable
+              props={filteredProps}
+              viewMode={viewMode}
+            />
           </CardContent>
         </Card>
       </div>
