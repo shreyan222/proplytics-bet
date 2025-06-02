@@ -62,7 +62,7 @@ export const BestPropsPage: React.FC = () => {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Loading best props...</p>
+            <p>Loading top props...</p>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@ export const BestPropsPage: React.FC = () => {
           <div>
             <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3">
               <Trophy className="h-10 w-10 text-yellow-500" />
-              Best Props
+              Top Props
             </h1>
             <p className="text-xl text-muted-foreground mt-2">
               Top-rated NBA prop recommendations based on advanced analytics
