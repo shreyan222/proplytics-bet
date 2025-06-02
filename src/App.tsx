@@ -15,6 +15,7 @@ import { BestPropsPage } from "./pages/BestPropsPage";
 import { ComparePage } from "./pages/ComparePage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
+import { UsingProplyticsPage } from "./pages/UsingProplyticsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { PlayerDetail } from "./pages/PlayerDetail";
 import NotFound from "./pages/NotFound";
@@ -47,6 +48,7 @@ const App = () => (
                       <Route path="/players" element={<PlayersPage />} />
                       <Route path="/players/:id" element={<PlayerDetail />} />
                       <Route path="/analytics" element={<AnalyticsPage />} />
+                      <Route path="/using-proplytics" element={<UsingProplyticsPage />} />
                       <Route path="/settings" element={<SettingsPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

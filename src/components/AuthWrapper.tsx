@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FloatingHelp } from './FloatingHelp';
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -42,5 +43,10 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <FloatingHelp />
+    </>
+  );
 };

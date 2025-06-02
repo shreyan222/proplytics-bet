@@ -9,6 +9,7 @@ import {
   Settings,
   LogOut,
   User,
+  HelpCircle,
 } from "lucide-react"
 
 import {
@@ -56,6 +57,11 @@ const items = [
     title: "Analytics",
     url: "/analytics",
     icon: BarChart3,
+  },
+  {
+    title: "Using Proplytics",
+    url: "/using-proplytics",
+    icon: HelpCircle,
   },
   {
     title: "Settings",

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BarChart3, TrendingUp, Activity, Users, Trophy, ArrowRight } from 'lucide-react';
+import { BarChart3, TrendingUp, Activity, Users, Trophy, ArrowRight, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LeagueSelector } from './LeagueSelector';
 import { PropsTable } from './PropsTable';
@@ -112,6 +112,13 @@ export const Dashboard = () => {
       icon: BarChart3,
       link: "/compare",
       color: "bg-purple-600 hover:bg-purple-700"
+    },
+    {
+      title: "Using Proplytics",
+      description: "Learn how to maximize your success",
+      icon: HelpCircle,
+      link: "/using-proplytics",
+      color: "bg-orange-600 hover:bg-orange-700"
     }
   ];
 
@@ -170,7 +177,7 @@ export const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickActions.map((action, index) => (
             <Link key={index} to={action.link}>
               <Card className="glass-card border border-slate-700 hover:border-slate-600 transition-all duration-300 group cursor-pointer">
