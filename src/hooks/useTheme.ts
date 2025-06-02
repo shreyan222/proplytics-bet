@@ -1,30 +1,31 @@
-
 import { useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
 export const useTheme = () => {
-  const [theme, setTheme] = useState<Theme>('dark');
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<Theme>(() => {
     // Check if there's a saved theme preference
     const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme) {
-      setTheme(savedTheme);
+    // Check system preference if no saved theme
+    if (!savedTheme) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-  }, []);
+    return savedTheme;
+  });
 
   useEffect(() => {
-    // Apply theme to document
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const root = document.documentElement;
     
-    // Save theme preference
+    // Remove both classes first
+    root.classList.remove('light', 'dark');
+    
+    // Then add the current theme class
+    root.classList.add(theme);
+  
+    // Save to localStorage
     localStorage.setItem('theme', theme);
   }, [theme]);
+  
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
