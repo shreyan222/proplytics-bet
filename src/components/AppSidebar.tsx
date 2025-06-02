@@ -1,3 +1,4 @@
+
 import {
   Home,
   Activity,
@@ -6,6 +7,8 @@ import {
   Users,
   BarChart3,
   Settings,
+  LogOut,
+  User,
 } from "lucide-react"
 
 import {
@@ -17,8 +20,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
-import { Link, useLocation } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth"
 
 const items = [
   {
@@ -60,6 +66,17 @@ const items = [
 
 export function AppSidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, signOut } = useSupabaseAuth()
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      navigate('/landing')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
 
   return (
     <Sidebar className="border-r border-gray-700 bg-gray-800/95 backdrop-blur-xl">
@@ -97,6 +114,36 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      {/* User info and logout at bottom */}
+      <SidebarFooter className="p-4 border-t border-gray-700">
+        <div className="space-y-3">
+          {/* User info */}
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-700/50">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+              <User className="h-4 w-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">
+                {user?.email || 'User'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Signed in
+              </p>
+            </div>
+          </div>
+          
+          {/* Logout button */}
+          <Button 
+            variant="ghost" 
+            onClick={handleSignOut}
+            className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-gray-700/50"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   )
 }

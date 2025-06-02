@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,8 +6,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { AuthWrapper } from "@/components/AuthWrapper";
 import Index from "./pages/Index";
 import LandingPage from "./pages/LandingPage";
+import AuthPage from "./pages/AuthPage";
 import { PropsTrackerPage } from "./pages/PropsTrackerPage";
 import { BestPropsPage } from "./pages/BestPropsPage";
 import { ComparePage } from "./pages/ComparePage";
@@ -23,31 +26,34 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <Routes>
-          {/* Landing page - accessible but not linked from main app */}
+          {/* Public routes */}
           <Route path="/landing" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           
-          {/* Main app with sidebar */}
+          {/* Protected app routes */}
           <Route path="/*" element={
-            <SidebarProvider>
-              <div className="min-h-screen flex w-full bg-background text-foreground">
-                <AppSidebar />
-                <main className="flex-1 bg-background">
-                  <Toaster />
-                  <Sonner />
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/tracker" element={<PropsTrackerPage />} />
-                    <Route path="/best-props" element={<BestPropsPage />} />
-                    <Route path="/compare" element={<ComparePage />} />
-                    <Route path="/players" element={<PlayersPage />} />
-                    <Route path="/players/:id" element={<PlayerDetail />} />
-                    <Route path="/analytics" element={<AnalyticsPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-              </div>
-            </SidebarProvider>
+            <AuthWrapper>
+              <SidebarProvider>
+                <div className="min-h-screen flex w-full bg-background text-foreground">
+                  <AppSidebar />
+                  <main className="flex-1 bg-background">
+                    <Toaster />
+                    <Sonner />
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/tracker" element={<PropsTrackerPage />} />
+                      <Route path="/best-props" element={<BestPropsPage />} />
+                      <Route path="/compare" element={<ComparePage />} />
+                      <Route path="/players" element={<PlayersPage />} />
+                      <Route path="/players/:id" element={<PlayerDetail />} />
+                      <Route path="/analytics" element={<AnalyticsPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                </div>
+              </SidebarProvider>
+            </AuthWrapper>
           } />
         </Routes>
       </BrowserRouter>

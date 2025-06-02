@@ -13,7 +13,7 @@ const LandingPage = () => {
     {
       icon: BarChart3,
       title: "Statistical Analysis",
-      description: "Advanced algorithms analyze historical NBA data to identify value propositions"
+      description: "Advanced algorithms analyze historical data to identify value propositions"
     },
     {
       icon: Target,
@@ -42,10 +42,37 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12">
-        <HeroSection 
-          onStartAnalyzing={() => navigate('/')} 
-          onViewSample={() => navigate('/')} 
-        />
+        {/* Hero Section - Modified to show signup requirement */}
+        <section className="text-center py-20">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-6xl font-bold tracking-tight text-foreground mb-6">
+              Advanced <span className="text-primary">Props Analytics</span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Leverage cutting-edge statistical models and real-time data to make informed decisions on sports props across multiple leagues.
+            </p>
+            
+            {/* Auth Required Message */}
+            <Card className="max-w-md mx-auto mb-8 border-primary/20 bg-primary/5">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl text-primary">Account Required</CardTitle>
+                <CardDescription>
+                  Create an account to access our advanced props analytics platform
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  size="lg" 
+                  className="w-full font-semibold"
+                  onClick={() => navigate('/auth')}
+                >
+                  Sign Up / Login to Continue
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
         
         {/* Landing Page Stats */}
         <section className="py-16">
@@ -73,7 +100,7 @@ const LandingPage = () => {
               Why Choose Our Analysis
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Leverage cutting-edge statistical models to make informed decisions on NBA props
+              Leverage cutting-edge statistical models to make informed decisions on sports props
             </p>
           </div>
           
@@ -102,7 +129,7 @@ const LandingPage = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  We aggregate NBA player stats, team performance, and PrizePicks prop data
+                  We aggregate player stats, team performance, and prop data across multiple leagues
                 </CardDescription>
               </CardContent>
             </Card>
@@ -137,7 +164,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* Final CTA */}
         <section className="py-20 text-center">
           <Card className="max-w-2xl mx-auto border-0 shadow-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
             <CardHeader className="pb-6">
@@ -145,7 +172,7 @@ const LandingPage = () => {
                 Ready to Start Winning?
               </CardTitle>
               <CardDescription className="text-primary-foreground/80">
-                Join thousands of users who trust our statistical analysis for NBA props
+                Join thousands of users who trust our statistical analysis for sports props
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -154,9 +181,9 @@ const LandingPage = () => {
                   size="lg" 
                   variant="secondary" 
                   className="font-semibold"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/auth')}
                 >
-                  Get Started Now
+                  Create Your Account
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <p className="text-sm text-primary-foreground/70">
