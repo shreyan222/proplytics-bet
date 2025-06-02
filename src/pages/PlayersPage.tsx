@@ -4,16 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlayerCard } from '@/components/PlayerCard';
-import { usePropsData } from '@/hooks/usePropsData';
-import { useTeamsData } from '@/hooks/useTeamsData';
 import { Search, Users } from 'lucide-react';
+import { LeagueSelector } from '@/components/LeagueSelector';
+import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 
 export const PlayersPage: React.FC = () => {
-  const { data: props = [], isLoading: propsLoading } = usePropsData();
-  const { data: teams = [], isLoading: teamsLoading } = useTeamsData();
+  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const props = getPropsForLeague(selectedLeague);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
   const [selectedPosition, setSelectedPosition] = useState<string>('all');
+
+  // Mock teams data based on league
+  const teams = selectedLeague === 'NBA' 
+    ? [{ id: '1', abbreviation: 'LAL' }, { id: '2', abbreviation: 'GSW' }, { id: '3', abbreviation: 'BOS' }, { id: '4', abbreviation: 'MIL' }]
+    : selectedLeague === 'NFL'
+    ? [{ id: '1', abbreviation: 'BUF' }, { id: '2', abbreviation: 'LV' }, { id: '3', abbreviation: 'SF' }, { id: '4', abbreviation: 'KC' }]
+    : [{ id: '1', abbreviation: 'LAD' }, { id: '2', abbreviation: 'NYY' }, { id: '3', abbreviation: 'BOS' }, { id: '4', abbreviation: 'SF' }];
 
   // Group props by player
   const playerData = props.reduce((acc, prop) => {
@@ -49,25 +57,23 @@ export const PlayersPage: React.FC = () => {
     return matchesSearch && matchesTeam && matchesPosition;
   });
 
-  // Get unique positions
+  // Get unique positions based on league
   const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean);
-
-  if (propsLoading || teamsLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-8 text-white">Loading players...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* League Selector */}
+      <LeagueSelector
+        selectedLeague={selectedLeague}
+        onLeagueChange={setSelectedLeague}
+      />
+
       {/* Header */}
-      <Card>
+      <Card className="glass-card border border-slate-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
             <Users className="h-5 w-5" />
-            Players ({filteredPlayers.length})
+            {selectedLeague} Players ({filteredPlayers.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -78,11 +84,11 @@ export const PlayersPage: React.FC = () => {
                 placeholder="Search players..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 text-white"
+                className="pl-10 text-white bg-slate-800 border-slate-600"
               />
             </div>
             <Select value={selectedTeam} onValueChange={setSelectedTeam}>
-              <SelectTrigger className="text-white">
+              <SelectTrigger className="text-white bg-slate-800 border-slate-600">
                 <SelectValue placeholder="Select team" />
               </SelectTrigger>
               <SelectContent>
@@ -95,7 +101,7 @@ export const PlayersPage: React.FC = () => {
               </SelectContent>
             </Select>
             <Select value={selectedPosition} onValueChange={setSelectedPosition}>
-              <SelectTrigger className="text-white">
+              <SelectTrigger className="text-white bg-slate-800 border-slate-600">
                 <SelectValue placeholder="Select position" />
               </SelectTrigger>
               <SelectContent>
@@ -128,9 +134,9 @@ export const PlayersPage: React.FC = () => {
       </div>
 
       {filteredPlayers.length === 0 && (
-        <Card>
+        <Card className="glass-card border border-slate-700">
           <CardContent className="text-center py-8">
-            <p className="text-gray-400">No players found matching your criteria.</p>
+            <p className="text-gray-400">No {selectedLeague} players found matching your criteria.</p>
           </CardContent>
         </Card>
       )}

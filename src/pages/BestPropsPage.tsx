@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,14 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, TrendingUp, Search, Filter, RefreshCw, Star, Target, BarChart3 } from 'lucide-react';
-import { usePropsData } from '@/hooks/usePropsData';
-import { useRealtime } from '@/hooks/useRealtime';
+import { LeagueSelector } from '@/components/LeagueSelector';
 import { PropsTable } from '@/components/PropsTable';
+import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 import { Prop } from '@/types/nba';
 
 export const BestPropsPage: React.FC = () => {
-  const { data: props = [], isLoading, error, refetch } = usePropsData();
-  const { isConnected, lastUpdate } = useRealtime();
+  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const props = getPropsForLeague(selectedLeague);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -52,65 +51,42 @@ export const BestPropsPage: React.FC = () => {
     };
   }, [props, searchQuery, selectedTeam, selectedPosition, selectedStatType, minScore]);
 
-  const handleRefresh = async () => {
-    await refetch();
+  const handleRefresh = () => {
+    console.log(`Refreshing ${selectedLeague} props data...`);
   };
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Loading top props...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card>
-          <CardContent className="text-center py-8">
-            <p className="text-destructive">Error loading props data. Please try again.</p>
-            <Button onClick={handleRefresh} className="mt-4">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* League Selector */}
+      <LeagueSelector
+        selectedLeague={selectedLeague}
+        onLeagueChange={setSelectedLeague}
+      />
+
       {/* Header */}
-      <div className="border-b pb-6">
+      <div className="border-b border-slate-700 pb-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3">
+            <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
               <Trophy className="h-10 w-10 text-yellow-500" />
-              Top Props
+              Top {selectedLeague} Props
             </h1>
-            <p className="text-xl text-muted-foreground mt-2">
-              Top-rated NBA prop recommendations based on advanced analytics
+            <p className="text-xl text-slate-400 mt-2">
+              Top-rated {selectedLeague} prop recommendations based on advanced analytics
             </p>
             <div className="flex items-center gap-4 mt-3">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-slate-400">
                 <TrendingUp className="h-4 w-4" />
-                {lastUpdate ? `Updated: ${lastUpdate.toLocaleTimeString()}` : 'Loading updates...'}
+                Updated: {new Date().toLocaleTimeString()}
               </div>
-              <Badge variant={isConnected ? "default" : "secondary"} className="text-xs">
-                {isConnected ? "Live" : "Offline"}
+              <Badge variant="default" className="text-xs bg-green-600 hover:bg-green-700">
+                Live
               </Badge>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            <Button onClick={handleRefresh} variant="outline" size="sm">
+            <Button onClick={handleRefresh} variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700">
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
@@ -120,59 +96,59 @@ export const BestPropsPage: React.FC = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-l-4 border-l-blue-500">
+        <Card className="border-l-4 border-l-blue-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Standard Props</p>
-                <p className="text-3xl font-bold text-blue-600">{standardProps.length}</p>
+                <p className="text-sm font-medium text-slate-400">Standard Props</p>
+                <p className="text-3xl font-bold text-blue-400">{standardProps.length}</p>
               </div>
-              <Badge variant="outline" className="text-blue-600 border-blue-600">STD</Badge>
+              <Badge variant="outline" className="text-blue-400 border-blue-400">STD</Badge>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-l-4 border-l-red-500">
+        <Card className="border-l-4 border-l-red-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Demon Props</p>
-                <p className="text-3xl font-bold text-red-600">{demonProps.length}</p>
+                <p className="text-sm font-medium text-slate-400">Demon Props</p>
+                <p className="text-3xl font-bold text-red-400">{demonProps.length}</p>
               </div>
               <Badge className="bg-red-600 hover:bg-red-700">DMN</Badge>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-l-4 border-l-green-500">
+        <Card className="border-l-4 border-l-green-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Goblin Props</p>
-                <p className="text-3xl font-bold text-green-600">{goblinProps.length}</p>
+                <p className="text-sm font-medium text-slate-400">Goblin Props</p>
+                <p className="text-3xl font-bold text-green-400">{goblinProps.length}</p>
               </div>
               <Badge className="bg-green-600 hover:bg-green-700">GBL</Badge>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-l-4 border-l-purple-500">
+        <Card className="border-l-4 border-l-purple-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Props</p>
-                <p className="text-3xl font-bold text-purple-600">{props.length}</p>
+                <p className="text-sm font-medium text-slate-400">Total Props</p>
+                <p className="text-3xl font-bold text-purple-400">{props.length}</p>
               </div>
-              <BarChart3 className="h-8 w-8 text-purple-600" />
+              <BarChart3 className="h-8 w-8 text-purple-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="glass-card border border-slate-700">
         <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 text-white">
             <Filter className="h-5 w-5" />
             Filters & Search
           </CardTitle>
@@ -181,12 +157,12 @@ export const BestPropsPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
             <div className="lg:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   placeholder="Search players, teams, stats..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-slate-800 border-slate-600 text-white"
                 />
               </div>
             </div>
@@ -250,7 +226,7 @@ export const BestPropsPage: React.FC = () => {
               checked={showFavoritesOnly}
               onCheckedChange={setShowFavoritesOnly}
             />
-            <label htmlFor="favorites-only" className="text-sm font-medium flex items-center gap-2">
+            <label htmlFor="favorites-only" className="text-sm font-medium flex items-center gap-2 text-white">
               <Star className="h-4 w-4" />
               Show favorites only
             </label>
@@ -260,26 +236,26 @@ export const BestPropsPage: React.FC = () => {
 
       {/* Props Tables by Odds Type */}
       <Tabs defaultValue="standard" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="standard" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
+          <TabsTrigger value="standard" className="flex items-center gap-2 data-[state=active]:bg-blue-600">
             <Target className="h-4 w-4" />
             Standard ({standardProps.length})
           </TabsTrigger>
-          <TabsTrigger value="demon" className="flex items-center gap-2 text-red-600">
+          <TabsTrigger value="demon" className="flex items-center gap-2 data-[state=active]:bg-red-600">
             <Target className="h-4 w-4" />
             Demon ({demonProps.length})
           </TabsTrigger>
-          <TabsTrigger value="goblin" className="flex items-center gap-2 text-green-600">
+          <TabsTrigger value="goblin" className="flex items-center gap-2 data-[state=active]:bg-green-600">
             <Target className="h-4 w-4" />
             Goblin ({goblinProps.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="standard">
-          <Card>
+          <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-blue-600">Standard Props</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-blue-400">Standard {selectedLeague} Props</CardTitle>
+              <CardDescription className="text-slate-400">
                 Regular odds props with standard scoring analysis
               </CardDescription>
             </CardHeader>
@@ -290,11 +266,11 @@ export const BestPropsPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="demon">
-          <Card>
+          <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-red-600">Demon Props</CardTitle>
-              <CardDescription>
-                High-risk, high-reward props with standard analysis
+              <CardTitle className="text-red-400">Demon {selectedLeague} Props</CardTitle>
+              <CardDescription className="text-slate-400">
+                High-risk, high-reward props with advanced analysis
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -304,11 +280,11 @@ export const BestPropsPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="goblin">
-          <Card>
+          <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-green-600">Goblin Props</CardTitle>
-              <CardDescription>
-              Low-risk, low-reward props with standard analysis
+              <CardTitle className="text-green-400">Goblin {selectedLeague} Props</CardTitle>
+              <CardDescription className="text-slate-400">
+                Low-risk, consistent props with reliable analysis
               </CardDescription>
             </CardHeader>
             <CardContent>

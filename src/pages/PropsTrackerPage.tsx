@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,15 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Activity, RefreshCw, Plus, Minus, Edit, Search, Download, Table, Grid3X3, Clock, Bell } from 'lucide-react';
-import { TrackerStatsCards } from '@/components/TrackerStatsCards';
-import { TrackerPropsTable } from '@/components/TrackerPropsTable';
-import { LiveActivityFeed } from '@/components/LiveActivityFeed';
-import { useTrackerData } from '@/hooks/useTrackerData';
-import { useToast } from '@/hooks/use-toast';
+import { LeagueSelector } from '@/components/LeagueSelector';
+import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 
 export const PropsTrackerPage: React.FC = () => {
-  const { data: trackerData, isLoading, refetch } = useTrackerData();
-  const { toast } = useToast();
+  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const props = getPropsForLeague(selectedLeague);
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
   const [selectedStatType, setSelectedStatType] = useState<string>('all');
@@ -26,6 +23,17 @@ export const PropsTrackerPage: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshCountdown, setRefreshCountdown] = useState(300);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+
+  // Mock tracker data based on selected league
+  const trackerData = {
+    new_props: props.slice(0, 2),
+    removed_props: props.slice(2, 3),
+    changed_props: props.slice(3, 4),
+    recent_activities: [
+      { id: '1', type: 'new', message: `New ${selectedLeague} prop added`, timestamp: new Date() },
+      { id: '2', type: 'changed', message: `${selectedLeague} prop line updated`, timestamp: new Date() },
+    ]
+  };
 
   // Auto-refresh countdown
   useEffect(() => {
@@ -44,20 +52,13 @@ export const PropsTrackerPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [autoRefresh]);
 
-  const handleRefresh = async () => {
-    await refetch();
+  const handleRefresh = () => {
     setLastUpdated(new Date());
     setRefreshCountdown(300);
     
     if (soundEnabled) {
-      // Play notification sound (you'd implement actual sound here)
       console.log('🔔 Data refreshed');
     }
-
-    toast({
-      title: 'Data Updated',
-      description: 'Props data has been refreshed successfully',
-    });
   };
 
   const formatCountdown = (seconds: number) => {
@@ -66,36 +67,29 @@ export const PropsTrackerPage: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Loading tracker data...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* League Selector */}
+      <LeagueSelector
+        selectedLeague={selectedLeague}
+        onLeagueChange={setSelectedLeague}
+      />
+
       {/* Header */}
-      <div className="border-b pb-6">
+      <div className="border-b border-slate-700 pb-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight">NBA Props Tracker</h1>
-            <p className="text-xl text-muted-foreground mt-2">
-              Real-time prop monitoring and change detection
+            <h1 className="text-4xl font-bold tracking-tight text-white">{selectedLeague} Props Tracker</h1>
+            <p className="text-xl text-slate-400 mt-2">
+              Real-time {selectedLeague} prop monitoring and change detection
             </p>
             <div className="flex items-center gap-4 mt-3">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Clock className="h-4 w-4" />
                 Last updated: {lastUpdated.toLocaleTimeString()}
               </div>
               {autoRefresh && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm text-slate-400">
                   <RefreshCw className="h-4 w-4" />
                   Next refresh: {formatCountdown(refreshCountdown)}
                 </div>
@@ -105,26 +99,26 @@ export const PropsTrackerPage: React.FC = () => {
           
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4" />
+              <Bell className="h-4 w-4 text-white" />
               <Switch
                 checked={soundEnabled}
                 onCheckedChange={setSoundEnabled}
               />
-              <span className="text-sm">Sound</span>
+              <span className="text-sm text-white">Sound</span>
             </div>
             <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
+              <Activity className="h-4 w-4 text-white" />
               <Switch
                 checked={autoRefresh}
                 onCheckedChange={setAutoRefresh}
               />
-              <span className="text-sm">Auto-refresh</span>
+              <span className="text-sm text-white">Auto-refresh</span>
             </div>
-            <Button onClick={handleRefresh} variant="outline" size="sm">
+            <Button onClick={handleRefresh} variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700">
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh Now
             </Button>
-            <Badge variant="outline" className="text-green-600 border-green-600">
+            <Badge variant="outline" className="text-green-400 border-green-400">
               <Activity className="h-3 w-3 mr-1" />
               Live
             </Badge>
@@ -133,29 +127,79 @@ export const PropsTrackerPage: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <TrackerStatsCards data={trackerData} />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">New Props</p>
+                <p className="text-3xl font-bold text-green-400">{trackerData.new_props.length}</p>
+              </div>
+              <Plus className="h-8 w-8 text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Removed Props</p>
+                <p className="text-3xl font-bold text-red-400">{trackerData.removed_props.length}</p>
+              </div>
+              <Minus className="h-8 w-8 text-red-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Modified Props</p>
+                <p className="text-3xl font-bold text-blue-400">{trackerData.changed_props.length}</p>
+              </div>
+              <Edit className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Total Props</p>
+                <p className="text-3xl font-bold text-purple-400">{props.length}</p>
+              </div>
+              <Activity className="h-8 w-8 text-purple-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         {/* Main Content */}
         <div className="xl:col-span-3 space-y-6">
           {/* Filters */}
-          <Card>
+          <Card className="glass-card border border-slate-700">
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Filters & Search</CardTitle>
+              <CardTitle className="text-lg text-white">Filters & Search</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       placeholder="Search by player name, team, or stat type..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 bg-slate-800 border-slate-600 text-white"
                     />
                   </div>
                 </div>
+                
+                {/* Keep existing filter controls but update styling */}
                 <div className="flex gap-2">
                   <Select value={selectedTeam} onValueChange={setSelectedTeam}>
                     <SelectTrigger className="w-32">
@@ -202,6 +246,7 @@ export const PropsTrackerPage: React.FC = () => {
                     variant={viewMode === 'table' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setViewMode('table')}
+                    className={viewMode === 'table' ? 'bg-blue-600 hover:bg-blue-700' : 'border-slate-600 text-slate-300 hover:bg-slate-700'}
                   >
                     <Table className="h-4 w-4 mr-2" />
                     Table
@@ -210,12 +255,13 @@ export const PropsTrackerPage: React.FC = () => {
                     variant={viewMode === 'cards' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setViewMode('cards')}
+                    className={viewMode === 'cards' ? 'bg-blue-600 hover:bg-blue-700' : 'border-slate-600 text-slate-300 hover:bg-slate-700'}
                   >
                     <Grid3X3 className="h-4 w-4 mr-2" />
                     Cards
                   </Button>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700">
                   <Download className="h-4 w-4 mr-2" />
                   Export CSV
                 </Button>
@@ -225,18 +271,18 @@ export const PropsTrackerPage: React.FC = () => {
 
           {/* Tabbed Tables */}
           <Tabs defaultValue="new" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="new" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
+              <TabsTrigger value="new" className="flex items-center gap-2 data-[state=active]:bg-green-600">
                 <Plus className="h-4 w-4" />
-                New Props ({trackerData?.new_props?.length || 0})
+                New Props ({trackerData.new_props.length})
               </TabsTrigger>
-              <TabsTrigger value="removed" className="flex items-center gap-2">
+              <TabsTrigger value="removed" className="flex items-center gap-2 data-[state=active]:bg-red-600">
                 <Minus className="h-4 w-4" />
-                Removed Props ({trackerData?.removed_props?.length || 0})
+                Removed Props ({trackerData.removed_props.length})
               </TabsTrigger>
-              <TabsTrigger value="modified" className="flex items-center gap-2">
+              <TabsTrigger value="modified" className="flex items-center gap-2 data-[state=active]:bg-blue-600">
                 <Edit className="h-4 w-4" />
-                Modified Props ({trackerData?.changed_props?.length || 0})
+                Modified Props ({trackerData.changed_props.length})
               </TabsTrigger>
             </TabsList>
 
@@ -286,7 +332,24 @@ export const PropsTrackerPage: React.FC = () => {
 
         {/* Live Activity Feed */}
         <div className="xl:col-span-1">
-          <LiveActivityFeed activities={trackerData?.recent_activities || []} />
+          <Card className="glass-card border border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white">Live Activity</CardTitle>
+              <CardDescription className="text-slate-400">
+                Recent {selectedLeague} prop changes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {trackerData.recent_activities.map((activity) => (
+                  <div key={activity.id} className="p-3 rounded bg-slate-800/50 border border-slate-700">
+                    <p className="text-sm text-white">{activity.message}</p>
+                    <p className="text-xs text-slate-400 mt-1">{activity.timestamp.toLocaleTimeString()}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

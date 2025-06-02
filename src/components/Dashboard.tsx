@@ -1,204 +1,190 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { PropsTable } from './PropsTable';
-import { PropsFilters } from './PropsFilters';
-import { usePropsData } from '@/hooks/usePropsData';
-import { useFilteredProps } from '@/hooks/useFilteredProps';
-import { Activity, RefreshCw, BarChart3, TrendingUp } from 'lucide-react';
-import { PropFilters } from '@/types/nba';
+import { Button } from '@/components/ui/button';
+import { BarChart3, TrendingUp, Activity, Users, Trophy, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { LeagueSelector } from './LeagueSelector';
+import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 
-export const Dashboard: React.FC = () => {
-  const { data: props = [], isLoading, error, refetch } = usePropsData();
-  const [filters, setFilters] = useState<PropFilters>({});
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
-  const [searchQuery, setSearchQuery] = useState('');
+export const Dashboard = () => {
+  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const props = getPropsForLeague(selectedLeague);
 
-  const searchFilteredProps = props.filter(prop => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      prop.player_name.toLowerCase().includes(query) ||
-      prop.team.toLowerCase().includes(query) ||
-      prop.stat_type.toLowerCase().includes(query)
-    );
-  });
+  // Calculate stats based on selected league
+  const totalProps = props.length;
+  const demonProps = props.filter(p => p.odds_type === 'demon').length;
+  const goblinProps = props.filter(p => p.odds_type === 'goblin').length;
+  const standardProps = props.filter(p => p.odds_type === 'standard').length;
+  const topScore = Math.max(...props.map(p => p.sorting_score));
 
-  const filteredProps = useFilteredProps(searchFilteredProps, filters);
+  const statCards = [
+    {
+      title: "Total Props",
+      value: totalProps,
+      description: `Active ${selectedLeague} props available`,
+      icon: BarChart3,
+      color: "text-blue-400"
+    },
+    {
+      title: "Top Score",
+      value: topScore.toFixed(1),
+      description: "Highest scoring prop today",
+      icon: Trophy,
+      color: "text-yellow-400"
+    },
+    {
+      title: "Demon Props",
+      value: demonProps,
+      description: "High-risk, high-reward props",
+      icon: TrendingUp,
+      color: "text-red-400"
+    },
+    {
+      title: "Active Players",
+      value: new Set(props.map(p => p.player_id)).size,
+      description: `Unique ${selectedLeague} players tracked`,
+      icon: Users,
+      color: "text-green-400"
+    }
+  ];
 
-  const updateFilters = (newFilters: PropFilters) => setFilters(newFilters);
-  const clearFilters = () => {
-    setFilters({});
-    setSearchQuery('');
-  };
-
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await refetch();
-    setLastUpdated(new Date());
-    setTimeout(() => setIsRefreshing(false), 1000);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handleRefresh();
-    }, 120000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* Animated background elements */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 opacity-20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-40 right-10 w-80 h-80 bg-blue-600 opacity-15 rounded-full blur-2xl animate-ping" />
-        <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-slate-600 opacity-10 rounded-full blur-2xl animate-pulse transform -translate-x-1/2" />
-        
-        <div className="relative z-10 container mx-auto p-6">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="relative">
-                <img 
-                  src="/lovable-uploads/402b1e50-6b1e-40ae-abbb-0c98816bea46.png" 
-                  alt="Loading" 
-                  className="h-12 w-12 mx-auto mb-4 animate-spin"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 opacity-50 rounded-full blur-md animate-pulse" />
-              </div>
-              <p className="text-slate-300 text-lg">Loading props data...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="relative z-10 container mx-auto p-6">
-          <Card className="glass-card border border-red-500/30 shadow-2xl">
-            <CardContent className="text-center py-8">
-              <p className="text-red-400">Error loading data: {error.message}</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  const propCounts = {
-    standard: props.filter(p => p.odds_type === 'standard').length,
-    demon: props.filter(p => p.odds_type === 'demon').length,
-    goblin: props.filter(p => p.odds_type === 'goblin').length,
-  };
+  const quickActions = [
+    {
+      title: "Top Props",
+      description: `View best ${selectedLeague} props today`,
+      icon: Trophy,
+      link: "/best-props",
+      color: "bg-blue-600 hover:bg-blue-700"
+    },
+    {
+      title: "Props Tracker",
+      description: `Track ${selectedLeague} prop changes`,
+      icon: Activity,
+      link: "/tracker",
+      color: "bg-green-600 hover:bg-green-700"
+    },
+    {
+      title: "Compare Props",
+      description: `Compare ${selectedLeague} props side-by-side`,
+      icon: BarChart3,
+      link: "/compare",
+      color: "bg-purple-600 hover:bg-purple-700"
+    }
+  ];
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Enhanced animated background shapes */}
+      {/* Background effects */}
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 opacity-20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute top-40 right-10 w-80 h-80 bg-blue-600 opacity-15 rounded-full blur-2xl animate-ping" />
-      <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-slate-600 opacity-10 rounded-full blur-2xl animate-pulse transform -translate-x-1/2" />
-      <div className="absolute top-20 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-500 to-blue-700 opacity-10 rounded-full blur-3xl animate-bounce" style={{ animationDuration: '3s' }} />
       
-      {/* Content container */}
       <div className="relative z-10 container mx-auto p-6 space-y-6">
-        
+        {/* League Selector */}
+        <LeagueSelector
+          selectedLeague={selectedLeague}
+          onLeagueChange={setSelectedLeague}
+        />
+
         {/* Header */}
-        <div className="border-b border-slate-700 pb-6 glass-card p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <img 
-                src="final_logo.png" 
-                alt="Proplytics Logo" 
-                className="w-16 h-16"
-              />
-              <div>
-                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                  NBA Props Dashboard
-                </h1>
-                <p className="text-xl text-slate-400 mt-2">
-                  Professional prop analysis and real-time tracking
-                </p>
-                <div className="flex items-center gap-2 mt-3 text-sm text-slate-500">
-                  Last updated: {lastUpdated.toLocaleTimeString()}
-                </div>
-              </div>
-            </div>
-            <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-none px-4 py-2 font-semibold">
-              <Activity className="h-3 w-3 mr-1" />
-              Live
-            </Badge>
-          </div>
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-4">
+            {selectedLeague} Props Analytics
+          </h1>
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+            Advanced analytics and insights for {selectedLeague} prop betting with real-time data and AI-powered scoring
+          </p>
+          <Badge className="mt-4 bg-green-600 hover:bg-green-700">
+            <Activity className="h-3 w-3 mr-1" />
+            Live Data
+          </Badge>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[
-            { 
-              label: 'Total Props', 
-              value: props.length, 
-              icon: <BarChart3 className="h-8 w-8 text-blue-400" />,
-              gradient: 'from-black-500/80 to-blue-600/80',
-              border: 'border-blue-500/30'
-            },
-            { 
-              label: 'Standard', 
-              value: propCounts.standard, 
-              icon: <TrendingUp className="h-6 w-6 text-blue-400" />,
-              gradient: 'from-blue-500/80 to-blue-600/40',
-              border: 'border-blue-500/30'
-            },
-            { 
-              label: 'Demon', 
-              value: propCounts.demon, 
-              icon: <div className="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center text-xs font-bold text-white">D</div>,
-              gradient: 'from-red-500/80 to-red-600/20',
-              border: 'border-red-500/30'
-            },
-            { 
-              label: 'Goblin', 
-              value: propCounts.goblin, 
-              icon: <div className="w-6 h-6 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center text-xs font-bold text-white">G</div>,
-              gradient: 'from-green-500/80 to-green-600/30',
-              border: 'border-green-500/30'
-            }
-          ].map(({ label, value, icon, gradient, border }) => (
-            <Card key={label} className={`bg-gradient-to-br ${gradient} backdrop-blur-xl border ${border} shadow-2xl rounded-2xl hover:scale-105 transition-all duration-300 group`}>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {statCards.map((stat, index) => (
+            <Card key={index} className="glass-card border border-slate-700">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white-800">{label}</p>
-                    <p className="text-3xl font-bold text-white mt-1">{value}</p>
+                    <p className="text-sm font-medium text-slate-400">{stat.title}</p>
+                    <p className="text-3xl font-bold text-white">{stat.value}</p>
+                    <p className="text-xs text-slate-500 mt-1">{stat.description}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                    {icon}
-                  </div>
+                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Props Table & Filters */}
-        <div className="glass-card border border-slate-700 p-6 space-y-6">
-          <PropsFilters
-            filters={filters}
-            onFiltersChange={updateFilters}
-            onClearFilters={clearFilters}
-            totalProps={props.length}
-            filteredProps={filteredProps.length}
-            onViewModeChange={setViewMode}
-            viewMode={viewMode}
-            onRefresh={handleRefresh}
-            isRefreshing={isRefreshing}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
-          <PropsTable props={filteredProps} viewMode={viewMode} />
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {quickActions.map((action, index) => (
+            <Link key={index} to={action.link}>
+              <Card className="glass-card border border-slate-700 hover:border-slate-600 transition-all duration-300 group cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <action.icon className="h-8 w-8 text-blue-400" />
+                    <ArrowRight className="h-5 w-5 text-slate-500 group-hover:text-blue-400 transition-colors" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">{action.title}</h3>
+                  <p className="text-sm text-slate-400">{action.description}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
+
+        {/* Recent Props Preview */}
+        <Card className="glass-card border border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white">Top {selectedLeague} Props Today</CardTitle>
+            <CardDescription className="text-slate-400">
+              Highest scoring props based on our advanced analytics
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {props.slice(0, 3).map((prop) => (
+                <div key={prop.prop_id} className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <p className="font-medium text-white">{prop.player_name}</p>
+                      <p className="text-sm text-slate-400">{prop.team} vs {prop.against_team}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-slate-400">{prop.stat_type}</p>
+                    <p className="font-bold text-white">{prop.line_score}</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge 
+                      variant={prop.odds_type === 'demon' ? 'destructive' : prop.odds_type === 'goblin' ? 'secondary' : 'default'}
+                      className={
+                        prop.odds_type === 'demon' ? 'bg-red-600 hover:bg-red-700' :
+                        prop.odds_type === 'goblin' ? 'bg-green-600 hover:bg-green-700' :
+                        'bg-blue-600 hover:bg-blue-700'
+                      }
+                    >
+                      {prop.odds_type}
+                    </Badge>
+                    <p className="text-sm text-slate-400 mt-1">Score: {prop.sorting_score.toFixed(1)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 text-center">
+              <Link to="/best-props">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  View All {selectedLeague} Props
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
