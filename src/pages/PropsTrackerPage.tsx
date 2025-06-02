@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Activity, RefreshCw, Plus, Minus, Edit, Search, Download, Table, Grid3X3, Clock, Bell } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
+import { TrackerPropsTable } from '@/components/TrackerPropsTable';
 import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 
 export const PropsTrackerPage: React.FC = () => {
