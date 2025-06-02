@@ -4,6 +4,7 @@ import {
   Activity,
   Trophy,
   GitCompare,
+  Flame,
   Users,
   BarChart3,
   Settings,
@@ -47,6 +48,11 @@ const items = [
     title: "Compare Props",
     url: "/compare",
     icon: GitCompare,
+  },
+  {
+    title: "Hot Props",
+    url: "/hot-props",
+    icon: Flame,
   },
   {
     title: "Players",

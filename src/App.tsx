@@ -13,6 +13,7 @@ import AuthPage from "./pages/AuthPage";
 import { PropsTrackerPage } from "./pages/PropsTrackerPage";
 import { BestPropsPage } from "./pages/BestPropsPage";
 import { ComparePage } from "./pages/ComparePage";
+import HotPropsPage from "./pages/HotPropsPage";
 import { PlayersPage } from "./pages/PlayersPage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { UsingProplyticsPage } from "./pages/UsingProplyticsPage";
@@ -45,6 +46,7 @@ const App = () => (
                       <Route path="/tracker" element={<PropsTrackerPage />} />
                       <Route path="/best-props" element={<BestPropsPage />} />
                       <Route path="/compare" element={<ComparePage />} />
+                      <Route path="/hot-props" element={<HotPropsPage />} />
                       <Route path="/players" element={<PlayersPage />} />
                       <Route path="/players/:id" element={<PlayerDetail />} />
                       <Route path="/analytics" element={<AnalyticsPage />} />
