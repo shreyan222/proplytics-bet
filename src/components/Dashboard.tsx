@@ -65,29 +65,33 @@ export const Dashboard = () => {
       title: "Total Props",
       value: totalProps,
       description: `Active ${selectedLeague} props available`,
-      icon: BarChart3,
-      color: "text-blue-400"
+      icon: <BarChart3 className="h-9 w-9 text-blue-400" />,
+      gradient: 'from-black-500/80 to-blue-600/80',
+      border: 'border-blue-500/30'
     },
     {
       title: "Standard Props",
       value: standardProps,
       description: "Standard confidence props",
-      icon: Trophy,
-      color: "text-blue-400"
+      icon: <TrendingUp className="h-9 w-9 text-blue-400" />,
+      gradient: 'from-blue-500/80 to-blue-600/40',
+      border: 'border-blue-500/30'
     },
     {
       title: "Demon Props",
       value: demonProps,
       description: "High-risk, high-reward props",
-      icon: TrendingUp,
-      color: "text-red-400"
+      icon: <img src="demon.png" alt="demon" className="w-10 h-10" />,
+      gradient: 'from-red-500/80 to-red-600/20',
+      border: 'border-red-500/30'
     },
     {
       title: "Goblin Props",
       value: goblinProps,
       description: "Premium high-confidence props",
-      icon: Users,
-      color: "text-green-400"
+      icon: <img src="goblin_updated.png" alt="Goblin" className="w-10 h-10" />,
+      gradient: 'from-green-500/80 to-green-600/30',
+      border: 'border-green-500/30'
     }
   ];
 
@@ -130,7 +134,7 @@ export const Dashboard = () => {
     setFilters({});
     setSearchQuery('');
   };
-
+  
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Background effects */}
@@ -161,15 +165,17 @@ export const Dashboard = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statCards.map((stat, index) => (
-            <Card key={index} className="glass-card border border-slate-700">
+            <Card key={index} className={`bg-gradient-to-br ${stat.gradient} backdrop-blur-xl border ${stat.border} shadow-2xl rounded-2xl hover:scale-105 transition-all duration-300 group`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-slate-400">{stat.title}</p>
                     <p className="text-3xl font-bold text-white">{stat.value}</p>
-                    <p className="text-xs text-slate-500 mt-1">{stat.description}</p>
+                    <p className="text-xs text-slate-400 mt-1">{stat.description}</p>
                   </div>
-                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                  <div className="p-1 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
+                    {stat.icon}
+                  </div>
                 </div>
               </CardContent>
             </Card>
