@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,6 @@ import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 
 export const PropsTrackerPage: React.FC = () => {
   const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
-  const props = getPropsForLeague(selectedLeague);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -26,16 +25,49 @@ export const PropsTrackerPage: React.FC = () => {
   const [refreshCountdown, setRefreshCountdown] = useState(300);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  // Mock tracker data based on selected league
-  const trackerData = {
-    new_props: props.slice(0, 2),
-    removed_props: props.slice(2, 3),
-    changed_props: props.slice(3, 4),
-    recent_activities: [
-      { id: '1', type: 'new', message: `New ${selectedLeague} prop added`, timestamp: new Date() },
-      { id: '2', type: 'changed', message: `${selectedLeague} prop line updated`, timestamp: new Date() },
-    ]
-  };
+  // Get props for selected league
+  const props = getPropsForLeague(selectedLeague);
+
+  // Transform props data to match TrackerPropsTable expected format
+  const trackerData = useMemo(() => {
+    const transformProp = (prop: any) => ({
+      "Prop ID": prop.prop_id,
+      "Display Name": prop.player_name,
+      "Team Name": prop.team,
+      "Position": prop.position,
+      "Stat Type": prop.stat_type,
+      "Line Score": prop.line_score,
+      "Odds Type": prop.odds_type,
+      "Start Time": prop.start_time
+    });
+
+    return {
+      new_props: props.slice(0, 3).map(transformProp),
+      removed_props: props.slice(3, 5).map(prop => ({
+        ...transformProp(prop),
+        "Removed At": new Date().toISOString()
+      })),
+      changed_props: props.slice(5, 7).map(prop => ({
+        "Prop ID": prop.prop_id,
+        "Player": prop.player_name,
+        "Team": prop.team,
+        "Position": prop.position,
+        "Stat Type": prop.stat_type,
+        "Odds Type": prop.odds_type,
+        "Start Time": prop.start_time,
+        "Changes": {
+          "Line Score": {
+            "previous": prop.line_score - 0.5,
+            "current": prop.line_score
+          }
+        }
+      })),
+      recent_activities: [
+        { id: '1', type: 'new', message: `New ${selectedLeague} prop added`, timestamp: new Date() },
+        { id: '2', type: 'changed', message: `${selectedLeague} prop line updated`, timestamp: new Date() },
+      ]
+    };
+  }, [props, selectedLeague]);
 
   // Auto-refresh countdown
   useEffect(() => {
@@ -201,7 +233,6 @@ export const PropsTrackerPage: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Keep existing filter controls but update styling */}
                 <div className="flex gap-2">
                   <Select value={selectedTeam} onValueChange={setSelectedTeam}>
                     <SelectTrigger className="w-32">

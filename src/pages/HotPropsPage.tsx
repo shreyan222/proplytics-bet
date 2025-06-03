@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Flame, Filter } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { PropsFilters } from '@/components/PropsFilters';
-import { PropsTable } from '@/components/PropsTable';
-import { usePropsData } from '@/hooks/usePropsData';
+import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
 import { Prop, PropFilters } from '@/types/nba';
 
@@ -23,7 +22,8 @@ const HotPropsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
-  const { data: allProps = [], isLoading, error, refetch } = usePropsData();
+  // Get props for selected league
+  const allProps = getPropsForLeague(selectedLeague);
 
   // Filter hot props (3+ consecutive overs or unders)
   const hotProps = useMemo(() => {
@@ -90,33 +90,10 @@ const HotPropsPage = () => {
     setSearchQuery('');
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading hot props...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <p className="text-destructive">Error loading props data</p>
-            <Button onClick={() => refetch()} className="mt-4">
-              Try Again
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleRefresh = () => {
+    // Simulate refresh - in real app this would refetch data
+    console.log(`Refreshing ${selectedLeague} hot props data...`);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -215,7 +192,7 @@ const HotPropsPage = () => {
           filteredProps={searchFilteredProps.length}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
-          onRefresh={refetch}
+          onRefresh={handleRefresh}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
@@ -226,10 +203,10 @@ const HotPropsPage = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Flame className="h-5 w-5 text-orange-500" />
-                Hot Props - Trending Opportunities
+                {selectedLeague} Hot Props - Trending Opportunities
               </CardTitle>
               <CardDescription>
-                Props with 3+ consecutive overs or unders. Use these trends to identify potential opportunities.
+                {selectedLeague} props with 3+ consecutive overs or unders. Use these trends to identify potential opportunities.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -301,9 +278,10 @@ const HotPropsPage = () => {
                           </td>
                           <td className="p-4 text-center">
                             <Badge 
-                              variant={
-                                prop.odds_type === 'demon' ? 'demon' :
-                                prop.odds_type === 'goblin' ? 'goblin' : 'standard'
+                              className={
+                                prop.odds_type === 'demon' ? 'bg-red-600 hover:bg-red-700' :
+                                prop.odds_type === 'goblin' ? 'bg-green-600 hover:bg-green-700' : 
+                                'bg-blue-600 hover:bg-blue-700'
                               }
                             >
                               {prop.odds_type}
@@ -323,7 +301,7 @@ const HotPropsPage = () => {
               <Flame className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">No Hot Props Found</h3>
               <p className="text-muted-foreground">
-                No props currently have 3+ consecutive overs or unders. Try adjusting your filters or check back later.
+                No {selectedLeague} props currently have 3+ consecutive overs or unders. Try adjusting your filters or check back later.
               </p>
             </CardContent>
           </Card>
