@@ -54,7 +54,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
         <div className="cursor-pointer w-full">
           {viewMode === 'table' ? (
             <TableRow className="hover:bg-slate-800/50 transition-all duration-300 cursor-pointer border-b border-slate-700 group">
-              <TableCell className="py-4 align-middle">
+              <TableCell className="px-4 py-3 text-left">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-blue-500/30">
                     <User className="h-5 w-5 text-blue-400" />
@@ -62,20 +62,18 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                   <span className="font-medium text-white group-hover:text-blue-400 transition-colors">{prop.player_name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-slate-300 align-middle">{prop.team}</TableCell>
-              <TableCell className="text-slate-300 align-middle">{prop.position}</TableCell>
-              <TableCell className="text-slate-300 align-middle">{prop.stat_type}</TableCell>
-              <TableCell className="text-center align-middle font-bold text-xl text-blue-400">{prop.line_score}</TableCell>
-              <TableCell className="text-center align-middle">
-                <div className="flex justify-center">{getOddsTypeBadge(prop.odds_type)}</div>
+              <TableCell className="px-4 py-3 text-left text-slate-300">{prop.team}</TableCell>
+              <TableCell className="px-4 py-3 text-left text-slate-300">{prop.position}</TableCell>
+              <TableCell className="px-4 py-3 text-left text-slate-300">{prop.stat_type}</TableCell>
+              <TableCell className="px-4 py-3 text-center font-bold text-xl text-blue-400">{prop.line_score}</TableCell>
+              <TableCell className="px-4 py-3 text-center">
+                {getOddsTypeBadge(prop.odds_type)}
               </TableCell>
-              <TableCell className="text-center align-middle text-slate-300">{formatTime(prop.start_time)}</TableCell>
-              <TableCell className="text-center align-middle">
-                <div className="flex justify-center">
-                  <Button variant="outline" size="sm" className="glass-button text-white border-blue-500/30 hover:border-blue-400/50 hover:text-blue-400">
-                    View Details
-                  </Button>
-                </div>
+              <TableCell className="px-4 py-3 text-center text-slate-300">{formatTime(prop.start_time)}</TableCell>
+              <TableCell className="px-4 py-3 text-center">
+                <Button variant="outline" size="sm" className="glass-button text-white border-blue-500/30 hover:border-blue-400/50 hover:text-blue-400">
+                  View Details
+                </Button>
               </TableCell>
             </TableRow>
           ) : (
@@ -223,14 +221,14 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
       <Table>
         <TableHeader>
           <TableRow className="border-b border-slate-700 hover:bg-slate-800/30">
-            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Player</TableHead>
-            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Team</TableHead>
-            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Position</TableHead>
-            <TableHead className="text-slate-300 font-semibold h-12 align-middle">Stat Type</TableHead>
-            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Line Score</TableHead>
-            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Odds Type</TableHead>
-            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Start Time</TableHead>
-            <TableHead className="text-center text-slate-300 font-semibold h-12 align-middle">Actions</TableHead>
+            <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Player</TableHead>
+            <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Team</TableHead>
+            <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Position</TableHead>
+            <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Stat Type</TableHead>
+            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Line Score</TableHead>
+            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Odds Type</TableHead>
+            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Start Time</TableHead>
+            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
