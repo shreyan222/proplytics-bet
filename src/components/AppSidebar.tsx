@@ -11,6 +11,7 @@ import {
   LogOut,
   User,
   HelpCircle,
+  Calendar,
 } from "lucide-react"
 
 import {
