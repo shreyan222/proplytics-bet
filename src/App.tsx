@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 
 import Index from "@/pages/Index"
 import LandingPage from "@/pages/LandingPage"
@@ -22,6 +23,7 @@ import UsingProplyticsPage from "@/pages/UsingProplyticsPage"
 import RecapPage from "@/pages/RecapPage"
 
 import { AuthWrapper } from "@/components/AuthWrapper"
+import { AppSidebar } from "@/components/AppSidebar"
 
 const queryClient = new QueryClient()
 
@@ -34,19 +36,30 @@ function App() {
           <Routes>
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/" element={<AuthWrapper><Index /></AuthWrapper>} />
-            <Route path="/tracker" element={<AuthWrapper><PropsTrackerPage /></AuthWrapper>} />
-            <Route path="/best-props" element={<AuthWrapper><BestPropsPage /></AuthWrapper>} />
-            <Route path="/compare" element={<AuthWrapper><ComparePage /></AuthWrapper>} />
-            <Route path="/hot-props" element={<AuthWrapper><HotPropsPage /></AuthWrapper>} />
-            <Route path="/players" element={<AuthWrapper><PlayersPage /></AuthWrapper>} />
-            <Route path="/players/:playerId" element={<AuthWrapper><PlayerDetail /></AuthWrapper>} />
-            <Route path="/analytics" element={<AuthWrapper><AnalyticsPage /></AuthWrapper>} />
-            <Route path="/recap" element={<AuthWrapper><RecapPage /></AuthWrapper>} />
-            <Route path="/using-proplytics" element={<AuthWrapper><UsingProplyticsPage /></AuthWrapper>} />
-            <Route path="/settings" element={<AuthWrapper><SettingsPage /></AuthWrapper>} />
-            <Route path="/data-processing" element={<AuthWrapper><DataProcessingPage /></AuthWrapper>} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/*" element={
+              <SidebarProvider>
+                <div className="min-h-screen flex w-full">
+                  <AppSidebar />
+                  <SidebarInset className="flex-1">
+                    <Routes>
+                      <Route path="/" element={<AuthWrapper><Index /></AuthWrapper>} />
+                      <Route path="/tracker" element={<AuthWrapper><PropsTrackerPage /></AuthWrapper>} />
+                      <Route path="/best-props" element={<AuthWrapper><BestPropsPage /></AuthWrapper>} />
+                      <Route path="/compare" element={<AuthWrapper><ComparePage /></AuthWrapper>} />
+                      <Route path="/hot-props" element={<AuthWrapper><HotPropsPage /></AuthWrapper>} />
+                      <Route path="/players" element={<AuthWrapper><PlayersPage /></AuthWrapper>} />
+                      <Route path="/players/:playerId" element={<AuthWrapper><PlayerDetail /></AuthWrapper>} />
+                      <Route path="/analytics" element={<AuthWrapper><AnalyticsPage /></AuthWrapper>} />
+                      <Route path="/recap" element={<AuthWrapper><RecapPage /></AuthWrapper>} />
+                      <Route path="/using-proplytics" element={<AuthWrapper><UsingProplyticsPage /></AuthWrapper>} />
+                      <Route path="/settings" element={<AuthWrapper><SettingsPage /></AuthWrapper>} />
+                      <Route path="/data-processing" element={<AuthWrapper><DataProcessingPage /></AuthWrapper>} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </SidebarInset>
+                </div>
+              </SidebarProvider>
+            } />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
