@@ -1,5 +1,4 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,6 +23,12 @@ const HotPropsPage = () => {
 
   // Get props for selected league
   const allProps = getPropsForLeague(selectedLeague);
+
+  // Clear filters when league changes
+  React.useEffect(() => {
+    setFilters({});
+    setSearchQuery('');
+  }, [selectedLeague]);
 
   // Filter hot props (3+ consecutive overs or unders)
   const hotProps = useMemo(() => {
@@ -195,6 +200,7 @@ const HotPropsPage = () => {
           onRefresh={handleRefresh}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          selectedLeague={selectedLeague}
         />
 
         {/* Hot Props Table */}

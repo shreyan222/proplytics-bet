@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,20 +20,48 @@ interface PropsFiltersProps {
   isRefreshing?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  selectedLeague?: 'NBA' | 'NFL' | 'MLB';
 }
 
-const NBA_TEAMS = [
-  'ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW',
-  'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK',
-  'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'
-];
-
-const STAT_TYPES = [
-  'Points', 'Rebounds', 'Assists', 'Steals', 'Blocks', '3-Pointers Made',
-  'Field Goals Made', 'Free Throws Made', 'Turnovers', 'Double-Double'
-];
-
-const POSITIONS = ['PG', 'SG', 'SF', 'PF', 'C'];
+const LEAGUE_DATA = {
+  NBA: {
+    teams: [
+      'ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW',
+      'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK',
+      'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'
+    ],
+    positions: ['PG', 'SG', 'SF', 'PF', 'C'],
+    statTypes: [
+      'Points', 'Rebounds', 'Assists', 'Steals', 'Blocks', '3-Pointers Made',
+      'Field Goals Made', 'Free Throws Made', 'Turnovers', 'Double-Double'
+    ]
+  },
+  NFL: {
+    teams: [
+      'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN',
+      'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC', 'LV', 'LAC', 'LAR', 'MIA',
+      'MIN', 'NE', 'NO', 'NYG', 'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB',
+      'TEN', 'WAS'
+    ],
+    positions: ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'],
+    statTypes: [
+      'Passing Yards', 'Rushing Yards', 'Receiving Yards', 'Touchdowns', 'Receptions',
+      'Passing TDs', 'Rushing TDs', 'Receiving TDs', 'Interceptions', 'Sacks'
+    ]
+  },
+  MLB: {
+    teams: [
+      'ARI', 'ATL', 'BAL', 'BOS', 'CHC', 'CWS', 'CIN', 'CLE', 'COL', 'DET',
+      'HOU', 'KC', 'LAA', 'LAD', 'MIA', 'MIL', 'MIN', 'NYM', 'NYY', 'OAK',
+      'PHI', 'PIT', 'SD', 'SF', 'SEA', 'STL', 'TB', 'TEX', 'TOR', 'WAS'
+    ],
+    positions: ['P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'DH'],
+    statTypes: [
+      'Hits', 'Runs', 'RBIs', 'Home Runs', 'Stolen Bases', 'Strikeouts',
+      'Total Bases', 'Walks', 'Doubles', 'Triples'
+    ]
+  }
+};
 
 const ODDS_TYPES = [
   { value: 'standard', label: 'Standard' },
@@ -52,8 +81,11 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
   isRefreshing = false,
   searchQuery = '',
   onSearchChange,
+  selectedLeague = 'NBA',
 }) => {
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+
+  const currentLeagueData = LEAGUE_DATA[selectedLeague];
 
   React.useEffect(() => {
     const count = Object.values(filters).filter(value => 
@@ -82,7 +114,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search by player name, team, or stat type..."
+              placeholder={`Search by player name, team, or stat type...`}
               value={searchQuery}
               onChange={(e) => onSearchChange?.(e.target.value)}
               className="pl-10 bg-background text-foreground placeholder:text-muted-foreground border-border"
@@ -134,7 +166,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               <SelectValue placeholder="Team" />
             </SelectTrigger>
             <SelectContent>
-              {NBA_TEAMS.map((team) => (
+              {currentLeagueData.teams.map((team) => (
                 <SelectItem key={team} value={team} className="text-foreground hover:bg-muted">{team}</SelectItem>
               ))}
             </SelectContent>
@@ -146,7 +178,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               <SelectValue placeholder="Stat Type" />
             </SelectTrigger>
             <SelectContent>
-              {STAT_TYPES.map((stat) => (
+              {currentLeagueData.statTypes.map((stat) => (
                 <SelectItem key={stat} value={stat} className="text-foreground hover:bg-muted">{stat}</SelectItem>
               ))}
             </SelectContent>
@@ -170,7 +202,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               <SelectValue placeholder="Position" />
             </SelectTrigger>
             <SelectContent>
-              {POSITIONS.map((position) => (
+              {currentLeagueData.positions.map((position) => (
                 <SelectItem key={position} value={position} className="text-foreground hover:bg-muted">{position}</SelectItem>
               ))}
             </SelectContent>
