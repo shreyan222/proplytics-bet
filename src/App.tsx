@@ -1,68 +1,58 @@
+import React from "react"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Toaster } from "@/components/ui/toaster"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { AuthWrapper } from "@/components/AuthWrapper";
-import Index from "./pages/Index";
-import LandingPage from "./pages/LandingPage";
-import AuthPage from "./pages/AuthPage";
-import { PropsTrackerPage } from "./pages/PropsTrackerPage";
-import { BestPropsPage } from "./pages/BestPropsPage";
-import { ComparePage } from "./pages/ComparePage";
-import HotPropsPage from "./pages/HotPropsPage";
-import { PlayersPage } from "./pages/PlayersPage";
-import { AnalyticsPage } from "./pages/AnalyticsPage";
-import { UsingProplyticsPage } from "./pages/UsingProplyticsPage";
-import { SettingsPage } from "./pages/SettingsPage";
-import { PlayerDetail } from "./pages/PlayerDetail";
-import NotFound from "./pages/NotFound";
+import { Index } from "@/pages"
+import { LandingPage } from "@/pages/LandingPage"
+import { AuthPage } from "@/pages/AuthPage"
+import { NotFound } from "@/pages/NotFound"
+import { SettingsPage } from "@/pages/SettingsPage"
+import { DataProcessingPage } from "@/pages/DataProcessingPage"
+import { PropsTrackerPage } from "@/pages/PropsTrackerPage"
+import { BestPropsPage } from "@/pages/BestPropsPage"
+import { ComparePage } from "@/pages/ComparePage"
+import { HotPropsPage } from "@/pages/HotPropsPage"
+import { PlayersPage } from "@/pages/PlayersPage"
+import { PlayerDetail } from "@/pages/PlayerDetail"
+import { AnalyticsPage } from "@/pages/AnalyticsPage"
+import { UsingProplyticsPage } from "@/pages/UsingProplyticsPage"
 
-const queryClient = new QueryClient();
+import { AuthWrapper } from "@/components/AuthWrapper"
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/landing" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          
-          {/* Protected app routes */}
-          <Route path="/*" element={
-            <AuthWrapper>
-              <SidebarProvider>
-                <div className="min-h-screen flex w-full bg-background text-foreground">
-                  <AppSidebar />
-                  <main className="flex-1 bg-background">
-                    <Toaster />
-                    <Sonner />
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/tracker" element={<PropsTrackerPage />} />
-                      <Route path="/best-props" element={<BestPropsPage />} />
-                      <Route path="/compare" element={<ComparePage />} />
-                      <Route path="/hot-props" element={<HotPropsPage />} />
-                      <Route path="/players" element={<PlayersPage />} />
-                      <Route path="/players/:id" element={<PlayerDetail />} />
-                      <Route path="/analytics" element={<AnalyticsPage />} />
-                      <Route path="/using-proplytics" element={<UsingProplyticsPage />} />
-                      <Route path="/settings" element={<SettingsPage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                </div>
-              </SidebarProvider>
-            </AuthWrapper>
-          } />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const queryClient = new QueryClient()
+import RecapPage from "./pages/RecapPage";
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route element={<AuthWrapper />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/tracker" element={<PropsTrackerPage />} />
+              <Route path="/best-props" element={<BestPropsPage />} />
+              <Route path="/compare" element={<ComparePage />} />
+              <Route path="/hot-props" element={<HotPropsPage />} />
+              <Route path="/players" element={<PlayersPage />} />
+              <Route path="/players/:playerId" element={<PlayerDetail />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/recap" element={<RecapPage />} />
+              <Route path="/using-proplytics" element={<UsingProplyticsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/data-processing" element={<DataProcessingPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

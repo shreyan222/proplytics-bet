@@ -65,6 +65,11 @@ const items = [
     icon: BarChart3,
   },
   {
+    title: "Recap",
+    url: "/recap",
+    icon: Calendar,
+  },
+  {
     title: "Using Proplytics",
     url: "/using-proplytics",
     icon: HelpCircle,
