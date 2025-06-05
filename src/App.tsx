@@ -24,6 +24,7 @@ import RecapPage from "@/pages/RecapPage"
 
 import { AuthWrapper } from "@/components/AuthWrapper"
 import { AppSidebar } from "@/components/AppSidebar"
+import { Footer } from "@/components/Footer"
 
 const queryClient = new QueryClient()
 
@@ -38,25 +39,30 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/*" element={
               <SidebarProvider>
-                <div className="min-h-screen flex w-full">
-                  <AppSidebar />
-                  <SidebarInset className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<AuthWrapper><Index /></AuthWrapper>} />
-                      <Route path="/tracker" element={<AuthWrapper><PropsTrackerPage /></AuthWrapper>} />
-                      <Route path="/best-props" element={<AuthWrapper><BestPropsPage /></AuthWrapper>} />
-                      <Route path="/compare" element={<AuthWrapper><ComparePage /></AuthWrapper>} />
-                      <Route path="/hot-props" element={<AuthWrapper><HotPropsPage /></AuthWrapper>} />
-                      <Route path="/players" element={<AuthWrapper><PlayersPage /></AuthWrapper>} />
-                      <Route path="/players/:playerId" element={<AuthWrapper><PlayerDetail /></AuthWrapper>} />
-                      <Route path="/analytics" element={<AuthWrapper><AnalyticsPage /></AuthWrapper>} />
-                      <Route path="/recap" element={<AuthWrapper><RecapPage /></AuthWrapper>} />
-                      <Route path="/using-proplytics" element={<AuthWrapper><UsingProplyticsPage /></AuthWrapper>} />
-                      <Route path="/settings" element={<AuthWrapper><SettingsPage /></AuthWrapper>} />
-                      <Route path="/data-processing" element={<AuthWrapper><DataProcessingPage /></AuthWrapper>} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </SidebarInset>
+                <div className="min-h-screen flex w-full flex-col">
+                  <div className="flex flex-1">
+                    <AppSidebar />
+                    <SidebarInset className="flex-1 flex flex-col">
+                      <div className="flex-1">
+                        <Routes>
+                          <Route path="/" element={<AuthWrapper><Index /></AuthWrapper>} />
+                          <Route path="/tracker" element={<AuthWrapper><PropsTrackerPage /></AuthWrapper>} />
+                          <Route path="/best-props" element={<AuthWrapper><BestPropsPage /></AuthWrapper>} />
+                          <Route path="/compare" element={<AuthWrapper><ComparePage /></AuthWrapper>} />
+                          <Route path="/hot-props" element={<AuthWrapper><HotPropsPage /></AuthWrapper>} />
+                          <Route path="/players" element={<AuthWrapper><PlayersPage /></AuthWrapper>} />
+                          <Route path="/players/:playerId" element={<AuthWrapper><PlayerDetail /></AuthWrapper>} />
+                          <Route path="/analytics" element={<AuthWrapper><AnalyticsPage /></AuthWrapper>} />
+                          <Route path="/recap" element={<AuthWrapper><RecapPage /></AuthWrapper>} />
+                          <Route path="/using-proplytics" element={<AuthWrapper><UsingProplyticsPage /></AuthWrapper>} />
+                          <Route path="/settings" element={<AuthWrapper><SettingsPage /></AuthWrapper>} />
+                          <Route path="/data-processing" element={<AuthWrapper><DataProcessingPage /></AuthWrapper>} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </div>
+                      <Footer />
+                    </SidebarInset>
+                  </div>
                 </div>
               </SidebarProvider>
             } />
