@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Instagram, Twitter } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
@@ -48,26 +49,26 @@ export const Footer = () => {
 
           {/* Legal Links */}
           <div className="flex items-center space-x-6 text-sm">
-            <a
-              href="#"
+            <Link
+              to="/responsible-gaming"
               className="text-slate-400 hover:text-white transition-colors"
             >
               Responsible Gaming
-            </a>
+            </Link>
             <span className="text-slate-600">|</span>
-            <a
-              href="#"
+            <Link
+              to="/terms-of-use"
               className="text-slate-400 hover:text-white transition-colors"
             >
               Terms of Use
-            </a>
+            </Link>
             <span className="text-slate-600">|</span>
-            <a
-              href="#"
+            <Link
+              to="/privacy-policy"
               className="text-slate-400 hover:text-white transition-colors"
             >
               Privacy Policy
-            </a>
+            </Link>
           </div>
         </div>
       </div>

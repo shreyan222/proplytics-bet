@@ -21,6 +21,9 @@ import { PlayerDetail } from "@/pages/PlayerDetail"
 import { AnalyticsPage } from "@/pages/AnalyticsPage"
 import UsingProplyticsPage from "@/pages/UsingProplyticsPage"
 import RecapPage from "@/pages/RecapPage"
+import ResponsibleGamingPage from "@/pages/ResponsibleGamingPage"
+import TermsOfUsePage from "@/pages/TermsOfUsePage"
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage"
 
 import { AuthWrapper } from "@/components/AuthWrapper"
 import { AppSidebar } from "@/components/AppSidebar"
@@ -37,6 +40,9 @@ function App() {
           <Routes>
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/responsible-gaming" element={<ResponsibleGamingPage />} />
+            <Route path="/terms-of-use" element={<TermsOfUsePage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/*" element={
               <SidebarProvider>
                 <div className="min-h-screen flex w-full flex-col">
