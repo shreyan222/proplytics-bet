@@ -40,9 +40,6 @@ function App() {
           <Routes>
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/responsible-gaming" element={<ResponsibleGamingPage />} />
-            <Route path="/terms-of-use" element={<TermsOfUsePage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/*" element={
               <SidebarProvider>
                 <div className="min-h-screen flex w-full flex-col">
@@ -63,6 +60,9 @@ function App() {
                           <Route path="/using-proplytics" element={<AuthWrapper><UsingProplyticsPage /></AuthWrapper>} />
                           <Route path="/settings" element={<AuthWrapper><SettingsPage /></AuthWrapper>} />
                           <Route path="/data-processing" element={<AuthWrapper><DataProcessingPage /></AuthWrapper>} />
+                          <Route path="/responsible-gaming" element={<ResponsibleGamingPage />} />
+                          <Route path="/terms-of-use" element={<TermsOfUsePage />} />
+                          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </div>
