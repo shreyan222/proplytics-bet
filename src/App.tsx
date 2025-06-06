@@ -29,7 +29,14 @@ import { AuthWrapper } from "@/components/AuthWrapper"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Footer } from "@/components/Footer"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 function App() {
   return (
