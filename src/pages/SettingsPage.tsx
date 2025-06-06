@@ -7,9 +7,10 @@ import { NotificationSettings } from '@/components/NotificationSettings';
 import { FavoritePlayersManager } from '@/components/FavoritePlayersManager';
 import { FilterPresetsManager } from '@/components/FilterPresetsManager';
 import { AlertsManager } from '@/components/AlertsManager';
+import { AccountManagement } from '@/components/AccountManagement';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings, Bell, Users, Filter, AlertTriangle, Palette } from 'lucide-react';
+import { ArrowLeft, Settings, Bell, Users, Filter, AlertTriangle, Palette, UserCog } from 'lucide-react';
 import { PropFilters } from '@/types/nba';
 
 export const SettingsPage: React.FC = () => {
@@ -42,10 +43,14 @@ export const SettingsPage: React.FC = () => {
 
       {/* Settings Tabs */}
       <Tabs defaultValue="appearance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="appearance" className="flex items-center gap-2">
             <Palette className="h-4 w-4" />
             Appearance
+          </TabsTrigger>
+          <TabsTrigger value="account" className="flex items-center gap-2">
+            <UserCog className="h-4 w-4" />
+            Account
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -77,6 +82,10 @@ export const SettingsPage: React.FC = () => {
               <ThemeToggle />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="account" className="space-y-4">
+          <AccountManagement />
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">

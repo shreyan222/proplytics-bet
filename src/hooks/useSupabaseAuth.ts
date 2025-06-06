@@ -46,6 +46,43 @@ export const useSupabaseAuth = () => {
     }
   };
 
+  const canChangeUsername = async (userId: string) => {
+    try {
+      const { data, error } = await supabase.rpc('can_change_username', {
+        user_id: userId
+      });
+      
+      if (error) {
+        console.error('Error checking username change availability:', error);
+        return false;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error checking username change availability:', error);
+      return false;
+    }
+  };
+
+  const updateUsername = async (userId: string, newUsername: string) => {
+    try {
+      const { data, error } = await supabase.rpc('update_username', {
+        user_id: userId,
+        new_username: newUsername
+      });
+      
+      if (error) {
+        console.error('Error updating username:', error);
+        return { success: false, error: error.message };
+      }
+      
+      return { success: data, error: null };
+    } catch (error) {
+      console.error('Error updating username:', error);
+      return { success: false, error: 'An unexpected error occurred' };
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -79,5 +116,7 @@ export const useSupabaseAuth = () => {
     signUp,
     signOut,
     checkUsernameAvailability,
+    canChangeUsername,
+    updateUsername,
   };
 };

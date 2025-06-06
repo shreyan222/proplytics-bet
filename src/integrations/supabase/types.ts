@@ -146,6 +146,7 @@ export type Database = {
           id: string
           updated_at: string | null
           username: string
+          username_last_changed: string | null
         }
         Insert: {
           created_at?: string | null
@@ -153,6 +154,7 @@ export type Database = {
           id: string
           updated_at?: string | null
           username: string
+          username_last_changed?: string | null
         }
         Update: {
           created_at?: string | null
@@ -160,6 +162,7 @@ export type Database = {
           id?: string
           updated_at?: string | null
           username?: string
+          username_last_changed?: string | null
         }
         Relationships: []
       }
@@ -297,8 +300,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_change_username: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
       is_username_available: {
         Args: { username_to_check: string }
+        Returns: boolean
+      }
+      update_username: {
+        Args: { user_id: string; new_username: string }
         Returns: boolean
       }
     }
