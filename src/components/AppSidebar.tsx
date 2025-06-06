@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth"
+import { useUserProfile } from "@/hooks/useUserProfile"
 
 const items = [
   {
@@ -86,6 +87,7 @@ export function AppSidebar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, signOut } = useSupabaseAuth()
+  const { profile } = useUserProfile()
 
   const handleSignOut = async () => {
     try {
@@ -143,7 +145,7 @@ export function AppSidebar() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">
-                {user?.email || 'User'}
+                {profile?.username || user?.email || 'User'}
               </p>
               <p className="text-xs text-muted-foreground">
                 Signed in

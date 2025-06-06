@@ -28,6 +28,24 @@ export const useSupabaseAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const checkUsernameAvailability = async (username: string) => {
+    try {
+      const { data, error } = await supabase.rpc('is_username_available', {
+        username_to_check: username
+      });
+      
+      if (error) {
+        console.error('Error checking username:', error);
+        return false;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error checking username:', error);
+      return false;
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -36,10 +54,15 @@ export const useSupabaseAuth = () => {
     return { data, error };
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, username: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username: username
+        }
+      }
     });
     return { data, error };
   };
@@ -55,5 +78,6 @@ export const useSupabaseAuth = () => {
     signIn,
     signUp,
     signOut,
+    checkUsernameAvailability,
   };
 };
