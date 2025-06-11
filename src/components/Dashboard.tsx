@@ -8,18 +8,19 @@ import { Link } from 'react-router-dom';
 import { LeagueSelector } from './LeagueSelector';
 import { PropsTable } from './PropsTable';
 import { PropsFilters } from './PropsFilters';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 import { PropFilters } from '@/types/nba';
 
 export const Dashboard = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<PropFilters>({});
   
-  const props = getPropsForLeague(selectedLeague);
+  const props = getPropsForMultipleLeagues(selectedLeagues);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
 
-  // Calculate stats based on selected league
+  // Calculate stats based on selected leagues
   const totalProps = props.length;
   const standardProps = props.filter(p => p.odds_type === 'standard').length;
   const demonProps = props.filter(p => p.odds_type === 'demon').length;
@@ -64,7 +65,7 @@ export const Dashboard = () => {
     {
       title: "Total Props",
       value: totalProps,
-      description: `Active ${selectedLeague} props available`,
+      description: `Active ${leagueDisplay} props available`,
       icon: <BarChart3 className="h-9 w-9 text-blue-400" />,
       gradient: 'from-black-500/80 to-blue-600/80',
       border: 'border-blue-500/30'
@@ -98,21 +99,21 @@ export const Dashboard = () => {
   const quickActions = [
     {
       title: "Top Props",
-      description: `View best ${selectedLeague} props today`,
+      description: `View best ${leagueDisplay} props today`,
       icon: Trophy,
       link: "/best-props",
       color: "bg-blue-600 hover:bg-blue-700"
     },
     {
       title: "Props Tracker",
-      description: `Track ${selectedLeague} prop changes`,
+      description: `Track ${leagueDisplay} prop changes`,
       icon: Activity,
       link: "/tracker",
       color: "bg-green-600 hover:bg-green-700"
     },
     {
       title: "Compare Props",
-      description: `Compare ${selectedLeague} props side-by-side`,
+      description: `Compare ${leagueDisplay} props side-by-side`,
       icon: BarChart3,
       link: "/compare",
       color: "bg-purple-600 hover:bg-purple-700"
@@ -144,17 +145,17 @@ export const Dashboard = () => {
       <div className="relative z-10 container mx-auto p-6 space-y-6">
         {/* League Selector */}
         <LeagueSelector
-          selectedLeague={selectedLeague}
-          onLeagueChange={setSelectedLeague}
+          selectedLeagues={selectedLeagues}
+          onLeaguesChange={setSelectedLeagues}
         />
 
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-4">
-            {selectedLeague} Props Analytics
+            {leagueDisplay} Props Analytics
           </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            Advanced analytics and insights for {selectedLeague} prop betting with real-time data and AI-powered scoring
+            Advanced analytics and insights for {leagueDisplay} prop betting with real-time data and AI-powered scoring
           </p>
           <Badge className="mt-4 bg-green-600 hover:bg-green-700">
             <Activity className="h-3 w-3 mr-1" />
@@ -203,9 +204,9 @@ export const Dashboard = () => {
         {/* Props Table Section */}
         <Card className="glass-card border border-slate-700">
           <CardHeader>
-            <CardTitle className="text-white">{selectedLeague} Props Overview</CardTitle>
+            <CardTitle className="text-white">{leagueDisplay} Props Overview</CardTitle>
             <CardDescription className="text-slate-400">
-              Complete view of all {selectedLeague} props with advanced filtering
+              Complete view of all {leagueDisplay} props with advanced filtering
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
