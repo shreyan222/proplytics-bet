@@ -139,15 +139,20 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-gray-700">
         <div className="space-y-3">
           {/* User info */}
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-700/50">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+          <div className="group flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-700/50 transition-all duration-300 hover:bg-gray-600/50 hover:scale-105 cursor-pointer overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
               <User className="h-4 w-4 text-primary" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 transition-all duration-300">
               <p className="text-sm font-medium text-foreground truncate">
                 {profile?.username || user?.email || 'User'}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <div className="overflow-hidden transition-all duration-300 group-hover:max-h-6 max-h-0">
+                <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                  {user?.email || 'No email'}
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground group-hover:opacity-0 transition-opacity duration-200">
                 Signed in
               </p>
             </div>
