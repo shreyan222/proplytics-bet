@@ -8,11 +8,12 @@ import { PropFilters } from '@/types/nba';
 import { PropsFilters } from '@/components/PropsFilters';
 import { BarChart3, Download, TrendingUp } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 
 export const AnalyticsPage: React.FC = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
-  const props = getPropsForLeague(selectedLeague);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const props = getPropsForMultipleLeagues(selectedLeagues);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
   
   const [filters, setFilters] = useState<PropFilters>({});
 
@@ -39,15 +40,15 @@ export const AnalyticsPage: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       {/* League Selector */}
       <LeagueSelector
-        selectedLeague={selectedLeague}
-        onLeagueChange={setSelectedLeague}
+        selectedLeagues={selectedLeagues}
+        onLeaguesChange={setSelectedLeagues}
       />
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">{selectedLeague} Analytics & Export</h1>
+        <h1 className="text-3xl font-bold text-white">{leagueDisplay} Analytics & Export</h1>
         <p className="text-base text-slate-400">
-          Performance insights and data export tools for {selectedLeague} props
+          Performance insights and data export tools for {leagueDisplay} props
         </p>
       </div>
 
@@ -85,7 +86,7 @@ export const AnalyticsPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-white">
                 <TrendingUp className="h-5 w-5" />
-                {selectedLeague} Export Preview
+                {leagueDisplay} Export Preview
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -113,7 +114,7 @@ export const AnalyticsPage: React.FC = () => {
                 
                 {filteredProps.length > 0 && (
                   <div className="text-sm text-slate-400">
-                    Top scoring {selectedLeague} prop: <strong className="text-white">{filteredProps[0]?.player_name}</strong> - 
+                    Top scoring {leagueDisplay} prop: <strong className="text-white">{filteredProps[0]?.player_name}</strong> - 
                     {filteredProps[0]?.stat_type} {filteredProps[0]?.line_score} 
                     (Score: {filteredProps[0]?.sorting_score.toFixed(3)})
                   </div>

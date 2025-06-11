@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Flame, Filter } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { PropsFilters } from '@/components/PropsFilters';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
 import { Prop, PropFilters } from '@/types/nba';
 
@@ -16,19 +17,21 @@ interface HotProp extends Prop {
 }
 
 const HotPropsPage = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
   const [filters, setFilters] = useState<PropFilters>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
-  // Get props for selected league
-  const allProps = getPropsForLeague(selectedLeague);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
 
-  // Clear filters when league changes
+  // Get props for selected leagues
+  const allProps = getPropsForMultipleLeagues(selectedLeagues);
+
+  // Clear filters when leagues change
   React.useEffect(() => {
     setFilters({});
     setSearchQuery('');
-  }, [selectedLeague]);
+  }, [selectedLeagues]);
 
   // Filter hot props (3+ consecutive overs or unders)
   const hotProps = useMemo(() => {
@@ -97,7 +100,7 @@ const HotPropsPage = () => {
 
   const handleRefresh = () => {
     // Simulate refresh - in real app this would refetch data
-    console.log(`Refreshing ${selectedLeague} hot props data...`);
+    console.log(`Refreshing ${leagueDisplay} hot props data...`);
   };
 
   return (
@@ -119,8 +122,8 @@ const HotPropsPage = () => {
 
           {/* League Selector */}
           <LeagueSelector 
-            selectedLeague={selectedLeague}
-            onLeagueChange={setSelectedLeague}
+            selectedLeagues={selectedLeagues}
+            onLeaguesChange={setSelectedLeagues}
             className="w-fit"
           />
         </div>
@@ -200,7 +203,7 @@ const HotPropsPage = () => {
           onRefresh={handleRefresh}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          selectedLeague={selectedLeague}
+          selectedLeague={selectedLeagues[0] || 'NBA'}
         />
 
         {/* Hot Props Table */}
@@ -209,10 +212,10 @@ const HotPropsPage = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Flame className="h-5 w-5 text-orange-500" />
-                {selectedLeague} Hot Props - Trending Opportunities
+                {leagueDisplay} Hot Props - Trending Opportunities
               </CardTitle>
               <CardDescription>
-                {selectedLeague} props with 3+ consecutive overs or unders. Use these trends to identify potential opportunities.
+                {leagueDisplay} props with 3+ consecutive overs or unders. Use these trends to identify potential opportunities.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -307,7 +310,7 @@ const HotPropsPage = () => {
               <Flame className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">No Hot Props Found</h3>
               <p className="text-muted-foreground">
-                No {selectedLeague} props currently have 3+ consecutive overs or unders. Try adjusting your filters or check back later.
+                No {leagueDisplay} props currently have 3+ consecutive overs or unders. Try adjusting your filters or check back later.
               </p>
             </CardContent>
           </Card>

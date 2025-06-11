@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,10 +9,11 @@ import { Switch } from '@/components/ui/switch';
 import { Activity, RefreshCw, Plus, Minus, Edit, Search, Download, Table, Grid3X3, Clock, Bell } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { TrackerPropsTable } from '@/components/TrackerPropsTable';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 
 export const PropsTrackerPage: React.FC = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -25,8 +25,8 @@ export const PropsTrackerPage: React.FC = () => {
   const [refreshCountdown, setRefreshCountdown] = useState(300);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  // Get props for selected league
-  const props = getPropsForLeague(selectedLeague);
+  // Get props for selected leagues
+  const props = getPropsForMultipleLeagues(selectedLeagues);
 
   // Transform props data to match TrackerPropsTable expected format
   const trackerData = useMemo(() => {
@@ -63,11 +63,11 @@ export const PropsTrackerPage: React.FC = () => {
         }
       })),
       recent_activities: [
-        { id: '1', type: 'new', message: `New ${selectedLeague} prop added`, timestamp: new Date() },
-        { id: '2', type: 'changed', message: `${selectedLeague} prop line updated`, timestamp: new Date() },
+        { id: '1', type: 'new', message: `New ${leagueDisplay} prop added`, timestamp: new Date() },
+        { id: '2', type: 'changed', message: `${leagueDisplay} prop line updated`, timestamp: new Date() },
       ]
     };
-  }, [props, selectedLeague]);
+  }, [props, leagueDisplay]);
 
   // Auto-refresh countdown
   useEffect(() => {
@@ -105,17 +105,17 @@ export const PropsTrackerPage: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       {/* League Selector */}
       <LeagueSelector
-        selectedLeague={selectedLeague}
-        onLeagueChange={setSelectedLeague}
+        selectedLeagues={selectedLeagues}
+        onLeaguesChange={setSelectedLeagues}
       />
 
       {/* Header */}
       <div className="border-b border-slate-700 pb-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-white">{selectedLeague} Props Tracker</h1>
+            <h1 className="text-4xl font-bold tracking-tight text-white">{leagueDisplay} Props Tracker</h1>
             <p className="text-xl text-slate-400 mt-2">
-              Real-time {selectedLeague} prop monitoring and change detection
+              Real-time {leagueDisplay} prop monitoring and change detection
             </p>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-2 text-sm text-slate-400">
@@ -369,7 +369,7 @@ export const PropsTrackerPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="text-white">Live Activity</CardTitle>
               <CardDescription className="text-slate-400">
-                Recent {selectedLeague} prop changes
+                Recent {leagueDisplay} prop changes
               </CardDescription>
             </CardHeader>
             <CardContent>

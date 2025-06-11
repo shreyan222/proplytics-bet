@@ -6,22 +6,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PlayerCard } from '@/components/PlayerCard';
 import { Search, Users } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 
 export const PlayersPage: React.FC = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
-  const props = getPropsForLeague(selectedLeague);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const props = getPropsForMultipleLeagues(selectedLeagues);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
   const [selectedPosition, setSelectedPosition] = useState<string>('all');
 
-  // Mock teams data based on league
-  const teams = selectedLeague === 'NBA' 
-    ? [{ id: '1', abbreviation: 'LAL' }, { id: '2', abbreviation: 'GSW' }, { id: '3', abbreviation: 'BOS' }, { id: '4', abbreviation: 'MIL' }]
-    : selectedLeague === 'NFL'
-    ? [{ id: '1', abbreviation: 'BUF' }, { id: '2', abbreviation: 'LV' }, { id: '3', abbreviation: 'SF' }, { id: '4', abbreviation: 'KC' }]
-    : [{ id: '1', abbreviation: 'LAD' }, { id: '2', abbreviation: 'NYY' }, { id: '3', abbreviation: 'BOS' }, { id: '4', abbreviation: 'SF' }];
+  // Get unique teams and positions from all selected leagues
+  const teams = [...new Set(props.map(prop => prop.team))].sort();
+  const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean).sort();
 
   // Group props by player
   const playerData = props.reduce((acc, prop) => {
@@ -57,15 +55,12 @@ export const PlayersPage: React.FC = () => {
     return matchesSearch && matchesTeam && matchesPosition;
   });
 
-  // Get unique positions based on league
-  const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean);
-
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* League Selector */}
       <LeagueSelector
-        selectedLeague={selectedLeague}
-        onLeagueChange={setSelectedLeague}
+        selectedLeagues={selectedLeagues}
+        onLeaguesChange={setSelectedLeagues}
       />
 
       {/* Header */}
@@ -73,7 +68,7 @@ export const PlayersPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-white">
             <Users className="h-5 w-5" />
-            {selectedLeague} Players ({filteredPlayers.length})
+            {leagueDisplay} Players ({filteredPlayers.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -94,8 +89,8 @@ export const PlayersPage: React.FC = () => {
               <SelectContent>
                 <SelectItem value="all">All Teams</SelectItem>
                 {teams.map(team => (
-                  <SelectItem key={team.id} value={team.abbreviation}>
-                    {team.abbreviation}
+                  <SelectItem key={team} value={team}>
+                    {team}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -136,7 +131,7 @@ export const PlayersPage: React.FC = () => {
       {filteredPlayers.length === 0 && (
         <Card className="glass-card border border-slate-700">
           <CardContent className="text-center py-8">
-            <p className="text-gray-400">No {selectedLeague} players found matching your criteria.</p>
+            <p className="text-gray-400">No {leagueDisplay} players found matching your criteria.</p>
           </CardContent>
         </Card>
       )}

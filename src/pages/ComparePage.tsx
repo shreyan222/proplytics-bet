@@ -9,11 +9,12 @@ import { Search, X, GitCompare, Download, Share2 } from 'lucide-react';
 import { ComparisonTable } from '@/components/ComparisonTable';
 import { useDebounce } from '@/hooks/useDebounce';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 
 export const ComparePage: React.FC = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
-  const props = getPropsForLeague(selectedLeague);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const props = getPropsForMultipleLeagues(selectedLeagues);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProps, setSelectedProps] = useState<Prop[]>([]);
@@ -58,10 +59,17 @@ export const ComparePage: React.FC = () => {
     console.log('Sharing comparison...');
   };
 
-  // Clear selected props when league changes
+  // Clear selected props when leagues change
   React.useEffect(() => {
     setSelectedProps([]);
-  }, [selectedLeague]);
+  }, [selectedLeagues]);
+
+  const getExampleSearch = () => {
+    if (selectedLeagues.includes('NBA')) return 'LeBron James points';
+    if (selectedLeagues.includes('NFL')) return 'Josh Allen passing yards';
+    if (selectedLeagues.includes('MLB')) return 'Shohei Ohtani total bases';
+    return 'player name';
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -73,8 +81,8 @@ export const ComparePage: React.FC = () => {
       <div className="relative z-10 container mx-auto p-6 space-y-6">
         {/* League Selector */}
         <LeagueSelector
-          selectedLeague={selectedLeague}
-          onLeagueChange={setSelectedLeague}
+          selectedLeagues={selectedLeagues}
+          onLeaguesChange={setSelectedLeagues}
         />
 
         {/* Header */}
@@ -83,10 +91,10 @@ export const ComparePage: React.FC = () => {
             <GitCompare className="h-12 w-12 text-blue-400" />
             <div>
               <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                Compare {selectedLeague} Props
+                Compare {leagueDisplay} Props
               </h1>
               <p className="text-xl text-slate-400 mt-2">
-                Side-by-side analysis of up to 4 {selectedLeague} props with detailed metrics
+                Side-by-side analysis of up to 4 {leagueDisplay} props with detailed metrics
               </p>
             </div>
           </div>
@@ -97,7 +105,7 @@ export const ComparePage: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Search className="h-5 w-5" />
-              Search & Select {selectedLeague} Props
+              Search & Select {leagueDisplay} Props
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -105,7 +113,7 @@ export const ComparePage: React.FC = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
-                placeholder={`Search by player name, team, or stat type (e.g., '${selectedLeague === 'NBA' ? 'LeBron James points' : selectedLeague === 'NFL' ? 'Josh Allen passing yards' : 'Shohei Ohtani total bases'}', 'Lakers', 'assists')`}
+                placeholder={`Search by player name, team, or stat type (e.g., '${getExampleSearch()}', 'Lakers', 'assists')`}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -162,7 +170,7 @@ export const ComparePage: React.FC = () => {
               {/* No Results */}
               {showDropdown && searchResults.length === 0 && debouncedSearchQuery.trim() && (
                 <div className="absolute top-full left-0 right-0 mt-1 glass-card border border-slate-600 rounded-lg p-4 z-50">
-                  <p className="text-slate-400 text-center">No {selectedLeague} props found</p>
+                  <p className="text-slate-400 text-center">No {leagueDisplay} props found</p>
                 </div>
               )}
             </div>
@@ -198,7 +206,7 @@ export const ComparePage: React.FC = () => {
                     ) : (
                       <div className="text-center">
                         <div className="text-slate-500 text-sm">Slot {index + 1}</div>
-                        <div className="text-slate-600 text-xs mt-1">Select a {selectedLeague} prop to compare</div>
+                        <div className="text-slate-600 text-xs mt-1">Select a {leagueDisplay} prop to compare</div>
                       </div>
                     )}
                   </div>

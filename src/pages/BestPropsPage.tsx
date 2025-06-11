@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,12 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, TrendingUp, Search, Filter, RefreshCw, Star, Target, BarChart3 } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { PropsTable } from '@/components/PropsTable';
-import { getPropsForLeague } from '@/utils/multiLeagueSampleData';
+import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
 import { Prop } from '@/types/nba';
 
 export const BestPropsPage: React.FC = () => {
-  const [selectedLeague, setSelectedLeague] = useState<'NBA' | 'NFL' | 'MLB'>('NBA');
-  const props = getPropsForLeague(selectedLeague);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const props = getPropsForMultipleLeagues(selectedLeagues);
+  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -22,6 +24,11 @@ export const BestPropsPage: React.FC = () => {
   const [selectedStatType, setSelectedStatType] = useState<string>('all');
   const [minScore, setMinScore] = useState<number>(0);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  // Get unique teams, positions, and stat types from all selected leagues
+  const teams = [...new Set(props.map(prop => prop.team))].sort();
+  const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean).sort();
+  const statTypes = [...new Set(props.map(prop => prop.stat_type))].sort();
 
   // Filter and sort props by odds type and score
   const { standardProps, demonProps, goblinProps } = useMemo(() => {
@@ -52,15 +59,15 @@ export const BestPropsPage: React.FC = () => {
   }, [props, searchQuery, selectedTeam, selectedPosition, selectedStatType, minScore]);
 
   const handleRefresh = () => {
-    console.log(`Refreshing ${selectedLeague} props data...`);
+    console.log(`Refreshing ${leagueDisplay} props data...`);
   };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* League Selector */}
       <LeagueSelector
-        selectedLeague={selectedLeague}
-        onLeagueChange={setSelectedLeague}
+        selectedLeagues={selectedLeagues}
+        onLeaguesChange={setSelectedLeagues}
       />
 
       {/* Header */}
@@ -69,10 +76,10 @@ export const BestPropsPage: React.FC = () => {
           <div>
             <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
               <Trophy className="h-10 w-10 text-yellow-500" />
-              Top {selectedLeague} Props
+              Top {leagueDisplay} Props
             </h1>
             <p className="text-xl text-slate-400 mt-2">
-              Top-rated {selectedLeague} prop recommendations based on advanced analytics
+              Top-rated {leagueDisplay} prop recommendations based on advanced analytics
             </p>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-2 text-sm text-slate-400">
@@ -173,10 +180,11 @@ export const BestPropsPage: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Teams</SelectItem>
-                <SelectItem value="LAL">Lakers</SelectItem>
-                <SelectItem value="GSW">Warriors</SelectItem>
-                <SelectItem value="BOS">Celtics</SelectItem>
-                <SelectItem value="MIL">Bucks</SelectItem>
+                {teams.map(team => (
+                  <SelectItem key={team} value={team}>
+                    {team}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -186,11 +194,11 @@ export const BestPropsPage: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Positions</SelectItem>
-                <SelectItem value="PG">Point Guard</SelectItem>
-                <SelectItem value="SG">Shooting Guard</SelectItem>
-                <SelectItem value="SF">Small Forward</SelectItem>
-                <SelectItem value="PF">Power Forward</SelectItem>
-                <SelectItem value="C">Center</SelectItem>
+                {positions.map(position => (
+                  <SelectItem key={position} value={position}>
+                    {position}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -200,10 +208,11 @@ export const BestPropsPage: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Stats</SelectItem>
-                <SelectItem value="Points">Points</SelectItem>
-                <SelectItem value="Rebounds">Rebounds</SelectItem>
-                <SelectItem value="Assists">Assists</SelectItem>
-                <SelectItem value="3-Pointers Made">3-Pointers</SelectItem>
+                {statTypes.map(statType => (
+                  <SelectItem key={statType} value={statType}>
+                    {statType}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -254,7 +263,7 @@ export const BestPropsPage: React.FC = () => {
         <TabsContent value="standard">
           <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-blue-400">Standard {selectedLeague} Props</CardTitle>
+              <CardTitle className="text-blue-400">Standard {leagueDisplay} Props</CardTitle>
               <CardDescription className="text-slate-400">
                 Regular odds props with standard scoring analysis
               </CardDescription>
@@ -268,7 +277,7 @@ export const BestPropsPage: React.FC = () => {
         <TabsContent value="demon">
           <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-red-400">Demon {selectedLeague} Props</CardTitle>
+              <CardTitle className="text-red-400">Demon {leagueDisplay} Props</CardTitle>
               <CardDescription className="text-slate-400">
                 High-risk, high-reward props with advanced analysis
               </CardDescription>
@@ -282,7 +291,7 @@ export const BestPropsPage: React.FC = () => {
         <TabsContent value="goblin">
           <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="text-green-400">Goblin {selectedLeague} Props</CardTitle>
+              <CardTitle className="text-green-400">Goblin {leagueDisplay} Props</CardTitle>
               <CardDescription className="text-slate-400">
                 Low-risk, consistent props with reliable analysis
               </CardDescription>
