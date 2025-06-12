@@ -5,24 +5,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, TrendingUp, TrendingDown, Target } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Target, User } from 'lucide-react';
 import { PlayerPerformanceChart } from '@/components/PlayerPerformanceChart';
-import { usePropsData } from '@/hooks/usePropsData';
-import { Prop } from '@/types/nba';
+import { getPropsForMultipleLeagues } from '@/utils/multiLeagueUtils';
 
 export const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
   const navigate = useNavigate();
-  const { data: props = [], isLoading } = usePropsData();
-
+  
+  // Get all props from all leagues
+  const allProps = getPropsForMultipleLeagues(['NBA', 'NFL', 'MLB']);
+  
   // Filter props for this player
-  const playerProps = props.filter(prop => prop.player_id === playerId);
+  const playerProps = allProps.filter(prop => prop.player_id === playerId);
   const playerInfo = playerProps[0];
 
-  if (isLoading) {
+  if (!playerInfo && playerId) {
     return (
       <div className="container mx-auto p-6">
-        <div className="text-center py-8">Loading player data...</div>
+        <Button variant="outline" onClick={() => navigate('/players')} className="mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Players
+        </Button>
+        <div className="text-center py-8">
+          <p className="text-lg text-muted-foreground">Player not found</p>
+          <p className="text-sm text-muted-foreground mt-2">The player with ID "{playerId}" could not be found.</p>
+        </div>
       </div>
     );
   }
@@ -30,11 +38,13 @@ export const PlayerDetail: React.FC = () => {
   if (!playerInfo) {
     return (
       <div className="container mx-auto p-6">
-        <Button variant="outline" onClick={() => navigate('/')} className="mb-4">
+        <Button variant="outline" onClick={() => navigate('/players')} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Dashboard
+          Back to Players
         </Button>
-        <div className="text-center py-8">Player not found</div>
+        <div className="text-center py-8">
+          <p className="text-lg text-muted-foreground">Loading player data...</p>
+        </div>
       </div>
     );
   }
@@ -49,10 +59,10 @@ export const PlayerDetail: React.FC = () => {
     if (!acc[prop.stat_type]) acc[prop.stat_type] = [];
     acc[prop.stat_type].push(prop);
     return acc;
-  }, {} as Record<string, Prop[]>);
+  }, {} as Record<string, typeof playerProps>);
 
   // Generate mock performance data for charts
-  const generatePerformanceData = (props: Prop[]) => {
+  const generatePerformanceData = (props: typeof playerProps) => {
     return props.slice(0, 10).map((prop, index) => ({
       date: new Date(Date.now() - (10 - index) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       score: prop.sorting_score,
@@ -67,45 +77,50 @@ export const PlayerDetail: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={() => navigate('/')}>
+        <Button variant="outline" onClick={() => navigate('/players')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Dashboard
+          Back to Players
         </Button>
       </div>
 
       {/* Player Info Card */}
-      <Card>
+      <Card className="glass-card border border-slate-700">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl">{playerInfo.player_name}</CardTitle>
-              <div className="flex gap-2 mt-2">
-                <Badge variant="secondary">{playerInfo.position}</Badge>
-                <Badge variant="outline">{playerInfo.team}</Badge>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/30">
+                <User className="h-8 w-8 text-blue-400" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl text-white">{playerInfo.player_name}</CardTitle>
+                <div className="flex gap-2 mt-2">
+                  <Badge variant="secondary">{playerInfo.position}</Badge>
+                  <Badge variant="outline">{playerInfo.team}</Badge>
+                </div>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Total Props</p>
-              <p className="text-2xl font-bold">{playerProps.length}</p>
+              <p className="text-sm text-slate-400">Total Props</p>
+              <p className="text-2xl font-bold text-white">{playerProps.length}</p>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 border rounded-lg">
+            <div className="text-center p-4 border border-slate-700 rounded-lg bg-slate-800/50">
               <TrendingUp className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-              <p className="text-sm text-muted-foreground">Avg H2H Score</p>
-              <p className="text-xl font-semibold">{avgH2HScore.toFixed(2)}</p>
+              <p className="text-sm text-slate-400">Avg H2H Score</p>
+              <p className="text-xl font-semibold text-white">{avgH2HScore.toFixed(2)}</p>
             </div>
-            <div className="text-center p-4 border rounded-lg">
+            <div className="text-center p-4 border border-slate-700 rounded-lg bg-slate-800/50">
               <TrendingDown className="h-8 w-8 mx-auto mb-2 text-green-500" />
-              <p className="text-sm text-muted-foreground">Avg L5 Score</p>
-              <p className="text-xl font-semibold">{avgL5Score.toFixed(2)}</p>
+              <p className="text-sm text-slate-400">Avg L5 Score</p>
+              <p className="text-xl font-semibold text-white">{avgL5Score.toFixed(2)}</p>
             </div>
-            <div className="text-center p-4 border rounded-lg">
+            <div className="text-center p-4 border border-slate-700 rounded-lg bg-slate-800/50">
               <Target className="h-8 w-8 mx-auto mb-2 text-purple-500" />
-              <p className="text-sm text-muted-foreground">Avg Final Score</p>
-              <p className="text-xl font-semibold">{avgSortingScore.toFixed(2)}</p>
+              <p className="text-sm text-slate-400">Avg Final Score</p>
+              <p className="text-xl font-semibold text-white">{avgSortingScore.toFixed(2)}</p>
             </div>
           </div>
         </CardContent>
@@ -113,11 +128,11 @@ export const PlayerDetail: React.FC = () => {
 
       {/* Performance Charts */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="h2h">Head-to-Head</TabsTrigger>
-          <TabsTrigger value="recent">Recent Form</TabsTrigger>
-          <TabsTrigger value="props">All Props</TabsTrigger>
+        <TabsList className="bg-slate-800/50 border border-slate-700">
+          <TabsTrigger value="overview" className="text-slate-300 data-[state=active]:text-white">Overview</TabsTrigger>
+          <TabsTrigger value="h2h" className="text-slate-300 data-[state=active]:text-white">Head-to-Head</TabsTrigger>
+          <TabsTrigger value="recent" className="text-slate-300 data-[state=active]:text-white">Recent Form</TabsTrigger>
+          <TabsTrigger value="props" className="text-slate-300 data-[state=active]:text-white">All Props</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -153,29 +168,58 @@ export const PlayerDetail: React.FC = () => {
 
         <TabsContent value="props" className="space-y-4">
           {Object.entries(propsByStatType).map(([statType, typeProps]) => (
-            <Card key={statType}>
+            <Card key={statType} className="glass-card border border-slate-700">
               <CardHeader>
-                <CardTitle>{statType} Props ({typeProps.length})</CardTitle>
+                <CardTitle className="text-white">{statType} Props ({typeProps.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-2">
-                  {typeProps.slice(0, 5).map((prop) => (
-                    <div key={prop.prop_id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">vs {prop.against_team}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Line: {prop.line_score} | Score: {prop.sorting_score.toFixed(2)}
-                        </p>
+                <div className="grid gap-3">
+                  {typeProps.map((prop) => (
+                    <div key={prop.prop_id} className="flex items-center justify-between p-4 border border-slate-700 rounded-lg bg-slate-800/30">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <p className="font-medium text-white">vs {prop.against_team}</p>
+                          <Badge variant={prop.odds_type === 'demon' ? 'destructive' : prop.odds_type === 'goblin' ? 'default' : 'secondary'}>
+                            {prop.odds_type}
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="text-slate-400">Line:</span>
+                            <div className="font-medium text-white">{prop.line_score}</div>
+                          </div>
+                          <div>
+                            <span className="text-slate-400">Final Score:</span>
+                            <div className="font-medium text-white">{prop.sorting_score.toFixed(2)}</div>
+                          </div>
+                          <div>
+                            <span className="text-slate-400">H2H Score:</span>
+                            <div className="font-medium text-white">{prop.h2h_score.toFixed(2)}</div>
+                          </div>
+                          <div>
+                            <span className="text-slate-400">L5 Score:</span>
+                            <div className="font-medium text-white">{prop.l5_score.toFixed(2)}</div>
+                          </div>
+                        </div>
                       </div>
-                      <Badge variant={prop.odds_type === 'demon' ? 'destructive' : prop.odds_type === 'goblin' ? 'default' : 'secondary'}>
-                        {prop.odds_type}
-                      </Badge>
                     </div>
                   ))}
+                  {typeProps.length === 0 && (
+                    <div className="text-center py-8 text-slate-400">
+                      No {statType} props found for this player.
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           ))}
+          {Object.keys(propsByStatType).length === 0 && (
+            <Card className="glass-card border border-slate-700">
+              <CardContent className="text-center py-8">
+                <p className="text-slate-400">No props found for this player.</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>

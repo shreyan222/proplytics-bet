@@ -34,7 +34,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/player/${playerId}`)}>
+    <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/players/${playerId}`)}>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center justify-between">
           <span>{playerName}</span>
