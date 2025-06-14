@@ -4,26 +4,21 @@ import PPnbapicks
 import time
 import dataFinder
 import csv
-#from fanduel import filtered_data
+from fanduel import filtered_data
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from unidecode import unidecode
-import os
 
 start_time = time.time()
-# Get the directory where the script is located
-script_dir = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(script_dir, 'Testing.csv')
+df = pd.read_csv('Testing.csv')
+output_file = "output_data.csv"
 
-df = pd.read_csv(csv_path)
-output_file = os.path.join(script_dir, "output_data.csv")
-
-'''for category, data in filtered_data.items():
+for category, data in filtered_data.items():
     print(f"{category}:")
     for row in data:
         print(row)
-    print()'''
+    print()
 
 
 def load_props_from_file(filename='nba_props.pkl'):
@@ -118,8 +113,6 @@ def fetch_all_team_positions(teams):
 
 def combinetoverPropraternum2(num, timeframe):
     global h2harr, current_player, current_prop, L5arr, h2hstatarr
-    h2hstatarr = []
-    h2harr = []
     print(timeframe)
     unique_teams = norm["Team Name"].nunique()
     print(f"Number of different teams: {unique_teams}")
