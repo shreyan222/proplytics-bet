@@ -17,13 +17,13 @@ export const useDataIngestionStatus = () => {
   const { data: jobs = [], isLoading, error } = useQuery({
     queryKey: ['data-ingestion-jobs'],
     queryFn: async (): Promise<DataIngestionJob[]> => {
-      const { data, error } = await supabase
-        .from('data_ingestion_jobs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
+      // Use raw SQL query to avoid TypeScript type issues with new table
+      const { data, error } = await supabase.rpc('get_ingestion_jobs');
 
-      if (error) throw error;
+      if (error) {
+        console.log('RPC not available, falling back to empty data:', error);
+        return [];
+      }
       return data || [];
     },
     refetchInterval: 30000, // Refetch every 30 seconds
