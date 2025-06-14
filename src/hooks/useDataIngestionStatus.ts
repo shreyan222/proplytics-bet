@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -17,14 +16,27 @@ export const useDataIngestionStatus = () => {
   const { data: jobs = [], isLoading, error } = useQuery({
     queryKey: ['data-ingestion-jobs'],
     queryFn: async (): Promise<DataIngestionJob[]> => {
-      // Use raw SQL query to avoid TypeScript type issues with new table
-      const { data, error } = await supabase.rpc('get_ingestion_jobs');
-
-      if (error) {
-        console.log('RPC not available, falling back to empty data:', error);
+      try {
+        // Try to query the table directly using a workaround for missing types
+        const query = `
+          SELECT id, job_type, status, started_at, completed_at, error_message, metadata, created_at
+          FROM data_ingestion_jobs 
+          ORDER BY created_at DESC 
+          LIMIT 20
+        `;
+        
+        const { data, error } = await supabase.rpc('sql', { query });
+        
+        if (error) {
+          console.log('Direct query failed, returning empty data:', error);
+          return [];
+        }
+        
+        return data || [];
+      } catch (err) {
+        console.log('Query error, returning empty data:', err);
         return [];
       }
-      return data || [];
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
