@@ -126,23 +126,16 @@ def fetch_and_update_data():
     cursor = conn.cursor()
 
     try:
-        # First try to get data from API
-        try:
-            driver.get("https://api.prizepicks.com/projections")
-            time.sleep(5)
-            json_data = driver.find_element(By.TAG_NAME, "pre").text
-            data = json.loads(json_data)
-            # Save the fresh API data to file
-            with open("data.json", "w", encoding="utf-8") as file:
-                json.dump(data, file)
-            print("Successfully fetched and saved new data from API")
-        except Exception as api_error:
-            print(f"API fetch failed: {api_error}")
-            print("Attempting to read from data.json instead...")
-            # If API fails, try to read from file
-            with open("data.json", "r", encoding="utf-8") as file:
-                data = json.load(file)
-            print("Successfully loaded data from data.json")
+
+        driver.get("https://api.prizepicks.com/projections")
+        time.sleep(5)
+        json_data = driver.find_element(By.TAG_NAME, "pre").text
+        data = json.loads(json_data)
+
+        '''with open("data.json", "r", encoding="utf-8") as file:
+            data = json.load(file)'''
+
+        print(data)  # Verify the structure'''
 
         players = extract_display_names(data)
         prizepicks_stats, props = extract_player_stats(data, players)
