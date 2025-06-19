@@ -12,7 +12,6 @@ class SupabaseUploader:
         self.ingestion_endpoint = f"{self.base_url}/functions/v1/python-data-ingestion"
         
     def convert_prop_to_dict(self, prop: Prop) -> Dict[str, Any]:
-        """Convert a Prop object to a dictionary for JSON serialization"""
         return {
             'player_name': prop.player_name,
             'position': prop.position,
@@ -22,15 +21,18 @@ class SupabaseUploader:
             'team_name': prop.team_name,
             'league_id': prop.league_id,
             'game_id': prop.game_id,
-            'h2h_array': prop.H2H1Y if hasattr(prop, 'H2H1Y') else [],
-            'l5_array': prop.L5 if hasattr(prop, 'L5') else [],
-            'h2h_avg': 0,  # Will be calculated
-            'l5_avg': 0,   # Will be calculated
-            'h2h_score': 0,  # Will be calculated
-            'l5_score': 0,   # Will be calculated
-            'sample_size': len(prop.H2H1Y) if hasattr(prop, 'H2H1Y') else 0,
-            'sorting_score': prop.score if hasattr(prop, 'score') else 0
+            'against_team': getattr(prop, 'against_team', None),
+            'start_time': getattr(prop, 'start_time', None),
+            'h2h_array': getattr(prop, 'H2H1Y', []),
+            'l5_array': getattr(prop, 'L5', []),
+            'h2h_avg': 0,
+            'l5_avg': 0,
+            'h2h_score': 0,
+            'l5_score': 0,
+            'sample_size': len(getattr(prop, 'H2H1Y', [])),
+            'sorting_score': getattr(prop, 'score', 0)
         }
+
     
     def upload_props(self, props: List[Prop], metadata: Dict[str, Any] = None) -> bool:
         """Upload props data to Supabase"""
@@ -58,7 +60,11 @@ class SupabaseUploader:
                     **(metadata or {})
                 }
             }
-            
+            print("\n📦 Payload being sent to Supabase (first prop):")
+            print(json.dumps(payload['props'][0], indent=2))
+            print("\n📦 Metadata:")
+            print(json.dumps(payload['metadata'], indent=2))
+
             print(f"Uploading {len(props_data)} props to Supabase...")
             
             response = requests.post(
@@ -95,6 +101,11 @@ class SupabaseUploader:
             return False
     
     def upload_with_retry(self, props: List[Prop], max_retries: int = 3, metadata: Dict[str, Any] = None) -> bool:
+        for i, prop in enumerate(props):
+            for field in ['game_id', 'against_team', 'start_time']:
+                if not hasattr(prop, field) or getattr(prop, field) in [None, '', 'Unknown']:
+                    print(f"❌ Prop #{i} missing {field}: {prop.player_name} ({prop.stat_type})")
+
         """Upload props with retry logic"""
         for attempt in range(max_retries):
             print(f"Upload attempt {attempt + 1}/{max_retries}")
@@ -113,11 +124,14 @@ class SupabaseUploader:
 # Integration with your existing main script
 def integrate_with_main():
     """Example of how to integrate with your existing Main.py"""
-    from Main import load_props_from_file
+    from enhanced_main import load_props_from_file
     
     # Load props from your existing pickle file
     props = load_props_from_file('nba_props.pkl')
-    
+    print(uploader.convert_prop_to_dict(props[0]))
+    print(f"against_team: {props[0].against_team}, start_time: {props[0].start_time}")
+
+
     if props:
         uploader = SupabaseUploader()
         success = uploader.upload_with_retry(props, metadata={
@@ -129,6 +143,8 @@ def integrate_with_main():
             print("Props successfully uploaded to Supabase!")
         else:
             print("Failed to upload props to Supabase")
+            print(uploader.convert_prop_to_dict(props[0]))
+            print(f"against_team: {props[0].against_team}, start_time: {props[0].start_time}")
     else:
         print("No props found to upload")
 
