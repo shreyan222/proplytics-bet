@@ -24,15 +24,15 @@ class Prop:
     def add_performance_data(self, performance_data, category):
         """Adds performance data to the specified category: 'H2H', 'L5', 'L10', or 'L20'."""
         if category == "H2H1Y":
-            self.H2H1Y.extend(performance_data)
+            self.H2H1Y = list(performance_data)
         elif category == "H2H2Y":
-            self.H2H2Y.extend(performance_data)
+            self.H2H2Y = list(performance_data)
         elif category == "L5":
-            self.L5.extend(performance_data)
+            self.L5 = list(performance_data)
         elif category == "L10":
-            self.L10.extend(performance_data)
+            self.L10 = list(performance_data)
         elif category == "L20":
-            self.L20.extend(performance_data)
+            self.L20 = list(performance_data)
         else:
             raise ValueError(f"Invalid category '{category}'. Must be one of: 'H2H1Y', 'H2H2Y', 'L5', 'L10', 'L20'")
 
