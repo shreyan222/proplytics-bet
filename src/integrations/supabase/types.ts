@@ -50,6 +50,30 @@ export type Database = {
           },
         ]
       }
+      data_ingestion_jobs: {
+        Row: {
+          created_at: string | null
+          id: string
+          job_type: string
+          metadata: Json | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          job_type: string
+          metadata?: Json | null
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          job_type?: string
+          metadata?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
       games: {
         Row: {
           away_team_id: string

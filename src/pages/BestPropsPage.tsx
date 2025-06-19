@@ -10,13 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trophy, TrendingUp, Search, Filter, RefreshCw, Star, Target, BarChart3 } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { PropsTable } from '@/components/PropsTable';
-import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
+import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { Prop } from '@/types/nba';
 
 export const BestPropsPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
-  const props = getPropsForMultipleLeagues(selectedLeagues);
-  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -60,7 +59,35 @@ export const BestPropsPage: React.FC = () => {
 
   const handleRefresh = () => {
     console.log(`Refreshing ${leagueDisplay} props data...`);
+    refetch();
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading {leagueDisplay} props...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8">
+          <p className="text-red-400 mb-4">Error loading props: {error.message}</p>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -87,7 +114,7 @@ export const BestPropsPage: React.FC = () => {
                 Updated: {new Date().toLocaleTimeString()}
               </div>
               <Badge variant="default" className="text-xs bg-green-600 hover:bg-green-700">
-                Live
+                Live Data
               </Badge>
             </div>
           </div>

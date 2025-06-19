@@ -5,20 +5,55 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, TrendingUp, TrendingDown, Target, User } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Target, User, RefreshCw } from 'lucide-react';
 import { PlayerPerformanceChart } from '@/components/PlayerPerformanceChart';
-import { getPropsForMultipleLeagues } from '@/utils/multiLeagueUtils';
+import { usePropsData } from '@/hooks/usePropsData';
 
 export const PlayerDetail: React.FC = () => {
   const { playerId } = useParams<{ playerId: string }>();
   const navigate = useNavigate();
   
-  // Get all props from all leagues
-  const allProps = getPropsForMultipleLeagues(['NBA', 'NFL', 'MLB']);
+  // Get all props from Supabase
+  const { data: allProps = [], isLoading, error, refetch } = usePropsData();
   
   // Filter props for this player
   const playerProps = allProps.filter(prop => prop.player_id === playerId);
   const playerInfo = playerProps[0];
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <Button variant="outline" onClick={() => navigate('/players')} className="mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Players
+        </Button>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading player data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <Button variant="outline" onClick={() => navigate('/players')} className="mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Players
+        </Button>
+        <div className="text-center py-8">
+          <p className="text-red-400 mb-4">Error loading player: {error.message}</p>
+          <Button onClick={() => refetch()} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!playerInfo && playerId) {
     return (

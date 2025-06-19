@@ -2,45 +2,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Prop } from '@/types/nba';
-import { sampleProps } from '@/utils/sampleData';
-
-interface SupabaseTeam {
-  abbreviation: string;
-}
-
-interface SupabasePlayer {
-  id: string;
-  display_name: string;
-  position: string | null;
-  team: SupabaseTeam | null;
-}
-
-interface SupabaseGame {
-  id: string;
-  start_time: string;
-  home_team: SupabaseTeam;
-  away_team: SupabaseTeam;
-}
-
-interface SupabaseProp {
-  id: string;
-  external_id: string | null;
-  stat_type: string;
-  line_score: number;
-  odds_type: string;
-  h2h_array: number[];
-  l5_array: number[];
-  h2h_avg: number;
-  l5_avg: number;
-  h2h_score: number;
-  l5_score: number;
-  sample_size: number;
-  sorting_score: number;
-  created_at: string;
-  updated_at: string;
-  player: SupabasePlayer;
-  game: SupabaseGame;
-}
 
 export const usePropsData = () => {
   return useQuery({
@@ -89,13 +50,12 @@ export const usePropsData = () => {
 
       if (error) {
         console.error('Error fetching props:', error);
-        console.log('Using sample data instead...');
-        return sampleProps;
+        throw new Error(`Failed to fetch props: ${error.message}`);
       }
 
       if (!data || data.length === 0) {
-        console.log('No props data returned from Supabase, using sample data');
-        return sampleProps;
+        console.log('No props data returned from Supabase');
+        return [];
       }
 
       console.log(`Successfully fetched ${data.length} props from Supabase`);
@@ -137,5 +97,7 @@ export const usePropsData = () => {
       return transformedData;
     },
     refetchInterval: 60000, // Refetch every minute for real-time updates
+    retry: 3,
+    retryDelay: 1000,
   });
 };

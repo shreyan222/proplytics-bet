@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Flame, Filter } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { PropsFilters } from '@/components/PropsFilters';
-import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
+import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { useFilteredProps } from '@/hooks/useFilteredProps';
 import { Prop, PropFilters } from '@/types/nba';
 
@@ -22,10 +22,7 @@ const HotPropsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
-  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
-
-  // Get props for selected leagues
-  const allProps = getPropsForMultipleLeagues(selectedLeagues);
+  const { props: allProps, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
 
   // Clear filters when leagues change
   React.useEffect(() => {
@@ -99,9 +96,39 @@ const HotPropsPage = () => {
   };
 
   const handleRefresh = () => {
-    // Simulate refresh - in real app this would refetch data
     console.log(`Refreshing ${leagueDisplay} hot props data...`);
+    refetch();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading hot props...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="text-center py-8">
+            <p className="text-red-500 mb-4">Error loading props: {error.message}</p>
+            <Button onClick={handleRefresh} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

@@ -5,16 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Prop } from '@/types/nba';
-import { Search, X, GitCompare, Download, Share2 } from 'lucide-react';
+import { Search, X, GitCompare, Download, Share2, RefreshCw } from 'lucide-react';
 import { ComparisonTable } from '@/components/ComparisonTable';
 import { useDebounce } from '@/hooks/useDebounce';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
+import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 
 export const ComparePage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
-  const props = getPropsForMultipleLeagues(selectedLeagues);
-  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProps, setSelectedProps] = useState<Prop[]>([]);
@@ -70,6 +69,37 @@ export const ComparePage: React.FC = () => {
     if (selectedLeagues.includes('MLB')) return 'Shohei Ohtani total bases';
     return 'player name';
   };
+
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="relative z-10 container mx-auto p-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-slate-400">Loading {leagueDisplay} props...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="relative z-10 container mx-auto p-6">
+          <div className="text-center py-8">
+            <p className="text-red-400 mb-4">Error loading props: {error.message}</p>
+            <Button onClick={() => refetch()} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
