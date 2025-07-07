@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, ExternalLink, Clock, User, TrendingUp } from 'lucide-react';
 import { Prop } from '@/types/nba';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface PropsTableProps {
   props: Prop[];
@@ -147,7 +147,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                   <div className="text-white">{prop.against_team}</div>
                 </div>
                 <div>
-                  <span className="text-slate-400">Odds Type:</span>
+                  <span className="text-slate-900">Odds Type:</span>
                   <div>{getOddsTypeBadge(prop.odds_type)}</div>
                 </div>
                 <div>
@@ -225,18 +225,65 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
             <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Team</TableHead>
             <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Position</TableHead>
             <TableHead className="px-4 py-3 text-left text-slate-300 font-semibold">Stat Type</TableHead>
-            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Line Score</TableHead>
+            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Line</TableHead>
+            <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Prop Score</TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Odds Type</TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Start Time</TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {props.map((prop) => (
-            <PropDetailDialog key={prop.prop_id} prop={prop} />
-          ))}
-        </TableBody>
+  {props.map((prop) => (
+    <TableRow
+      key={prop.prop_id}
+      className="hover:bg-slate-800/50 transition-all duration-300 cursor-pointer border-b border-slate-700 group"
+      onClick={() => setSelectedProp(prop)}
+    >
+      <TableCell className="px-4 py-3 text-left">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 border border-blue-500/30">
+            <User className="h-5 w-5 text-blue-400" />
+          </div>
+          <span className="font-medium text-white group-hover:text-blue-400 transition-colors">{prop.player_name}</span>
+        </div>
+      </TableCell>
+      <TableCell className="px-4 py-3 text-left text-slate-300">{prop.team}</TableCell>
+      <TableCell className="px-4 py-3 text-left text-slate-300">{prop.position}</TableCell>
+      <TableCell className="px-4 py-3 text-left text-slate-300">{prop.stat_type}</TableCell>
+      <TableCell
+  className={cn(
+    "px-4 py-3 text-center font-bold text-xl",
+    prop.odds_type === "demon" && "text-red-500",
+    prop.odds_type === "goblin" && "text-green-400",
+    prop.odds_type === "standard" && "text-blue-500"
+  )}
+>
+  {prop.line_score}
+</TableCell>
+<TableCell className="px-4 py-3 text-center">
+  <div className="text-2xl font-bold text-blue-400">{prop.sorting_score}</div>
+</TableCell>
+      <TableCell className="px-4 py-3 text-center">
+        {getOddsTypeBadge(prop.odds_type)}
+      </TableCell>
+      <TableCell className="px-4 py-3 text-center text-slate-300">{formatTime(prop.start_time)}</TableCell>
+      <TableCell className="px-4 py-3 text-center">
+        <Button variant="outline" size="sm" className="glass-button text-white border-blue-500/30 hover:border-blue-400/50 hover:text-blue-400">
+          View Details
+        </Button>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
       </Table>
+      {selectedProp && (
+  <Dialog open={true} onOpenChange={() => setSelectedProp(null)}>
+    <DialogContent className="max-w-2xl glass border border-slate-700">
+      <PropDetailDialog prop={selectedProp} />
+    </DialogContent>
+  </Dialog>
+)}
+
     </div>
   );
 };
