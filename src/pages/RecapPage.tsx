@@ -1,166 +1,58 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { 
-  Calendar, 
-  ChevronDown, 
-  ChevronUp, 
-  TrendingUp, 
-  TrendingDown, 
-  Target,
-  BarChart3,
-  CheckCircle,
-  XCircle,
-  Minus
-} from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, TrendingUp, TrendingDown, Target, Trophy, BarChart3, RefreshCw } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
-import { format, subDays, startOfDay } from 'date-fns';
-
-interface PropPick {
-  id: string;
-  player_name: string;
-  prop_type: string;
-  line: number;
-  final_result: number;
-  outcome: 'win' | 'loss' | 'push';
-  grade?: 'A' | 'B' | 'C' | 'D' | 'F';
-  team: string;
-  opponent: string;
-}
-
-interface DayRecap {
-  date: Date;
-  picks: PropPick[];
-  total_picks: number;
-  wins: number;
-  losses: number;
-  pushes: number;
-  win_rate: number;
-}
-
-// Sample data generator
-const generateSampleData = (leagues: ('NBA' | 'NFL' | 'MLB')[]): DayRecap[] => {
-  const days: DayRecap[] = [];
-  
-  for (let i = 0; i < 7; i++) {
-    const date = subDays(new Date(), i);
-    const picks: PropPick[] = [];
-    
-    // Generate sample picks for each selected league
-    leagues.forEach(league => {
-      const leaguePlayers = league === 'NBA' 
-        ? ['LeBron James', 'Stephen Curry', 'Giannis Antetokounmpo'] 
-        : league === 'NFL'
-        ? ['Josh Allen', 'Patrick Mahomes', 'Lamar Jackson']
-        : ['Shohei Ohtani', 'Aaron Judge', 'Mookie Betts'];
-      
-      const leagueStats = league === 'NBA'
-        ? ['Points', 'Rebounds', 'Assists']
-        : league === 'NFL' 
-        ? ['Passing Yards', 'Rushing Yards', 'Touchdowns']
-        : ['Hits', 'RBIs', 'Home Runs'];
-      
-      for (let j = 0; j < Math.floor(Math.random() * 3) + 1; j++) {
-        picks.push({
-          id: `${league}-${i}-${j}`,
-          player_name: leaguePlayers[Math.floor(Math.random() * leaguePlayers.length)],
-          prop_type: leagueStats[Math.floor(Math.random() * leagueStats.length)],
-          line: Math.random() * 30 + 10,
-          final_result: Math.random() * 35 + 8,
-          outcome: Math.random() > 0.6 ? 'win' : Math.random() > 0.8 ? 'push' : 'loss',
-          grade: ['A', 'B', 'C', 'D', 'F'][Math.floor(Math.random() * 5)] as 'A' | 'B' | 'C' | 'D' | 'F',
-          team: `${league}_TEAM`,
-          opponent: `${league}_OPP`,
-        });
-      }
-    });
-    
-    const wins = picks.filter(p => p.outcome === 'win').length;
-    const losses = picks.filter(p => p.outcome === 'loss').length;
-    const pushes = picks.filter(p => p.outcome === 'push').length;
-    
-    days.push({
-      date,
-      picks,
-      total_picks: picks.length,
-      wins,
-      losses,
-      pushes,
-      win_rate: picks.length > 0 ? (wins / picks.length) * 100 : 0,
-    });
-  }
-  
-  return days;
-};
+import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 
 export const RecapPage: React.FC = () => {
-  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('week');
-  const [openDays, setOpenDays] = useState<Set<string>>(new Set());
-  
-  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
-  const sampleData = useMemo(() => generateSampleData(selectedLeagues), [selectedLeagues]);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
 
-  const toggleDay = (dateStr: string) => {
-    const newOpenDays = new Set(openDays);
-    if (newOpenDays.has(dateStr)) {
-      newOpenDays.delete(dateStr);
-    } else {
-      newOpenDays.add(dateStr);
-    }
-    setOpenDays(newOpenDays);
+  // Mock data for demonstration - in a real app, this would come from your backend
+  const mockRecapData = {
+    totalProps: props.length,
+    hitRate: 68.5,
+    totalWinnings: 2450.75,
+    bestPerformer: props.length > 0 ? props[0] : null,
+    worstPerformer: props.length > 0 ? props[props.length - 1] : null,
+    dailyStats: [
+      { date: '2024-01-15', hits: 8, misses: 4, winnings: 245.50 },
+      { date: '2024-01-14', hits: 6, misses: 6, winnings: 125.25 },
+      { date: '2024-01-13', hits: 9, misses: 3, winnings: 380.75 },
+      { date: '2024-01-12', hits: 7, misses: 5, winnings: 195.00 },
+      { date: '2024-01-11', hits: 10, misses: 2, winnings: 425.25 },
+    ]
   };
 
-  // Calculate overall stats
-  const overallStats = useMemo(() => {
-    const totalPicks = sampleData.reduce((sum, day) => sum + day.total_picks, 0);
-    const totalWins = sampleData.reduce((sum, day) => sum + day.wins, 0);
-    const totalLosses = sampleData.reduce((sum, day) => sum + day.losses, 0);
-    const totalPushes = sampleData.reduce((sum, day) => sum + day.pushes, 0);
-    
-    return {
-      totalPicks,
-      totalWins,
-      totalLosses,
-      totalPushes,
-      winRate: totalPicks > 0 ? (totalWins / totalPicks) * 100 : 0,
-    };
-  }, [sampleData]);
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading {leagueDisplay} recap...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const getOutcomeIcon = (outcome: string) => {
-    switch (outcome) {
-      case 'win':
-        return <CheckCircle className="h-4 w-4 text-green-400" />;
-      case 'loss':
-        return <XCircle className="h-4 w-4 text-red-400" />;
-      case 'push':
-        return <Minus className="h-4 w-4 text-yellow-400" />;
-      default:
-        return null;
-    }
-  };
-
-  const getGradeColor = (grade: string) => {
-    switch (grade) {
-      case 'A':
-        return 'text-green-400';
-      case 'B':
-        return 'text-blue-400';
-      case 'C':
-        return 'text-yellow-400';
-      case 'D':
-        return 'text-orange-400';
-      case 'F':
-        return 'text-red-400';
-      default:
-        return 'text-gray-400';
-    }
-  };
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8">
+          <p className="text-red-400 mb-4">Error loading recap: {error.message}</p>
+          <Button onClick={() => refetch()} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -172,165 +64,245 @@ export const RecapPage: React.FC = () => {
 
       {/* Header */}
       <div className="border-b border-slate-700 pb-6">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
               <Calendar className="h-10 w-10 text-blue-500" />
-              {leagueDisplay} Props Recap
+              {leagueDisplay} Performance Recap
             </h1>
             <p className="text-xl text-slate-400 mt-2">
-              Performance history and detailed analysis of your {leagueDisplay} prop picks
+              Your {leagueDisplay} prop betting performance summary and insights
             </p>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Select period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="week">Last 7 Days</SelectItem>
-                <SelectItem value="month">Last 30 Days</SelectItem>
-                <SelectItem value="quarter">Last 3 Months</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+            Last 7 Days
+          </Badge>
         </div>
       </div>
 
-      {/* Overall Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="glass-card border border-slate-700">
-          <CardContent className="p-6 text-center">
-            <BarChart3 className="h-8 w-8 mx-auto mb-2 text-blue-400" />
-            <p className="text-2xl font-bold text-white">{overallStats.totalPicks}</p>
-            <p className="text-sm text-slate-400">Total Picks</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Total Props</p>
+                <p className="text-3xl font-bold text-white">{mockRecapData.totalProps}</p>
+              </div>
+              <BarChart3 className="h-8 w-8 text-blue-400" />
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card className="glass-card border border-slate-700">
-          <CardContent className="p-6 text-center">
-            <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-400" />
-            <p className="text-2xl font-bold text-green-400">{overallStats.totalWins}</p>
-            <p className="text-sm text-slate-400">Wins</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Hit Rate</p>
+                <p className="text-3xl font-bold text-green-400">{mockRecapData.hitRate}%</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-green-400" />
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card className="glass-card border border-slate-700">
-          <CardContent className="p-6 text-center">
-            <XCircle className="h-8 w-8 mx-auto mb-2 text-red-400" />
-            <p className="text-2xl font-bold text-red-400">{overallStats.totalLosses}</p>
-            <p className="text-sm text-slate-400">Losses</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Total Winnings</p>
+                <p className="text-3xl font-bold text-yellow-400">${mockRecapData.totalWinnings}</p>
+              </div>
+              <Trophy className="h-8 w-8 text-yellow-400" />
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card className="glass-card border border-slate-700">
-          <CardContent className="p-6 text-center">
-            <Minus className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
-            <p className="text-2xl font-bold text-yellow-400">{overallStats.totalPushes}</p>
-            <p className="text-sm text-slate-400">Pushes</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-card border border-slate-700">
-          <CardContent className="p-6 text-center">
-            <Target className="h-8 w-8 mx-auto mb-2 text-purple-400" />
-            <p className="text-2xl font-bold text-purple-400">{overallStats.winRate.toFixed(1)}%</p>
-            <p className="text-sm text-slate-400">Win Rate</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Avg Per Day</p>
+                <p className="text-3xl font-bold text-purple-400">${(mockRecapData.totalWinnings / 7).toFixed(2)}</p>
+              </div>
+              <Target className="h-8 w-8 text-purple-400" />
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Daily Recaps */}
-      <Card className="glass-card border border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-white">Daily {leagueDisplay} Performance</CardTitle>
-          <CardDescription className="text-slate-400">
-            Detailed breakdown of your {leagueDisplay} prop picks by day
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {sampleData.map((day) => {
-              const dateStr = format(day.date, 'yyyy-MM-dd');
-              const isOpen = openDays.has(dateStr);
-              
-              return (
-                <Collapsible key={dateStr} open={isOpen} onOpenChange={() => toggleDay(dateStr)}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-between p-4 h-auto glass-card border border-slate-600 hover:bg-slate-700/50"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="text-left">
-                          <div className="text-lg font-semibold text-white">
-                            {format(day.date, 'EEEE, MMMM dd')}
-                          </div>
-                          <div className="text-sm text-slate-400">
-                            {day.total_picks} picks • {day.wins}W-{day.losses}L-{day.pushes}P • {day.win_rate.toFixed(1)}%
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge 
-                          variant="outline" 
-                          className={day.win_rate >= 60 ? 'border-green-400 text-green-400' : 
-                                    day.win_rate >= 40 ? 'border-yellow-400 text-yellow-400' : 
-                                    'border-red-400 text-red-400'}
-                        >
-                          {day.win_rate >= 60 ? 'Excellent' : day.win_rate >= 40 ? 'Good' : 'Poor'}
-                        </Badge>
-                        {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                      </div>
-                    </Button>
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent className="pt-4">
-                    <div className="grid gap-3">
-                      {day.picks.map((pick) => (
-                        <div key={pick.id} className="p-4 border border-slate-600 rounded-lg bg-slate-800/30">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              {getOutcomeIcon(pick.outcome)}
-                              <div>
-                                <div className="font-medium text-white">
-                                  {pick.player_name} - {pick.prop_type}
-                                </div>
-                                <div className="text-sm text-slate-400">
-                                  {pick.team} vs {pick.opponent}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-sm text-slate-300">
-                                Line: {pick.line.toFixed(1)} | Result: {pick.final_result.toFixed(1)}
-                              </div>
-                              <div className="flex items-center gap-2 mt-1">
-                                <Badge 
-                                  variant={pick.outcome === 'win' ? 'default' : pick.outcome === 'push' ? 'secondary' : 'destructive'}
-                                  className="text-xs"
-                                >
-                                  {pick.outcome.toUpperCase()}
-                                </Badge>
-                                {pick.grade && (
-                                  <span className={`text-sm font-bold ${getGradeColor(pick.grade)}`}>
-                                    Grade: {pick.grade}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+      {/* Performance Details */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="daily" className="data-[state=active]:bg-green-600">
+            Daily Breakdown
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="data-[state=active]:bg-purple-600">
+            Insights
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Best Performer */}
+            {mockRecapData.bestPerformer && (
+              <Card className="glass-card border border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-green-400 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Best Performer
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Player:</span>
+                      <span className="text-white font-medium">{mockRecapData.bestPerformer.player_name}</span>
                     </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              );
-            })}
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Stat:</span>
+                      <span className="text-white">{mockRecapData.bestPerformer.stat_type}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Line:</span>
+                      <span className="text-white font-bold">{mockRecapData.bestPerformer.line_score}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Score:</span>
+                      <span className="text-green-400 font-bold">{mockRecapData.bestPerformer.sorting_score.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Worst Performer */}
+            {mockRecapData.worstPerformer && (
+              <Card className="glass-card border border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-red-400 flex items-center gap-2">
+                    <TrendingDown className="h-5 w-5" />
+                    Needs Improvement
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Player:</span>
+                      <span className="text-white font-medium">{mockRecapData.worstPerformer.player_name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Stat:</span>
+                      <span className="text-white">{mockRecapData.worstPerformer.stat_type}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Line:</span>
+                      <span className="text-white font-bold">{mockRecapData.worstPerformer.line_score}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Score:</span>
+                      <span className="text-red-400 font-bold">{mockRecapData.worstPerformer.sorting_score.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </TabsContent>
+
+        <TabsContent value="daily" className="space-y-4">
+          <Card className="glass-card border border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white">Daily Performance Breakdown</CardTitle>
+              <CardDescription className="text-slate-400">
+                Your {leagueDisplay} prop performance over the last 7 days
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockRecapData.dailyStats.map((day, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 border border-slate-700 rounded-lg bg-slate-800/30">
+                    <div className="flex items-center gap-4">
+                      <div className="text-white font-medium">{day.date}</div>
+                      <div className="flex gap-2">
+                        <Badge variant="default" className="bg-green-600">
+                          {day.hits} Hits
+                        </Badge>
+                        <Badge variant="destructive" className="bg-red-600">
+                          {day.misses} Misses
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-yellow-400 font-bold">${day.winnings}</div>
+                      <div className="text-sm text-slate-400">
+                        {((day.hits / (day.hits + day.misses)) * 100).toFixed(1)}% hit rate
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="insights" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="glass-card border border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-blue-400">Key Insights</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-3 border border-blue-500/30 rounded-lg bg-blue-500/10">
+                    <p className="text-sm text-blue-300">
+                      Your {leagueDisplay} prop hit rate is above average at {mockRecapData.hitRate}%
+                    </p>
+                  </div>
+                  <div className="p-3 border border-green-500/30 rounded-lg bg-green-500/10">
+                    <p className="text-sm text-green-300">
+                      Best performing stat type: Points (72% hit rate)
+                    </p>
+                  </div>
+                  <div className="p-3 border border-yellow-500/30 rounded-lg bg-yellow-500/10">
+                    <p className="text-sm text-yellow-300">
+                      Most profitable day: {mockRecapData.dailyStats[2].date} (${mockRecapData.dailyStats[2].winnings})
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-card border border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-purple-400">Recommendations</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="p-3 border border-purple-500/30 rounded-lg bg-purple-500/10">
+                    <p className="text-sm text-purple-300">
+                      Focus on Goblin props for more consistent returns
+                    </p>
+                  </div>
+                  <div className="p-3 border border-orange-500/30 rounded-lg bg-orange-500/10">
+                    <p className="text-sm text-orange-300">
+                      Consider reducing exposure to high-risk Demon props
+                    </p>
+                  </div>
+                  <div className="p-3 border border-cyan-500/30 rounded-lg bg-cyan-500/10">
+                    <p className="text-sm text-cyan-300">
+                      Your rebounds props have a 78% hit rate - consider increasing volume
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface LeagueSelectorProps {
-  selectedLeagues: ('NBA' | 'NFL' | 'MLB')[];
-  onLeaguesChange: (leagues: ('NBA' | 'NFL' | 'MLB')[]) => void;
+  selectedLeagues: ('NBA' | 'NFL')[];
+  onLeaguesChange: (leagues: ('NBA' | 'NFL')[]) => void;
   className?: string;
 }
 
@@ -22,13 +22,9 @@ export const LeagueSelector: React.FC<LeagueSelectorProps> = ({
     id: 'NFL' as const,
     name: 'NFL',
     color: 'bg-green-600 hover:bg-green-700'
-  }, {
-    id: 'MLB' as const,
-    name: 'MLB',
-    color: 'bg-purple-600 hover:bg-purple-700'
   }];
 
-  const toggleLeague = (league: 'NBA' | 'NFL' | 'MLB') => {
+  const toggleLeague = (league: 'NBA' | 'NFL') => {
     if (selectedLeagues.includes(league)) {
       // Remove league if it's selected and there's more than one selected
       if (selectedLeagues.length > 1) {

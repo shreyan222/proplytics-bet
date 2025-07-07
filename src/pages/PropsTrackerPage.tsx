@@ -1,104 +1,92 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Activity, RefreshCw, Plus, Minus, Edit, Search, Download, Table, Grid3X3, Clock, Bell } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Activity, TrendingUp, TrendingDown, Search, Filter, RefreshCw, Clock, AlertCircle } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { TrackerPropsTable } from '@/components/TrackerPropsTable';
 import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
+import { Prop } from '@/types/nba';
 
 export const PropsTrackerPage: React.FC = () => {
-  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
   const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
+  const [selectedPosition, setSelectedPosition] = useState<string>('all');
   const [selectedStatType, setSelectedStatType] = useState<string>('all');
-  const [selectedOddsType, setSelectedOddsType] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const [autoRefresh, setAutoRefresh] = useState(true);
-  const [refreshCountdown, setRefreshCountdown] = useState(300);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [trackingFilter, setTrackingFilter] = useState<'all' | 'rising' | 'falling' | 'stable'>('all');
 
-  // Get props for selected leagues
+  // Get unique teams, positions, and stat types
+  const teams = [...new Set(props.map(prop => prop.team))].sort();
+  const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean).sort();
+  const statTypes = [...new Set(props.map(prop => prop.stat_type))].sort();
 
-  // Transform props data to match TrackerPropsTable expected format
-  const trackerData = useMemo(() => {
-    const transformProp = (prop: any) => ({
-      "Prop ID": prop.prop_id,
-      "Display Name": prop.player_name,
-      "Team Name": prop.team,
-      "Position": prop.position,
-      "Stat Type": prop.stat_type,
-      "Line Score": prop.line_score,
-      "Odds Type": prop.odds_type,
-      "Start Time": prop.start_time
-    });
-
+  // Mock tracking data - in real app this would come from historical data
+  const getTrackingData = (prop: Prop) => {
+    const trend = Math.random() > 0.33 ? (Math.random() > 0.5 ? 'rising' : 'falling') : 'stable';
+    const changePercent = trend === 'stable' ? 0 : (Math.random() * 20 - 10);
+    const lastUpdate = new Date(Date.now() - Math.random() * 3600000); // Random time in last hour
+    
     return {
-      new_props: props.slice(0, 3).map(transformProp),
-      removed_props: props.slice(3, 5).map(prop => ({
-        ...transformProp(prop),
-        "Removed At": new Date().toISOString()
-      })),
-      changed_props: props.slice(5, 7).map(prop => ({
-        "Prop ID": prop.prop_id,
-        "Player": prop.player_name,
-        "Team": prop.team,
-        "Position": prop.position,
-        "Stat Type": prop.stat_type,
-        "Odds Type": prop.odds_type,
-        "Start Time": prop.start_time,
-        "Changes": {
-          "Line Score": {
-            "previous": prop.line_score - 0.5,
-            "current": prop.line_score
-          }
-        }
-      })),
-      recent_activities: [
-        { id: '1', type: 'new', message: `New ${leagueDisplay} prop added`, timestamp: new Date() },
-        { id: '2', type: 'changed', message: `${leagueDisplay} prop line updated`, timestamp: new Date() },
-      ]
+      trend,
+      changePercent: Number(changePercent.toFixed(1)),
+      lastUpdate,
+      alerts: Math.random() > 0.8 ? ['Line moved significantly'] : [],
     };
-  }, [props, leagueDisplay]);
+  };
 
-  // Auto-refresh countdown
-  useEffect(() => {
-    if (!autoRefresh) return;
-
-    const interval = setInterval(() => {
-      setRefreshCountdown(prev => {
-        if (prev <= 1) {
-          handleRefresh();
-          return 300; // Reset to 5 minutes
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [autoRefresh]);
+  // Filter props based on search and filters
+  const filteredProps = props.filter(prop => {
+    const trackingData = getTrackingData(prop);
+    
+    const matchesSearch = searchQuery === '' || 
+      prop.player_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      prop.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      prop.stat_type.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesTeam = selectedTeam === 'all' || prop.team === selectedTeam;
+    const matchesPosition = selectedPosition === 'all' || prop.position === selectedPosition;
+    const matchesStatType = selectedStatType === 'all' || prop.stat_type === selectedStatType;
+    const matchesTracking = trackingFilter === 'all' || trackingData.trend === trackingFilter;
+    
+    return matchesSearch && matchesTeam && matchesPosition && matchesStatType && matchesTracking;
+  });
 
   const handleRefresh = () => {
-    setLastUpdated(new Date());
-    setRefreshCountdown(300);
-    
-    if (soundEnabled) {
-      console.log('🔔 Data refreshed');
-    }
+    console.log(`Refreshing ${leagueDisplay} props tracking data...`);
+    refetch();
   };
 
-  const formatCountdown = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading {leagueDisplay} props tracker...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8">
+          <p className="text-red-400 mb-4">Error loading props tracker: {error.message}</p>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -112,278 +100,257 @@ export const PropsTrackerPage: React.FC = () => {
       <div className="border-b border-slate-700 pb-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-white">{leagueDisplay} Props Tracker</h1>
+            <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
+              <Activity className="h-10 w-10 text-blue-500" />
+              {leagueDisplay} Props Tracker
+            </h1>
             <p className="text-xl text-slate-400 mt-2">
-              Real-time {leagueDisplay} prop monitoring and change detection
+              Real-time tracking of {leagueDisplay} prop changes and trends
             </p>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Clock className="h-4 w-4" />
-                Last updated: {lastUpdated.toLocaleTimeString()}
+                Last updated: {new Date().toLocaleTimeString()}
               </div>
-              {autoRefresh && (
-                <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <RefreshCw className="h-4 w-4" />
-                  Next refresh: {formatCountdown(refreshCountdown)}
-                </div>
-              )}
+              <Badge variant="default" className="text-xs bg-green-600 hover:bg-green-700">
+                Live Tracking
+              </Badge>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-white" />
-              <Switch
-                checked={soundEnabled}
-                onCheckedChange={setSoundEnabled}
-              />
-              <span className="text-sm text-white">Sound</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-white" />
-              <Switch
-                checked={autoRefresh}
-                onCheckedChange={setAutoRefresh}
-              />
-              <span className="text-sm text-white">Auto-refresh</span>
-            </div>
             <Button onClick={handleRefresh} variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700">
               <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh Now
+              Refresh
             </Button>
-            <Badge variant="outline" className="text-green-400 border-green-400">
-              <Activity className="h-3 w-3 mr-1" />
-              Live
-            </Badge>
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="glass-card border border-slate-700">
+        <Card className="border-l-4 border-l-green-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">New Props</p>
-                <p className="text-3xl font-bold text-green-400">{trackerData.new_props.length}</p>
+                <p className="text-sm font-medium text-slate-400">Rising Props</p>
+                <p className="text-3xl font-bold text-green-400">
+                  {filteredProps.filter(prop => getTrackingData(prop).trend === 'rising').length}
+                </p>
               </div>
-              <Plus className="h-8 w-8 text-green-400" />
+              <TrendingUp className="h-8 w-8 text-green-400" />
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glass-card border border-slate-700">
+        <Card className="border-l-4 border-l-red-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Removed Props</p>
-                <p className="text-3xl font-bold text-red-400">{trackerData.removed_props.length}</p>
+                <p className="text-sm font-medium text-slate-400">Falling Props</p>
+                <p className="text-3xl font-bold text-red-400">
+                  {filteredProps.filter(prop => getTrackingData(prop).trend === 'falling').length}
+                </p>
               </div>
-              <Minus className="h-8 w-8 text-red-400" />
+              <TrendingDown className="h-8 w-8 text-red-400" />
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glass-card border border-slate-700">
+        <Card className="border-l-4 border-l-blue-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Modified Props</p>
-                <p className="text-3xl font-bold text-blue-400">{trackerData.changed_props.length}</p>
+                <p className="text-sm font-medium text-slate-400">Stable Props</p>
+                <p className="text-3xl font-bold text-blue-400">
+                  {filteredProps.filter(prop => getTrackingData(prop).trend === 'stable').length}
+                </p>
               </div>
-              <Edit className="h-8 w-8 text-blue-400" />
+              <Activity className="h-8 w-8 text-blue-400" />
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glass-card border border-slate-700">
+        <Card className="border-l-4 border-l-yellow-500 glass-card border border-slate-700">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Total Props</p>
-                <p className="text-3xl font-bold text-purple-400">{props.length}</p>
+                <p className="text-sm font-medium text-slate-400">With Alerts</p>
+                <p className="text-3xl font-bold text-yellow-400">
+                  {filteredProps.filter(prop => getTrackingData(prop).alerts.length > 0).length}
+                </p>
               </div>
-              <Activity className="h-8 w-8 text-purple-400" />
+              <AlertCircle className="h-8 w-8 text-yellow-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        {/* Main Content */}
-        <div className="xl:col-span-3 space-y-6">
-          {/* Filters */}
-          <Card className="glass-card border border-slate-700">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg text-white">Filters & Search</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                      placeholder="Search by player name, team, or stat type..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-slate-800 border-slate-600 text-white"
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Select value={selectedTeam} onValueChange={setSelectedTeam}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="Team" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Teams</SelectItem>
-                      <SelectItem value="LAL">Lakers</SelectItem>
-                      <SelectItem value="GSW">Warriors</SelectItem>
-                      <SelectItem value="BOS">Celtics</SelectItem>
-                      <SelectItem value="MIL">Bucks</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={selectedStatType} onValueChange={setSelectedStatType}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="Stat" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Stats</SelectItem>
-                      <SelectItem value="Points">Points</SelectItem>
-                      <SelectItem value="Rebounds">Rebounds</SelectItem>
-                      <SelectItem value="Assists">Assists</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={selectedOddsType} onValueChange={setSelectedOddsType}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="Odds" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Odds</SelectItem>
-                      <SelectItem value="standard">Standard</SelectItem>
-                      <SelectItem value="demon">Demon</SelectItem>
-                      <SelectItem value="goblin">Goblin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+      {/* Filters */}
+      <Card className="glass-card border border-slate-700">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <Filter className="h-5 w-5" />
+            Filters & Search
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
+            <div className="lg:col-span-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder="Search players, teams, stats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-slate-800 border-slate-600 text-white"
+                />
               </div>
-
-              <div className="flex justify-between items-center">
-                <div className="flex gap-2">
-                  <Button
-                    variant={viewMode === 'table' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setViewMode('table')}
-                    className={viewMode === 'table' ? 'bg-blue-600 hover:bg-blue-700' : 'border-slate-600 text-slate-300 hover:bg-slate-700'}
-                  >
-                    <Table className="h-4 w-4 mr-2" />
-                    Table
-                  </Button>
-                  <Button
-                    variant={viewMode === 'cards' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setViewMode('cards')}
-                    className={viewMode === 'cards' ? 'bg-blue-600 hover:bg-blue-700' : 'border-slate-600 text-slate-300 hover:bg-slate-700'}
-                  >
-                    <Grid3X3 className="h-4 w-4 mr-2" />
-                    Cards
-                  </Button>
-                </div>
-                <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tabbed Tables */}
-          <Tabs defaultValue="new" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
-              <TabsTrigger value="new" className="flex items-center gap-2 data-[state=active]:bg-green-600">
-                <Plus className="h-4 w-4" />
-                New Props ({trackerData.new_props.length})
-              </TabsTrigger>
-              <TabsTrigger value="removed" className="flex items-center gap-2 data-[state=active]:bg-red-600">
-                <Minus className="h-4 w-4" />
-                Removed Props ({trackerData.removed_props.length})
-              </TabsTrigger>
-              <TabsTrigger value="modified" className="flex items-center gap-2 data-[state=active]:bg-blue-600">
-                <Edit className="h-4 w-4" />
-                Modified Props ({trackerData.changed_props.length})
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="new">
-              <TrackerPropsTable
-                data={trackerData?.new_props || []}
-                type="new"
-                viewMode={viewMode}
-                searchQuery={searchQuery}
-                filters={{
-                  team: selectedTeam,
-                  statType: selectedStatType,
-                  oddsType: selectedOddsType
-                }}
-              />
-            </TabsContent>
-
-            <TabsContent value="removed">
-              <TrackerPropsTable
-                data={trackerData?.removed_props || []}
-                type="removed"
-                viewMode={viewMode}
-                searchQuery={searchQuery}
-                filters={{
-                  team: selectedTeam,
-                  statType: selectedStatType,
-                  oddsType: selectedOddsType
-                }}
-              />
-            </TabsContent>
-
-            <TabsContent value="modified">
-              <TrackerPropsTable
-                data={trackerData?.changed_props || []}
-                type="modified"
-                viewMode={viewMode}
-                searchQuery={searchQuery}
-                filters={{
-                  team: selectedTeam,
-                  statType: selectedStatType,
-                  oddsType: selectedOddsType
-                }}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        {/* Live Activity Feed */}
-        <div className="xl:col-span-1">
-          <Card className="glass-card border border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Live Activity</CardTitle>
-              <CardDescription className="text-slate-400">
-                Recent {leagueDisplay} prop changes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {trackerData.recent_activities.map((activity) => (
-                  <div key={activity.id} className="p-3 rounded bg-slate-800/50 border border-slate-700">
-                    <p className="text-sm text-white">{activity.message}</p>
-                    <p className="text-xs text-slate-400 mt-1">{activity.timestamp.toLocaleTimeString()}</p>
-                  </div>
+            </div>
+            
+            <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+              <SelectTrigger>
+                <SelectValue placeholder="Team" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Teams</SelectItem>
+                {teams.map(team => (
+                  <SelectItem key={team} value={team}>
+                    {team}
+                  </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+              <SelectTrigger>
+                <SelectValue placeholder="Position" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Positions</SelectItem>
+                {positions.map(position => (
+                  <SelectItem key={position} value={position}>
+                    {position}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedStatType} onValueChange={setSelectedStatType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Stat Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Stats</SelectItem>
+                {statTypes.map(statType => (
+                  <SelectItem key={statType} value={statType}>
+                    {statType}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={trackingFilter} onValueChange={setTrackingFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Trend" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Trends</SelectItem>
+                <SelectItem value="rising">Rising</SelectItem>
+                <SelectItem value="falling">Falling</SelectItem>
+                <SelectItem value="stable">Stable</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Props Tracking Table */}
+      <Card className="glass-card border border-slate-700">
+        <CardHeader>
+          <CardTitle className="text-white">{leagueDisplay} Props Tracking ({filteredProps.length})</CardTitle>
+          <CardDescription className="text-slate-400">
+            Real-time tracking of prop changes and trends
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {filteredProps.map((prop) => {
+              const trackingData = getTrackingData(prop);
+              return (
+                <div key={prop.prop_id} className="glass-card border border-slate-600 p-4 hover:border-slate-500 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-4 mb-2">
+                        <div>
+                          <h3 className="font-semibold text-white">{prop.player_name}</h3>
+                          <p className="text-sm text-slate-400">{prop.team} vs {prop.against_team} • {prop.position}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm text-slate-400">{prop.stat_type}</p>
+                          <p className="text-2xl font-bold text-blue-400">{prop.line_score}</p>
+                        </div>
+                        <Badge 
+                          variant={prop.odds_type === 'demon' ? 'destructive' : prop.odds_type === 'goblin' ? 'secondary' : 'default'}
+                          className={
+                            prop.odds_type === 'demon' ? 'bg-red-600 hover:bg-red-700' :
+                            prop.odds_type === 'goblin' ? 'bg-green-600 hover:bg-green-700' :
+                            'bg-blue-600 hover:bg-blue-700'
+                          }
+                        >
+                          {prop.odds_type}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center gap-6 text-sm">
+                        <div className="flex items-center gap-2">
+                          {trackingData.trend === 'rising' && <TrendingUp className="h-4 w-4 text-green-400" />}
+                          {trackingData.trend === 'falling' && <TrendingDown className="h-4 w-4 text-red-400" />}
+                          {trackingData.trend === 'stable' && <Activity className="h-4 w-4 text-blue-400" />}
+                          <span className={`font-medium ${
+                            trackingData.trend === 'rising' ? 'text-green-400' :
+                            trackingData.trend === 'falling' ? 'text-red-400' :
+                            'text-blue-400'
+                          }`}>
+                            {trackingData.trend === 'rising' ? 'Rising' :
+                             trackingData.trend === 'falling' ? 'Falling' : 'Stable'}
+                          </span>
+                          {trackingData.changePercent !== 0 && (
+                            <span className={`${trackingData.changePercent > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                              ({trackingData.changePercent > 0 ? '+' : ''}{trackingData.changePercent}%)
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="text-slate-400">
+                          Score: <span className="text-white font-medium">{prop.sorting_score.toFixed(2)}</span>
+                        </div>
+                        
+                        <div className="text-slate-400">
+                          Updated: <span className="text-white">{trackingData.lastUpdate.toLocaleTimeString()}</span>
+                        </div>
+                        
+                        {trackingData.alerts.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4 text-yellow-400" />
+                            <span className="text-yellow-400 text-xs">{trackingData.alerts[0]}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {filteredProps.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-slate-400">No {leagueDisplay} props found matching your criteria.</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

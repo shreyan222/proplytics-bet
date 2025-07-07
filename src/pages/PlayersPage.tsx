@@ -10,7 +10,7 @@ import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { Button } from '@/components/ui/button';
 
 export const PlayersPage: React.FC = () => {
-  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
   const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [searchTerm, setSearchTerm] = useState('');

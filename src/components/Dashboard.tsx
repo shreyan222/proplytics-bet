@@ -12,7 +12,7 @@ import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { PropFilters } from '@/types/nba';
 
 export const Dashboard = () => {
-  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<PropFilters>({});

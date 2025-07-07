@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,7 +11,7 @@ import { LeagueSelector } from '@/components/LeagueSelector';
 import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 
 export const ComparePage: React.FC = () => {
-  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
   const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,7 +65,6 @@ export const ComparePage: React.FC = () => {
   const getExampleSearch = () => {
     if (selectedLeagues.includes('NBA')) return 'LeBron James points';
     if (selectedLeagues.includes('NFL')) return 'Josh Allen passing yards';
-    if (selectedLeagues.includes('MLB')) return 'Shohei Ohtani total bases';
     return 'player name';
   };
 

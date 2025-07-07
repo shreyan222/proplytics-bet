@@ -1,114 +1,69 @@
-
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, TrendingDown, Flame, Filter } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Flame, TrendingUp, Search, Filter, RefreshCw, Star, Target, BarChart3 } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
-import { PropsFilters } from '@/components/PropsFilters';
+import { PropsTable } from '@/components/PropsTable';
 import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
-import { useFilteredProps } from '@/hooks/useFilteredProps';
-import { Prop, PropFilters } from '@/types/nba';
+import { Prop } from '@/types/nba';
 
-interface HotProp extends Prop {
-  streak_type: 'over' | 'under';
-  streak_length: number;
-  streak_games: number[];
-}
-
-const HotPropsPage = () => {
-  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
-  const [filters, setFilters] = useState<PropFilters>({});
+export const HotPropsPage: React.FC = () => {
+  const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
+  
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [selectedTeam, setSelectedTeam] = useState<string>('all');
+  const [selectedPosition, setSelectedPosition] = useState<string>('all');
+  const [selectedStatType, setSelectedStatType] = useState<string>('all');
+  const [minScore, setMinScore] = useState<number>(0);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-  const { props: allProps, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
+  // Get unique teams, positions, and stat types from all selected leagues
+  const teams = [...new Set(props.map(prop => prop.team))].sort();
+  const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean).sort();
+  const statTypes = [...new Set(props.map(prop => prop.stat_type))].sort();
 
-  // Clear filters when leagues change
-  React.useEffect(() => {
-    setFilters({});
-    setSearchQuery('');
-  }, [selectedLeagues]);
-
-  // Filter hot props (3+ consecutive overs or unders)
-  const hotProps = useMemo(() => {
-    const hot: HotProp[] = [];
-    
-    allProps.forEach(prop => {
-      if (!prop.l5_array || prop.l5_array.length < 3) return;
-      
-      // Check for over streaks (last 3+ games over the line)
-      let overStreak = 0;
-      let underStreak = 0;
-      
-      // Count consecutive overs from the most recent games
-      for (let i = prop.l5_array.length - 1; i >= 0; i--) {
-        if (prop.l5_array[i] > prop.line_score) {
-          overStreak++;
-          underStreak = 0;
-        } else if (prop.l5_array[i] < prop.line_score) {
-          underStreak++;
-          overStreak = 0;
-        } else {
-          break; // Push (exactly hit the line) breaks the streak
-        }
-      }
-      
-      if (overStreak >= 3) {
-        hot.push({
-          ...prop,
-          streak_type: 'over',
-          streak_length: overStreak,
-          streak_games: prop.l5_array.slice(-overStreak)
-        });
-      } else if (underStreak >= 3) {
-        hot.push({
-          ...prop,
-          streak_type: 'under',
-          streak_length: underStreak,
-          streak_games: prop.l5_array.slice(-underStreak)
-        });
-      }
-    });
-    
-    // Sort by streak length (longest streaks first)
-    return hot.sort((a, b) => b.streak_length - a.streak_length);
-  }, [allProps]);
-
-  // Apply filters to hot props
-  const filteredHotProps = useFilteredProps(hotProps, filters);
-
-  // Apply search filter
-  const searchFilteredProps = useMemo(() => {
-    if (!searchQuery.trim()) return filteredHotProps;
-    
-    const query = searchQuery.toLowerCase();
-    return filteredHotProps.filter(prop => 
-      prop.player_name.toLowerCase().includes(query) ||
-      prop.team.toLowerCase().includes(query) ||
-      prop.stat_type.toLowerCase().includes(query)
-    );
-  }, [filteredHotProps, searchQuery]);
-
-  const handleClearFilters = () => {
-    setFilters({});
-    setSearchQuery('');
+  // Filter and sort props by odds type and score
+  const filterProps = (props: Prop[], oddsType: 'standard' | 'demon' | 'goblin') => {
+    return props
+      .filter(prop => prop.odds_type === oddsType)
+      .filter(prop => {
+        const matchesSearch = searchQuery === '' || 
+          prop.player_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          prop.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          prop.stat_type.toLowerCase().includes(searchQuery.toLowerCase());
+        
+        const matchesTeam = selectedTeam === 'all' || prop.team === selectedTeam;
+        const matchesPosition = selectedPosition === 'all' || prop.position === selectedPosition;
+        const matchesStatType = selectedStatType === 'all' || prop.stat_type === selectedStatType;
+        const matchesMinScore = prop.sorting_score >= minScore;
+        
+        return matchesSearch && matchesTeam && matchesPosition && matchesStatType && matchesMinScore;
+      })
+      .sort((a, b) => b.sorting_score - a.sorting_score);
   };
 
+  const standardProps = filterProps(props, 'standard');
+  const demonProps = filterProps(props, 'demon');
+  const goblinProps = filterProps(props, 'goblin');
+
   const handleRefresh = () => {
-    console.log(`Refreshing ${leagueDisplay} hot props data...`);
+    console.log(`Refreshing ${leagueDisplay} props data...`);
     refetch();
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading hot props...</p>
-            </div>
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading {leagueDisplay} props...</p>
           </div>
         </div>
       </div>
@@ -117,234 +72,258 @@ const HotPropsPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6">
-          <div className="text-center py-8">
-            <p className="text-red-500 mb-4">Error loading props: {error.message}</p>
-            <Button onClick={handleRefresh} variant="outline">
-              Try Again
-            </Button>
-          </div>
+      <div className="container mx-auto p-6">
+        <div className="text-center py-8">
+          <p className="text-red-400 mb-4">Error loading props: {error.message}</p>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-              <Flame className="h-6 w-6 text-white" />
+    <div className="container mx-auto p-6 space-y-6">
+      {/* League Selector */}
+      <LeagueSelector
+        selectedLeagues={selectedLeagues}
+        onLeaguesChange={setSelectedLeagues}
+      />
+
+      {/* Header */}
+      <div className="border-b border-slate-700 pb-6">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
+              <Flame className="h-10 w-10 text-orange-500" />
+              Hot {leagueDisplay} Props
+            </h1>
+            <p className="text-xl text-slate-400 mt-2">
+              Hottest {leagueDisplay} prop recommendations based on recent performance
+            </p>
+            <div className="flex items-center gap-4 mt-3">
+              <div className="flex items-center gap-2 text-sm text-slate-400">
+                <TrendingUp className="h-4 w-4" />
+                Updated: {new Date().toLocaleTimeString()}
+              </div>
+              <Badge variant="default" className="text-xs bg-green-600 hover:bg-green-700">
+                Live Data
+              </Badge>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Hot Props</h1>
-              <p className="text-muted-foreground">
-                Props with 3+ consecutive overs or unders - trending opportunities
-              </p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Button onClick={handleRefresh} variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-l-4 border-l-blue-500 glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Standard Props</p>
+                <p className="text-3xl font-bold text-blue-400">{standardProps.length}</p>
+              </div>
+              <Badge variant="outline" className="text-blue-400 border-blue-400">STD</Badge>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-l-4 border-l-red-500 glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Demon Props</p>
+                <p className="text-3xl font-bold text-red-400">{demonProps.length}</p>
+              </div>
+              <Badge className="bg-red-600 hover:bg-red-700">DMN</Badge>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-l-4 border-l-green-500 glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Goblin Props</p>
+                <p className="text-3xl font-bold text-green-400">{goblinProps.length}</p>
+              </div>
+              <Badge className="bg-green-600 hover:bg-green-700">GBL</Badge>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-l-4 border-l-purple-500 glass-card border border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-400">Total Props</p>
+                <p className="text-3xl font-bold text-purple-400">{props.length}</p>
+              </div>
+              <BarChart3 className="h-8 w-8 text-purple-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <Card className="glass-card border border-slate-700">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <Filter className="h-5 w-5" />
+            Filters & Search
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
+            <div className="lg:col-span-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  placeholder="Search players, teams, stats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-slate-800 border-slate-600 text-white"
+                />
+              </div>
+            </div>
+            
+            <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+              <SelectTrigger>
+                <SelectValue placeholder="Team" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Teams</SelectItem>
+                {teams.map(team => (
+                  <SelectItem key={team} value={team}>
+                    {team}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+              <SelectTrigger>
+                <SelectValue placeholder="Position" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Positions</SelectItem>
+                {positions.map(position => (
+                  <SelectItem key={position} value={position}>
+                    {position}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedStatType} onValueChange={setSelectedStatType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Stat Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Stats</SelectItem>
+                {statTypes.map(statType => (
+                  <SelectItem key={statType} value={statType}>
+                    {statType}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center space-x-2">
+              <Input
+                type="number"
+                placeholder="Min Score"
+                value={minScore}
+                onChange={(e) => setMinScore(Number(e.target.value))}
+                min="0"
+                max="100"
+                step="1"
+              />
             </div>
           </div>
 
-          {/* League Selector */}
-          <LeagueSelector 
-            selectedLeagues={selectedLeagues}
-            onLeaguesChange={setSelectedLeagues}
-            className="w-fit"
-          />
-        </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="favorites-only"
+              checked={showFavoritesOnly}
+              onCheckedChange={setShowFavoritesOnly}
+            />
+            <label htmlFor="favorites-only" className="text-sm font-medium flex items-center gap-2 text-white">
+              <Star className="h-4 w-4" />
+              Show favorites only
+            </label>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                  <Flame className="h-5 w-5 text-orange-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">{hotProps.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Hot Props</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Props Tables by Odds Type */}
+      <Tabs defaultValue="standard" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-800 border border-slate-700">
+          <TabsTrigger value="standard" className="flex items-center gap-2 data-[state=active]:bg-blue-600">
+            <Target className="h-4 w-4" />
+            Standard ({standardProps.length})
+          </TabsTrigger>
+          <TabsTrigger value="demon" className="flex items-center gap-2 data-[state=active]:bg-red-600">
+            <Target className="h-4 w-4" />
+            Demon ({demonProps.length})
+          </TabsTrigger>
+          <TabsTrigger value="goblin" className="flex items-center gap-2 data-[state=active]:bg-green-600">
+            <Target className="h-4 w-4" />
+            Goblin ({goblinProps.length})
+          </TabsTrigger>
+        </TabsList>
 
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">
-                    {hotProps.filter(p => p.streak_type === 'over').length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Over Streaks</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                  <TrendingDown className="h-5 w-5 text-red-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">
-                    {hotProps.filter(p => p.streak_type === 'under').length}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Under Streaks</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                  <Filter className="h-5 w-5 text-yellow-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">{searchFilteredProps.length}</p>
-                  <p className="text-sm text-muted-foreground">Filtered Results</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <PropsFilters
-          filters={filters}
-          onFiltersChange={setFilters}
-          onClearFilters={handleClearFilters}
-          totalProps={hotProps.length}
-          filteredProps={searchFilteredProps.length}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          onRefresh={handleRefresh}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedLeague={selectedLeagues[0] || 'NBA'}
-        />
-
-        {/* Hot Props Table */}
-        {searchFilteredProps.length > 0 ? (
-          <Card className="bg-card border-border">
+        <TabsContent value="standard">
+          <Card className="glass-card border border-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Flame className="h-5 w-5 text-orange-500" />
-                {leagueDisplay} Hot Props - Trending Opportunities
-              </CardTitle>
-              <CardDescription>
-                {leagueDisplay} props with 3+ consecutive overs or unders. Use these trends to identify potential opportunities.
+              <CardTitle className="text-blue-400">Standard {leagueDisplay} Props</CardTitle>
+              <CardDescription className="text-slate-400">
+                Regular odds props with standard scoring analysis
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="border-b border-border">
-                    <tr>
-                      <th className="text-left p-4 font-medium text-muted-foreground">Player</th>
-                      <th className="text-left p-4 font-medium text-muted-foreground">Team</th>
-                      <th className="text-left p-4 font-medium text-muted-foreground">Stat</th>
-                      <th className="text-center p-4 font-medium text-muted-foreground">Line</th>
-                      <th className="text-center p-4 font-medium text-muted-foreground">Streak</th>
-                      <th className="text-center p-4 font-medium text-muted-foreground">Length</th>
-                      <th className="text-left p-4 font-medium text-muted-foreground">Recent Games</th>
-                      <th className="text-center p-4 font-medium text-muted-foreground">Odds</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {searchFilteredProps.map((prop) => {
-                      const hotProp = prop as HotProp;
-                      return (
-                        <tr key={prop.prop_id} className="border-b border-border hover:bg-muted/50">
-                          <td className="p-4">
-                            <div className="font-medium text-foreground">{prop.player_name}</div>
-                            <div className="text-sm text-muted-foreground">{prop.position}</div>
-                          </td>
-                          <td className="p-4 text-foreground">{prop.team}</td>
-                          <td className="p-4 text-foreground">{prop.stat_type}</td>
-                          <td className="p-4 text-center">
-                            <span className="text-lg font-bold text-primary">{prop.line_score}</span>
-                          </td>
-                          <td className="p-4 text-center">
-                            <Badge 
-                              variant={hotProp.streak_type === 'over' ? 'default' : 'destructive'}
-                              className="font-medium"
-                            >
-                              {hotProp.streak_type === 'over' ? (
-                                <>
-                                  <TrendingUp className="h-3 w-3 mr-1" />
-                                  Over
-                                </>
-                              ) : (
-                                <>
-                                  <TrendingDown className="h-3 w-3 mr-1" />
-                                  Under
-                                </>
-                              )}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-center">
-                            <span className="font-bold text-foreground">{hotProp.streak_length}</span>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex gap-1">
-                              {hotProp.streak_games.map((game, idx) => (
-                                <Badge 
-                                  key={idx} 
-                                  variant="outline" 
-                                  className={`text-xs ${
-                                    game > prop.line_score 
-                                      ? 'border-green-500 text-green-500' 
-                                      : 'border-red-500 text-red-500'
-                                  }`}
-                                >
-                                  {game}
-                                </Badge>
-                              ))}
-                            </div>
-                          </td>
-                          <td className="p-4 text-center">
-                            <Badge 
-                              className={
-                                prop.odds_type === 'demon' ? 'bg-red-600 hover:bg-red-700' :
-                                prop.odds_type === 'goblin' ? 'bg-green-600 hover:bg-green-700' : 
-                                'bg-blue-600 hover:bg-blue-700'
-                              }
-                            >
-                              {prop.odds_type}
-                            </Badge>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+            <CardContent>
+              <PropsTable props={standardProps} viewMode="table" />
             </CardContent>
           </Card>
-        ) : (
-          <Card className="bg-card border-border">
-            <CardContent className="p-12 text-center">
-              <Flame className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">No Hot Props Found</h3>
-              <p className="text-muted-foreground">
-                No {leagueDisplay} props currently have 3+ consecutive overs or unders. Try adjusting your filters or check back later.
-              </p>
+        </TabsContent>
+
+        <TabsContent value="demon">
+          <Card className="glass-card border border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-red-400">Demon {leagueDisplay} Props</CardTitle>
+              <CardDescription className="text-slate-400">
+                High-risk, high-reward props with advanced analysis
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PropsTable props={demonProps} viewMode="table" />
             </CardContent>
           </Card>
-        )}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="goblin">
+          <Card className="glass-card border border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-green-400">Goblin {leagueDisplay} Props</CardTitle>
+              <CardDescription className="text-slate-400">
+                Low-risk, consistent props with reliable analysis
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PropsTable props={goblinProps} viewMode="table" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
-
-export default HotPropsPage;
