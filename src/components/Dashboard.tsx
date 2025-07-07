@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { LeagueSelector } from './LeagueSelector';
 import { PropsTable } from './PropsTable';
 import { PropsFilters } from './PropsFilters';
-import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
+import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { PropFilters } from '@/types/nba';
 
 export const Dashboard = () => {
@@ -17,17 +17,16 @@ export const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<PropFilters>({});
   
-  const props = getPropsForMultipleLeagues(selectedLeagues);
-  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
+  const { props: allProps, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
 
   // Calculate stats based on selected leagues
-  const totalProps = props.length;
-  const standardProps = props.filter(p => p.odds_type === 'standard').length;
-  const demonProps = props.filter(p => p.odds_type === 'demon').length;
-  const goblinProps = props.filter(p => p.odds_type === 'goblin').length;
+  const totalProps = allProps.length;
+  const standardProps = allProps.filter(p => p.odds_type === 'standard').length;
+  const demonProps = allProps.filter(p => p.odds_type === 'demon').length;
+  const goblinProps = allProps.filter(p => p.odds_type === 'goblin').length;
 
   // Filter props based on search and filters
-  const filteredProps = props.filter(prop => {
+  const filteredProps = allProps.filter(prop => {
     // Search filter
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
