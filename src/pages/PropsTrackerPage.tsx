@@ -9,11 +9,11 @@ import { Switch } from '@/components/ui/switch';
 import { Activity, RefreshCw, Plus, Minus, Edit, Search, Download, Table, Grid3X3, Clock, Bell } from 'lucide-react';
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { TrackerPropsTable } from '@/components/TrackerPropsTable';
-import { getPropsForMultipleLeagues, getSelectedLeaguesDisplay } from '@/utils/multiLeagueUtils';
+import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 
 export const PropsTrackerPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL' | 'MLB')[]>(['NBA']);
-  const leagueDisplay = getSelectedLeaguesDisplay(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -26,7 +26,6 @@ export const PropsTrackerPage: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   // Get props for selected leagues
-  const props = getPropsForMultipleLeagues(selectedLeagues);
 
   // Transform props data to match TrackerPropsTable expected format
   const trackerData = useMemo(() => {
