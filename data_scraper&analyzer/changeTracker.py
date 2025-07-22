@@ -6,6 +6,9 @@ from datetime import datetime
 import pytz
 import json
 from copy import deepcopy
+import requests
+import os
+from supabase import create_client, Client
 
 
 class PropChangeTracker:
@@ -15,6 +18,24 @@ class PropChangeTracker:
         self.previous_props = None
         self.scheduler = BackgroundScheduler()
         self.setup_display_options()
+        self.setup_supabase()
+    
+    def setup_supabase(self):
+        """Set up Supabase client for uploading data to the database"""
+        try:
+            # Get Supabase credentials from environment variables
+            supabase_url = os.environ.get('SUPABASE_URL', 'https://tlpzzneewikrpqfqygxi.supabase.co')
+            supabase_key = os.environ.get('SUPABASE_KEY', '')
+            
+            if not supabase_key:
+                print("Warning: SUPABASE_KEY environment variable not set. Supabase uploads will be disabled.")
+                self.supabase = None
+            else:
+                self.supabase = create_client(supabase_url, supabase_key)
+                print("Supabase client initialized successfully.")
+        except Exception as e:
+            print(f"Error setting up Supabase client: {e}")
+            self.supabase = None
 
     def setup_display_options(self):
         # Set pandas display options for better visibility
@@ -261,12 +282,69 @@ class PropChangeTracker:
             changes = self.compare_props(self.previous_props, nba_props)
             self.print_changes(changes)
             self.log_changes_to_csv(changes)
+            
+            # Upload changes to Supabase if client is available
+            if self.supabase:
+                self.sync_props_to_supabase(nba_props, changes)
 
             # Update previous props for next comparison
             self.previous_props = deepcopy(nba_props)
 
         except Exception as e:
             print(f"Error checking for changes: {e}")
+            
+    def sync_props_to_supabase(self, current_props, changes):
+        """Sync props data to Supabase"""
+        try:
+            timestamp = datetime.now().isoformat()
+            print(f"Syncing props to Supabase at {timestamp}...")
+            
+            # Upload new and update existing props
+            for prop in current_props:
+                # Map the prop data to match Supabase schema
+                supabase_prop = {
+                    'id': prop['Prop ID'],  # Using the Prop ID as the UUID
+                    'external_id': prop['Prop ID'],  # Also storing as external_id
+                    'player_id': prop['Player ID'],
+                    'stat_type': prop['Stat Type'],
+                    'line_score': float(prop['Line Score']),
+                    'odds_type': prop['Odds Type'].lower(),
+                    'sorting_score': 0.0,  # Default score
+                    'game_id': prop['Game ID'] if prop['Game ID'] else None,
+                    'h2h_array': [],  # Default empty arrays
+                    'l5_array': [],
+                    'h2h_avg': 0,
+                    'l5_avg': 0,
+                    'h2h_score': 0,
+                    'l5_score': 0,
+                    'sample_size': 0,
+                    'updated_at': timestamp
+                }
+                
+                # Upsert the prop (insert if not exists, update if exists)
+                result = self.supabase.table('props').upsert(supabase_prop).execute()
+                
+            # Track prop changes for event logging
+            for change_type, props_list in [
+                ('new', changes['new_props']),
+                ('changed', changes['changed_props']),
+                ('removed', changes['removed_props'])
+            ]:
+                if props_list:
+                    print(f"Syncing {len(props_list)} {change_type} props...")
+                    
+                    if change_type == 'removed':
+                        # For removed props, we need to actually delete them from the database
+                        for prop in props_list:
+                            self.supabase.table('props').delete().eq('id', prop['Prop ID']).execute()
+            
+            print(f"Successfully synced {len(current_props)} props to Supabase.")
+            
+        except Exception as e:
+            print(f"Error syncing props to Supabase: {e}")
+            # If there's an error, print more details for debugging
+            import traceback
+            traceback.print_exc()
 
     def start(self):
         """Start the prop tracker"""
