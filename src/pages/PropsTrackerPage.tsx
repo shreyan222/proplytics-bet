@@ -250,7 +250,7 @@ export const PropsTrackerPage: React.FC = () => {
               </SelectContent>
             </Select>
 
-            <Select value={trackingFilter} onValueChange={setTrackingFilter}>
+            <Select value={trackingFilter} onValueChange={(value) => setTrackingFilter(value as 'all' | 'rising' | 'falling' | 'stable')}>
               <SelectTrigger>
                 <SelectValue placeholder="Trend" />
               </SelectTrigger>

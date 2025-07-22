@@ -12,7 +12,7 @@ import { PropsTable } from '@/components/PropsTable';
 import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { Prop } from '@/types/nba';
 
-export const HotPropsPage: React.FC = () => {
+const HotPropsPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
   const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
@@ -327,3 +327,5 @@ export const HotPropsPage: React.FC = () => {
     </div>
   );
 };
+
+export default HotPropsPage;
