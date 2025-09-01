@@ -158,6 +158,15 @@ def fetch_and_update_data():
                     prop.stat_type.lower() in {"dunks", "fantasy score"} or "combo" in prop.stat_type.lower()
             )
         ]
+        nfl_props = [
+            prop for prop in props
+            if prop.league_id == "9"
+        ]
+
+        save_props_to_file(nfl_props, 'nfl_props.pkl')
+
+        print(f"Saved {len(nfl_props)} NFL props to nfl_props.pkl")
+
 
         # Save filtered props to pickle file
         save_props_to_file(nba_props, 'nba_props.pkl')

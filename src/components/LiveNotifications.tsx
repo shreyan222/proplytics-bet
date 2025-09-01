@@ -41,7 +41,7 @@ export const LiveNotifications: React.FC = () => {
           // Ignore autoplay restrictions
         });
       } catch (error) {
-        console.log('Could not play notification sound:', error);
+        // Could not play notification sound
       }
     }
   };

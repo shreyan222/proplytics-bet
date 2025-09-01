@@ -22,9 +22,18 @@ export const getSelectedLeaguesDisplay = (leagues: ('NBA' | 'NFL')[]): string =>
 export const useMultiLeagueProps = (leagues: ('NBA' | 'NFL')[] = ['NBA']) => {
   const { data: allProps = [], isLoading, error, refetch } = usePropsData();
   
+  // Check for league field issues
+  const propsWithLeague = allProps.filter(p => p.league);
+  const propsWithoutLeague = allProps.filter(p => !p.league);
+  
   // For now, we're only supporting NBA data from Supabase
   // Filter can be added later when we have league information in the database
-  const filteredProps = leagues.includes('NBA') ? allProps : [];
+  const filteredProps = allProps.filter(prop => {
+    // Temporarily disable league filtering to debug the issue
+    return true;
+    
+    
+  });
   
   return {
     props: filteredProps,

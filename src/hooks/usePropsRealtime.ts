@@ -111,7 +111,6 @@ export const usePropsRealtime = () => {
         'postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'props' },
         (payload) => {
-          console.log('New prop inserted:', payload);
           const prop = mapDbPropToProp(payload);
           
           trackPropChange({
@@ -125,7 +124,6 @@ export const usePropsRealtime = () => {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'props' },
         (payload) => {
-          console.log('Prop updated:', payload);
           const prop = mapDbPropToProp(payload);
           
           // Determine what changed
@@ -164,7 +162,6 @@ export const usePropsRealtime = () => {
         'postgres_changes',
         { event: 'DELETE', schema: 'public', table: 'props' },
         (payload) => {
-          console.log('Prop deleted:', payload);
           const prop = mapDbPropToProp(payload);
           
           trackPropChange({
@@ -175,7 +172,6 @@ export const usePropsRealtime = () => {
         }
       )
       .subscribe((status) => {
-        console.log('Realtime subscription status:', status);
         setIsConnected(status === 'SUBSCRIBED');
         
         if (status === 'SUBSCRIBED') {

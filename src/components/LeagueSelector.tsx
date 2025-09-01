@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -9,11 +9,15 @@ interface LeagueSelectorProps {
   className?: string;
 }
 
+const STORAGE_KEY = 'prop-picks-selected-leagues';
+
 export const LeagueSelector: React.FC<LeagueSelectorProps> = ({
   selectedLeagues,
   onLeaguesChange,
   className = ''
 }) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const leagues = [{
     id: 'NBA' as const,
     name: 'NBA',
@@ -23,6 +27,43 @@ export const LeagueSelector: React.FC<LeagueSelectorProps> = ({
     name: 'NFL',
     color: 'bg-green-600 hover:bg-green-700'
   }];
+
+  // Initialize leagues from localStorage or default to both
+  useEffect(() => {
+    if (!isInitialized) {
+      const savedLeagues = localStorage.getItem(STORAGE_KEY);
+      
+      if (savedLeagues) {
+        try {
+          const parsedLeagues = JSON.parse(savedLeagues);
+          if (Array.isArray(parsedLeagues) && parsedLeagues.length > 0) {
+            onLeaguesChange(parsedLeagues);
+          } else {
+            // Fallback to default both if saved data is invalid
+            onLeaguesChange(['NBA', 'NFL']);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA', 'NFL']));
+          }
+        } catch (error) {
+          // Fallback to default both if parsing fails
+          onLeaguesChange(['NBA', 'NFL']);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA', 'NFL']));
+        }
+      } else {
+        // First time visit - default to both leagues
+        onLeaguesChange(['NBA', 'NFL']);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA', 'NFL']));
+      }
+      
+      setIsInitialized(true);
+    }
+  }, [isInitialized, onLeaguesChange]);
+
+  // Save to localStorage whenever selection changes
+  useEffect(() => {
+    if (isInitialized && selectedLeagues.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedLeagues));
+    }
+  }, [selectedLeagues, isInitialized]);
 
   const toggleLeague = (league: 'NBA' | 'NFL') => {
     if (selectedLeagues.includes(league)) {

@@ -1,6 +1,6 @@
 import pickle
 class Prop:
-    def __init__(self, player_name,position, stat_type, line_score, odds_type, team_name, league_id, game_id):
+    def __init__(self, player_name, position, stat_type, line_score, odds_type, team_name, league_id, game_id):
         self.player_name = player_name
         self.position = position
         self.stat_type = stat_type

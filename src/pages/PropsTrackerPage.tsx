@@ -70,7 +70,7 @@ export const PropsTrackerPage: React.FC = () => {
   });
 
   const handleRefresh = () => {
-    console.log(`Refreshing ${leagueDisplay} props tracking data...`);
+    // Refreshing props tracking data...
     refetch();
   };
 
@@ -118,23 +118,14 @@ export const PropsTrackerPage: React.FC = () => {
               {leagueDisplay} Props Tracker
             </h1>
             <p className="text-xl text-slate-400 mt-2">
-              Real-time tracking of {leagueDisplay} prop changes and trends
+              Real-time tracking of {leagueDisplay} prop changes and trends from Prizepicks
             </p>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-2 text-sm text-slate-400">
                 <Clock className="h-4 w-4" />
                 Last updated: {lastUpdateTime ? lastUpdateTime.toLocaleTimeString() : new Date().toLocaleTimeString()}
               </div>
-              <Badge 
-                variant={isConnected ? "default" : "outline"} 
-                className={isConnected ? "text-xs bg-green-600 hover:bg-green-700" : "text-xs border-orange-500 text-orange-400"}
-              >
-                {isConnected ? (
-                  <><Wifi className="h-3 w-3 mr-1" /> Live Connected</>
-                ) : (
-                  <><WifiOff className="h-3 w-3 mr-1" /> Connecting...</>
-                )}
-              </Badge>
+              
             </div>
           </div>
           

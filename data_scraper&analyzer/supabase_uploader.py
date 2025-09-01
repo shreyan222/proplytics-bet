@@ -5,13 +5,67 @@ from datetime import datetime
 import time
 from typing import List, Dict, Any
 from prop import Prop
+import os
 
 class SupabaseUploader:
-    def __init__(self, supabase_url: str = "https://tlpzzneewikrpqfqygxi.supabase.co"):
-        self.base_url = supabase_url
-        self.ingestion_endpoint = f"{self.base_url}/functions/v1/python-data-ingestion"
+    def __init__(self):
+        # Get Supabase credentials from environment variables
+        self.supabase_url = os.environ.get('SUPABASE_URL')
+        self.supabase_key = os.environ.get('SUPABASE_KEY', '')
+        
+        # Only construct endpoint if we have valid credentials
+        if self.supabase_url and self.supabase_key:
+            self.ingestion_endpoint = f"{self.supabase_url}/functions/v1/python-data-ingestion"
+            self.enabled = True
+        else:
+            self.ingestion_endpoint = None
+            print("Warning: SUPABASE_URL or SUPABASE_KEY environment variable not set. Supabase uploads will be disabled.")
+            self.enabled = False
+    
+    def update_credentials(self, url: str, key: str):
+        """Update credentials and endpoint after environment variables are loaded"""
+        self.supabase_url = url
+        self.supabase_key = key
+        if self.supabase_url and self.supabase_key:
+            self.ingestion_endpoint = f"{self.supabase_url}/functions/v1/python-data-ingestion"
+            self.enabled = True
+            print(f"✅ Supabase uploader enabled with URL: {self.supabase_url}")
+        else:
+            self.ingestion_endpoint = None
+            self.enabled = False
+            print("❌ Supabase uploader disabled - invalid credentials")
+    
+    def is_configured(self) -> bool:
+        """Check if the uploader is properly configured"""
+        return (
+            self.enabled and 
+            self.ingestion_endpoint and 
+            self.supabase_url and 
+            self.supabase_key
+        )
+    
+    def reload_from_environment(self):
+        """Reload credentials from environment variables"""
+        env_url = os.environ.get('SUPABASE_URL')
+        env_key = os.environ.get('SUPABASE_KEY')
+        
+        if env_url and env_key:
+            self.update_credentials(env_url, env_key)
+            return True
+        else:
+            print("❌ No credentials found in environment variables")
+            return False
         
     def convert_prop_to_dict(self, prop: Prop) -> Dict[str, Any]:
+        print(f"Player: {prop.player_name}, league_id: {prop.league_id}, assigned league: {'NFL' if prop.league_id == 9 else 'NBA'}")
+        
+        # Safe division for averages
+        h2h_array = getattr(prop, 'H2H1Y', [])
+        l5_array = getattr(prop, 'L5', [])
+        
+        h2h_avg = sum(h2h_array) / len(h2h_array) if h2h_array else 0
+        l5_avg = sum(l5_array) / len(l5_array) if l5_array else 0
+        
         return {
             'player_name': prop.player_name,
             'position': prop.position,
@@ -19,23 +73,32 @@ class SupabaseUploader:
             'line_score': float(prop.line_score),
             'odds_type': prop.odds_type,
             'team_name': prop.team_name,
-            'league_id': prop.league_id,
+            'league_id': prop.league_id,  # ✅ Add this field
             'game_id': prop.game_id,
             'against_team': getattr(prop, 'against_team', None),
             'start_time': getattr(prop, 'start_time', None),
-            'h2h_array': getattr(prop, 'H2H1Y', []),
-            'l5_array': getattr(prop, 'L5', []),
-            'h2h_avg': 0,
-            'l5_avg': 0,
+            'h2h_array': h2h_array,
+            'l5_array': l5_array,
+            'h2h_avg': h2h_avg,
+            'l5_avg': l5_avg,
             'h2h_score': 0,
             'l5_score': 0,
-            'sample_size': len(getattr(prop, 'H2H1Y', [])),
-            'sorting_score': getattr(prop, 'score', 0)
+            'sample_size': len(h2h_array),
+            'sorting_score': getattr(prop, 'score', 0),
+            'league': 'NBA' if prop.league_id == 7 else 'NFL'
         }
 
     
     def upload_props(self, props: List[Prop], metadata: Dict[str, Any] = None) -> bool:
         """Upload props data to Supabase"""
+        if not self.is_configured():
+            print("❌ Supabase uploader not properly configured. Cannot upload.")
+            print(f"  Enabled: {self.enabled}")
+            print(f"  Endpoint: {self.ingestion_endpoint}")
+            print(f"  URL: {self.supabase_url}")
+            print(f"  Key: {'***' + self.supabase_key[-4:] if self.supabase_key else 'None'}")
+            return False
+
         try:
             # Convert props to dictionaries
             props_data = []
@@ -72,7 +135,8 @@ class SupabaseUploader:
                 json=payload,
                 headers={
                     'Content-Type': 'application/json',
-                    'Authorization': f'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRscHp6bmVld2lrcnBxZnF5Z3hpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzMjY4MTQsImV4cCI6MjA2MzkwMjgxNH0.hcW3ra_vsrA2eMPCe3LWFrGbuuhC_oadxXsS0bFDAg0'
+                    'apikey': self.supabase_key,
+                    'Authorization': f'Bearer {self.supabase_key}'
                 },
                 timeout=300  # 5 minute timeout
             )
@@ -128,12 +192,14 @@ def integrate_with_main():
     
     # Load props from your existing pickle file
     props = load_props_from_file('nba_props.pkl')
-    print(uploader.convert_prop_to_dict(props[0]))
-    print(f"against_team: {props[0].against_team}, start_time: {props[0].start_time}")
-
-
+    
     if props:
         uploader = SupabaseUploader()
+        
+        # Now we can safely use uploader
+        print(uploader.convert_prop_to_dict(props[0]))
+        print(f"against_team: {props[0].against_team}, start_time: {props[0].start_time}")
+        
         success = uploader.upload_with_retry(props, metadata={
             'source': 'main_script',
             'nba_props_count': len(props)

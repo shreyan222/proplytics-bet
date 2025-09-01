@@ -33,6 +33,17 @@ const HotPropsPage: React.FC = () => {
     return props
       .filter(prop => prop.odds_type === oddsType)
       .filter(prop => {
+        // Only show props that have gone over their line in all 5 of their last 5 games
+        if (!prop.l5_array || prop.l5_array.length !== 5) {
+          return false;
+        }
+        
+        // Check if all 5 games went over the line
+        const allGamesOverLine = prop.l5_array.every(score => score > prop.line_score);
+        if (!allGamesOverLine) {
+          return false;
+        }
+        
         const matchesSearch = searchQuery === '' || 
           prop.player_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           prop.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -53,7 +64,6 @@ const HotPropsPage: React.FC = () => {
   const goblinProps = filterProps(props, 'goblin');
 
   const handleRefresh = () => {
-    console.log(`Refreshing ${leagueDisplay} props data...`);
     refetch();
   };
 
@@ -102,6 +112,9 @@ const HotPropsPage: React.FC = () => {
             </h1>
             <p className="text-xl text-slate-400 mt-2">
               Hottest {leagueDisplay} prop recommendations based on recent performance
+            </p>
+            <p className="text-sm text-slate-500 mt-1">
+              Showing only props that have gone over their line in all 5 of their last 5 games
             </p>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-2 text-sm text-slate-400">
@@ -165,8 +178,8 @@ const HotPropsPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Total Props</p>
-                <p className="text-3xl font-bold text-purple-400">{props.length}</p>
+                <p className="text-sm font-medium text-slate-400">Total Hot Props</p>
+                <p className="text-3xl font-bold text-purple-400">{goblinProps.length+demonProps.length+standardProps.length}</p>
               </div>
               <BarChart3 className="h-8 w-8 text-purple-400" />
             </div>

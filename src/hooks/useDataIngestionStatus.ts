@@ -18,7 +18,6 @@ export const useDataIngestionStatus = () => {
     queryFn: async (): Promise<DataIngestionJob[]> => {
       // Return empty array until data_ingestion_jobs table is properly set up
       // This prevents TypeScript errors while the table doesn't exist in the schema
-      console.log('Data ingestion jobs table not yet available, returning empty data');
       return [];
     },
     refetchInterval: 30000, // Refetch every 30 seconds

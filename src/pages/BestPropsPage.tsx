@@ -57,7 +57,6 @@ export const BestPropsPage: React.FC = () => {
   }, [props, searchQuery, selectedTeam, selectedPosition, selectedStatType, minScore]);
 
   const handleRefresh = () => {
-    console.log(`Refreshing ${leagueDisplay} props data...`);
     refetch();
   };
 

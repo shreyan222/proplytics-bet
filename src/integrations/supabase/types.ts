@@ -214,6 +214,15 @@ export type Database = {
           sorting_score: number
           stat_type: string
           updated_at: string | null
+          sorting_score_computed: number | null;
+          h2h_score_computed: number | null;
+          l5_score_computed: number | null;
+          h2h_diff_computed: number | null;
+          l5_diff_computed: number | null;
+          h2h_relative_diff_computed: number | null;
+          l5_relative_diff_computed: number | null;
+          h2h_percent_computed: number | null;
+          l5_percent_computed: number | null;
         }
         Insert: {
           created_at?: string | null

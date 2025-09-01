@@ -1,200 +1,580 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BarChart3, Target, TrendingUp, Zap } from "lucide-react";
-import { FeatureCard } from "@/components/FeatureCard";
-import { HeroSection } from "@/components/HeroSection";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { ArrowRight, BarChart3, Target, TrendingUp, Zap, ChartBar, Users, Clock, Shield, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { SEO } from "@/components/SEO";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const demoRef = useRef(null);
 
   const features = [
     {
-      icon: BarChart3,
-      title: "Statistical Analysis",
-      description: "Advanced algorithms analyze historical data to identify value propositions"
+      icon: Clock,
+      title: "Real-Time Prop Tracking",
+      description: "Live updates on prop movements and line changes across PrizePicks"
     },
     {
-      icon: Target,
-      title: "Prop Optimization",
-      description: "Pinpoint the highest probability props based on player performance trends"
+      icon: ChartBar,
+      title: "Matchup-Based Forecasting",
+      description: "Advanced algorithms analyze head-to-head matchups for optimal prop selection"
     },
     {
       icon: TrendingUp,
-      title: "Real-time Updates",
-      description: "Live data integration ensures you're always working with current information"
+      title: "Historical Trend Analysis",
+      description: "Deep dive into player performance patterns and seasonal trends"
     },
     {
-      icon: Zap,
-      title: "Instant Results",
-      description: "Get prop recommendations in seconds, not hours of manual research"
+      icon: Users,
+      title: "Custom Player Insights",
+      description: "Personalized analytics based on your favorite players and teams"
     }
   ];
 
   const stats = [
-    { label: "Props Analyzed", value: "10,000+", suffix: "" },
-    { label: "Success Rate", value: "78%", suffix: "" },
-    { label: "Active Users", value: "2,500+", suffix: "" },
-    { label: "Data Points", value: "1M+", suffix: "" },
+    { label: "Props Analyzed", value: "50,000+", suffix: "" },
+    { label: "Success Rate", value: "82%", suffix: "" },
+    { label: "Active Users", value: "5,000+", suffix: "" },
+    { label: "Data Points", value: "2M+", suffix: "" },
   ];
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12">
-        {/* Hero Section - Modified to show signup requirement */}
-        <section className="text-center py-20">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-6xl font-bold tracking-tight text-foreground mb-6">
-              Advanced <span className="text-primary">Props Analytics</span>
+  const whyProplytics = [
+    "Automated Data Pipeline",
+    "Built for Prop Bettors",
+    "Backtested Models",
+    "Clean & Simple UI"
+  ];
+
+  // Scroll-driven animation for demo section
+  const { scrollYProgress } = useScroll({
+    target: demoRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Map scroll progress to vertical translation for slideshow
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "-100%"]);
+
+       return (
+    <>
+      <SEO 
+        title="Prop Site Analytics, NFL Props, NBA Props"
+        description="The ultimate prop site for NFL and NBA prop betting analytics. Discover advanced prop insights, real-time data, and winning strategies. Start winning more bets today!"
+        keywords="prop site, NFL props, NBA props, prop betting, sports props, prop analytics, betting props, player props, game props, prop insights"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "Proplytics - Prop Site Analytics",
+          "description": "The ultimate prop site for NFL and NBA prop betting analytics with real-time data and winning strategies",
+          "applicationCategory": "SportsApplication",
+          "operatingSystem": "Web Browser",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "keywords": ["prop site", "NFL props", "NBA props", "prop betting", "sports analytics"]
+        }}
+      />
+      <div className="min-h-screen bg-background">
+       {/* Header Navigation */}
+       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
+         <nav className="container mx-auto px-4 py-4">
+           <div className="flex items-center justify-between">
+                           <div className="flex items-center gap-2">
+                <img 
+                  src="/final_logo.png" 
+                  alt="Proplytics Logo" 
+                  className="w-8 h-8 object-contain"
+                />
+                <span className="text-xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                  Proplytics
+                </span>
+              </div>
+             
+             <div className="hidden md:flex items-center gap-8">
+               <a 
+                 href="#features" 
+                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Features
+               </a>
+               <a 
+                 href="#demo" 
+                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Demo
+               </a>
+               <a 
+                 href="#why" 
+                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   document.getElementById('why')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Why Us
+               </a>
+               <a 
+                 href="#pricing" 
+                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Pricing
+               </a>
+               <Button 
+                 size="sm" 
+                 onClick={() => navigate('/auth')}
+                 className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+               >
+                 Get Started
+               </Button>
+             </div>
+             
+             {/* Mobile menu button */}
+             <div className="md:hidden">
+               <Button variant="ghost" size="sm">
+                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                 </svg>
+               </Button>
+             </div>
+           </div>
+         </nav>
+       </header>
+
+       {/* Hero Section */}
+       <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-background to-green-50"></div>
+        <div className="relative container mx-auto px-4 text-center">
+          <div className="max-w-5xl mx-auto">
+            <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
+              🚀 Powered by PrizePicks Data
+            </Badge>
+            
+                                     <h1 className="text-7xl md:text-8xl font-black tracking-tight mb-6">
+              <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                Proplytics
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Leverage cutting-edge statistical models and real-time data to make informed decisions on sports props across multiple leagues.
+            
+            <p className="text-2xl md:text-3xl text-muted-foreground mb-8 max-w-3xl mx-auto font-light">
+              The Ultimate Prop Site for NFL Props, NBA Props & Betting Analytics
             </p>
             
-            {/* Auth Required Message */}
-            <Card className="max-w-md mx-auto mb-8 border-primary/20 bg-primary/5">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl text-primary">Account Required</CardTitle>
-                <CardDescription>
-                  Create an account to access our advanced props analytics platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  size="lg" 
-                  className="w-full font-semibold"
-                  onClick={() => navigate('/auth')}
-                >
-                  Sign Up / Login to Continue
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
+                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+               <Button 
+                 size="lg" 
+                 className="px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                 onClick={() => navigate('/auth')}
+               >
+                 Get Started
+                 <ArrowRight className="ml-2 h-5 w-5" />
+               </Button>
+               <Button 
+                 size="lg" 
+                 variant="outline" 
+                 className="px-8 py-4 text-lg font-semibold rounded-2xl border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                 onClick={() => navigate('/auth')}
+               >
+                 View Live Props
+               </Button>
+             </div>
           </div>
-        </section>
-        
-        {/* Landing Page Stats */}
-        <section className="py-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-3xl font-bold text-foreground">
-                    {stat.value}
-                    <span className="text-primary">{stat.suffix}</span>
-                  </CardTitle>
+        </div>
+      </section>
+
+      
+
+             {/* Key Features Section */}
+       <section id="features" className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Why Choose Proplytics
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Built by sports analytics experts, designed for serious prop bettors
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {features.map((feature, index) => (
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl hover:-translate-y-1">
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl font-bold">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground font-medium">{stat.label}</p>
+                  <CardDescription className="text-center text-base leading-relaxed">
+                    {feature.description}
+                  </CardDescription>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </section>
-        
-        {/* Features Section */}
-        <section className="py-20">
+        </div>
+      </section>
+
+             {/* Demo/Analytics Preview Section - Scroll-Driven Slideshow */}
+       <section id="demo" className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Why Choose Our Analysis
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              See Proplytics in Action
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Leverage cutting-edge statistical models to make informed decisions on sports props
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Scroll down to explore our analytics platform features
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
-            ))}
-          </div>
-        </section>
+          {/* Scroll-driven slideshow */}
+          <div className="relative h-[200vh]"> 
+            {/* Sticky container that stays pinned while scrolling */}
+            <div 
+              ref={demoRef} 
+              className="sticky top-0 h-screen overflow-hidden rounded-2xl bg-background/80 backdrop-blur-sm border border-border/20"
+            >
+              <motion.div
+                style={{ y }}
+                className="flex flex-col h-[200%] w-full" // 2 images tall
+              >
+              {/* Slide 1 - Props Overview */}
+              <div className="h-1/2 flex flex-col items-center justify-center p-8">
+                <div className="max-w-4xl w-full">
+                  <div className="text-center mb-8">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <BarChart3 className="h-6 w-6 text-primary" />
+                      <h3 className="text-2xl font-bold text-foreground">Props Overview Dashboard</h3>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Real-time prop data with advanced analytics, matchup scoring, and performance tracking
+                    </p>
+                  </div>
+                  <div className="relative">
+                    <img 
+                      src="/props_table_pic.png" 
+                      alt="Props Table - Advanced analytics dashboard showing player props with filtering and scoring" 
+                      className="w-full h-auto rounded-xl border border-border/50 shadow-lg"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent rounded-xl pointer-events-none" />
+                  </div>
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex items-center gap-2 justify-center">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-muted-foreground">Green: Favorable Lines</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-center">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <span className="text-muted-foreground">Blue: Standard Lines</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-center">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <span className="text-muted-foreground">Red: Challenging Lines</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        {/* How It Works */}
-        <section className="py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              How It Works
-            </h2>
+              {/* Slide 2 - Hot Props Feature */}
+              <div className="h-1/2 flex flex-col items-center justify-center p-8">
+                <div className="max-w-4xl w-full">
+                  <div className="text-center mb-8">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <Flame className="h-6 w-6 text-orange-500" />
+                      <h3 className="text-2xl font-bold text-foreground">Hot Props - Performance Tracking</h3>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Identify players on fire! See who's consistently outperforming their lines with L5 game analysis
+                    </p>
+                  </div>
+                  <div className="relative">
+                    <img 
+                      src="/hotprops_pic.png" 
+                      alt="Hot Props Table - Shows players performing well in last 5 games with fire emojis and highlighting" 
+                      className="w-full h-auto rounded-xl border border-border/50 shadow-lg"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent rounded-xl pointer-events-none" />
+                  </div>
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex items-center gap-2 justify-center">
+                      <span className="text-2xl">🔥</span>
+                      <span className="text-muted-foreground">Fire Emoji: Hot Streak</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-center">
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <span className="text-muted-foreground">Yellow: L5 Above Line</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-center">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-muted-foreground">Green: Goblin Props</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-4 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                    <div className="flex items-center gap-2 text-orange-400 font-medium mb-2">
+                      <Flame className="h-4 w-4" />
+                      Hot Props Feature
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Automatically highlights players whose last 5 game average significantly exceeds their prop line. 
+                      Perfect for finding players in peak form!
+                    </p>
+                  </div>
+                </div>
+              </div>
+              </motion.div>
+              
+              {/* Scroll Progress Indicator */}
+              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2">
+                <motion.div 
+                  className="w-8 h-2 bg-primary/30 rounded-full overflow-hidden"
+                  initial={{ opacity: 0.3 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <motion.div 
+                    className="h-full bg-primary rounded-full"
+                    style={{ 
+                      width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
+                    }}
+                  />
+                </motion.div>
+              </div>
+              
+              {/* Scroll Hint */}
+              <div className="absolute top-6 right-6 text-sm text-muted-foreground bg-background/80 px-3 py-2 rounded-lg border border-border/30">
+                <span className="animate-pulse">↓ Scroll to explore</span>
+              </div>
+            </div>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <Card className="text-center border-0 shadow-lg">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-primary font-bold text-lg">1</span>
+          {/* Key Features Summary */}
+          <div className="mt-12 text-center">
+            <Card className="border-0 shadow-lg rounded-2xl bg-gradient-to-r from-primary/5 to-primary/10 p-6">
+              <h3 className="text-2xl font-bold text-foreground mb-4">
+                Key Features You Can See
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span>Advanced Filtering</span>
                 </div>
-                <CardTitle className="text-lg">Data Collection</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  We aggregate player stats, team performance, and prop data across multiple leagues
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg">
-              <CardHeader>
-                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-green-600 font-bold text-lg">2</span>
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span>Matchup Scoring</span>
                 </div>
-                <CardTitle className="text-lg">Statistical Analysis</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Our algorithms analyze patterns, trends, and probabilities to identify value
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg">
-              <CardHeader>
-                <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-purple-600 font-bold text-lg">3</span>
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span>Hot Props Tracking</span>
                 </div>
-                <CardTitle className="text-lg">Best Props Delivered</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Get ranked recommendations with confidence scores and reasoning
-                </CardDescription>
-              </CardContent>
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span>Performance Analytics</span>
+                </div>
+              </div>
             </Card>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Final CTA */}
-        <section className="py-20 text-center">
-          <Card className="max-w-2xl mx-auto border-0 shadow-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-            <CardHeader className="pb-6">
-              <CardTitle className="text-2xl font-bold">
-                Ready to Start Winning?
-              </CardTitle>
-              <CardDescription className="text-primary-foreground/80">
-                Join thousands of users who trust our statistical analysis for sports props
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Button 
-                  size="lg" 
-                  variant="secondary" 
-                  className="font-semibold"
-                  onClick={() => navigate('/auth')}
-                >
-                  Create Your Account
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <p className="text-sm text-primary-foreground/70">
-                  No credit card required • Free analysis included
-                </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                           {/* Why Proplytics Section */}
+        <section id="why" className="py-20">
+         <div className="container mx-auto px-4">
+           <div className="max-w-4xl mx-auto">
+             <Card className="border-0 shadow-xl rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10">
+               <CardHeader className="text-center pb-8">
+                 <CardTitle className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                   Built for Serious Prop Bettors
+                 </CardTitle>
+                 <CardDescription className="text-lg text-muted-foreground">
+                   Every feature designed with one goal: help you make better prop decisions
+                 </CardDescription>
+               </CardHeader>
+               <CardContent>
+                 <div className="grid md:grid-cols-2 gap-6">
+                   {whyProplytics.map((point, index) => (
+                     <div key={index} className="flex items-center gap-3">
+                       <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                         <Shield className="h-4 w-4 text-primary" />
+                       </div>
+                       <span className="text-lg font-medium text-foreground">{point}</span>
+                     </div>
+                   ))}
+                 </div>
+               </CardContent>
+             </Card>
+           </div>
+         </div>
+       </section>
+
+               {/* Pricing Section */}
+        <section id="pricing" className="py-20 bg-muted/30">
+         <div className="container mx-auto px-4">
+           <div className="text-center mb-16">
+             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+               Start Winning Today
+             </h2>
+             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+               Access our complete suite of sports prop analytics tools at no cost
+             </p>
+           </div>
+           
+           <div className="max-w-4xl mx-auto">
+             <Card className="border-0 shadow-2xl rounded-3xl bg-gradient-to-br from-green-50 via-background to-blue-50 relative overflow-hidden">
+               {/* Free Badge */}
+               <div className="absolute top-6 right-6">
+                 <Badge className="bg-green-500 text-white px-4 py-2 text-sm font-semibold rounded-full">
+                   🎯 FREE
+                 </Badge>
+               </div>
+               
+               <CardHeader className="text-center pt-12 pb-8">
+                 <CardTitle className="text-5xl font-black text-foreground mb-4">
+                   $0
+                 </CardTitle>
+                 <CardDescription className="text-2xl font-semibold text-muted-foreground">
+                   Complete Access
+                 </CardDescription>
+               </CardHeader>
+               
+               <CardContent className="pb-12">
+                 <div className="space-y-6 mb-8">
+                   <div className="flex items-center gap-3">
+                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                     </div>
+                     <span className="text-lg text-foreground">Unlimited Prop Analysis</span>
+                   </div>
+                   
+                   <div className="flex items-center gap-3">
+                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                     </div>
+                     <span className="text-lg text-foreground">Real-Time Data Updates</span>
+                   </div>
+                   
+                   <div className="flex items-center gap-3">
+                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                     </div>
+                     <span className="text-lg text-foreground">Advanced Analytics Dashboard</span>
+                   </div>
+                   
+                   <div className="flex items-center gap-3">
+                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                     </div>
+                     <span className="text-lg text-foreground">Dual-League Coverage (NBA, NFL)</span>
+                   </div>
+                   
+                   <div className="flex items-center gap-3">
+                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                     </div>
+                     <span className="text-lg text-foreground">Historical Performance Tracking</span>
+                   </div>
+                   
+                   <div className="flex items-center gap-3">
+                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                       </svg>
+                     </div>
+                     <span className="text-lg text-foreground">No Hidden Fees or Subscriptions</span>
+                   </div>
+                 </div>
+                 
+                 <div className="text-center">
+                   <Button 
+                     size="lg" 
+                     className="px-12 py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+                     onClick={() => navigate('/auth')}
+                   >
+                     Get Started Free
+                     <ArrowRight className="ml-3 h-6 w-6" />
+                   </Button>
+                   <p className="text-sm text-muted-foreground mt-4">
+                     No credit card required • Instant access
+                   </p>
+                 </div>
+               </CardContent>
+             </Card>
+           </div>
+         </div>
+       </section>
+
+       {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-2">Proplytics</h3>
+              <p className="text-gray-300">
+                Advanced sports prop analytics for smarter picks
+              </p>
+            </div>
+            
+            <Separator className="mb-8 bg-gray-700" />
+            
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex gap-6 text-sm">
+
+                <a href="#" className="hover:text-white transition-colors text-gray-300">Contact</a>
+                <a href="#" className="hover:text-white transition-colors text-gray-300">Terms</a>
+                <a href="#" className="hover:text-white transition-colors text-gray-300">Privacy</a>
               </div>
-            </CardContent>
-          </Card>
-        </section>
-      </div>
+              <p className="text-sm text-gray-400">
+                © 2024 Proplytics. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
+    </>
   );
 };
 

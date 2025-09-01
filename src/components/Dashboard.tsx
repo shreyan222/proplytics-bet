@@ -88,7 +88,7 @@ export const Dashboard = () => {
     {
       title: "Goblin Props",
       value: goblinProps,
-      description: "Premium high-confidence props",
+      description: "Low-risk, low-reward props",
       icon: <img src="goblin_updated.png" alt="Goblin" className="w-10 h-10" />,
       gradient: 'from-green-500/80 to-green-600/30',
       border: 'border-green-500/30'
@@ -150,16 +150,13 @@ export const Dashboard = () => {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-4">
+          <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-3 leading-tight">
             {leagueDisplay} Props Analytics
           </h1>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            Advanced analytics and insights for {leagueDisplay} prop betting with real-time data and AI-powered scoring
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-0 leading-relaxed">
+            Advanced analytics and insights for {leagueDisplay} with real-time data and AI-powered insights for winning strategies
           </p>
-          <Badge className="mt-4 bg-green-600 hover:bg-green-700">
-            <Activity className="h-3 w-3 mr-1" />
-            Live Data
-          </Badge>
+          
         </div>
 
         {/* Stats Grid */}
@@ -220,6 +217,8 @@ export const Dashboard = () => {
               viewMode={viewMode}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              allProps={allProps}
+              selectedLeague={selectedLeagues[0]}
             />
 
             {/* Props Table */}

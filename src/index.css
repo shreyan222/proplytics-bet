@@ -1,11 +1,19 @@
 
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* or for other fonts:
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 10%;
+    --background: 210 10% 10%;
     --foreground: 0 0% 100%;
   
     --card: 240 10% 14%;
@@ -23,7 +31,7 @@
     --muted: 240 5% 20%;
     --muted-foreground: 240 5% 65%;
   
-    --accent: 265 80% 70%;
+    --accent: 220 80% 60%;
     --accent-foreground: 0 0% 100%;
   
     --destructive: 0 70% 50%;
@@ -105,7 +113,7 @@
     --muted: 240 5% 20%;
     --muted-foreground: 240 5% 65%;
   
-    --accent: 265 80% 70%;
+    --accent: 220 80% 60%;
     --accent-foreground: 0 0% 100%;
   
     --destructive: 0 70% 50%;
@@ -128,6 +136,9 @@
 }
 
 @layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
   * {
     @apply border-border;
   }
@@ -142,7 +153,7 @@
     );
     background-size: 400% 400%;
     animation: gradientShift 20s ease infinite;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   .light body {
@@ -156,6 +167,29 @@
 }
 
 @layer utilities {
+  .scrollbar-hide {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  
+  .snap-start {
+    scroll-snap-align: start;
+  }
+  
+  .snap-mandatory {
+    scroll-snap-type: x mandatory;
+  }
+  
   .glass {
     @apply backdrop-blur-xl bg-white/5 border border-white/10;
   }

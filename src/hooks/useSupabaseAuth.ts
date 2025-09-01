@@ -109,12 +109,45 @@ export const useSupabaseAuth = () => {
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { data, error };
+  };
+
+  const updatePassword = async (newPassword: string, accessToken: string, refreshToken: string) => {
+    try {
+      // Set the session with the tokens from the reset link
+      const { data: { session }, error: sessionError } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (sessionError) {
+        return { data: null, error: sessionError };
+      }
+
+      // Update the password
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error updating password:', error);
+      return { data: null, error: { message: 'An unexpected error occurred' } };
+    }
+  };
+
   return {
     user,
     loading,
     signIn,
     signUp,
     signOut,
+    resetPassword,
+    updatePassword,
     checkUsernameAvailability,
     canChangeUsername,
     updateUsername,

@@ -8,6 +8,28 @@ export interface Player {
   image_url?: string;
 }
 
+// New normalized prop schema for search and display
+export interface NormalizedProp {
+  id: string;
+  player: string;
+  prop_type: string;
+  odd_type: 'Standard' | 'Alt Lines' | 'Goblin' | 'Demon';
+  line: number;
+  odds: number;
+  // Additional fields for enhanced functionality
+  team?: string;
+  opponent?: string;
+  position?: string;
+  start_time?: string;
+  league?: string;
+  // Performance metrics
+  h2h_avg?: number;
+  l5_avg?: number;
+  sorting_score?: number;
+  sample_size?: number;
+}
+
+// Legacy prop interface (keeping for backward compatibility)
 export interface Prop {
   prop_id: string;
   player_id: string;
@@ -28,6 +50,49 @@ export interface Prop {
   l5_score: number;
   sample_size: number;
   sorting_score: number;
+  // Add the computed fields from your database
+  sorting_score_computed?: number;
+  h2h_score_computed?: number;
+  l5_score_computed?: number;
+  h2h_relative_diff_computed?: number;
+  l5_relative_diff_computed?: number;
+  h2h_percent_computed?: number;
+  l5_percent_computed?: number;
+  matchup_rank?: number | null;
+  league?: string;
+}
+
+// Grouped props for display
+export interface GroupedProps {
+  player: string;
+  prop_types: {
+    [propType: string]: {
+      [oddType: string]: NormalizedProp[];
+    };
+  };
+  total_props: number;
+}
+
+// Search filters
+export interface SearchFilters {
+  prop_type?: string[];
+  odd_type?: string[];
+  min_line?: number;
+  max_line?: number;
+  min_odds?: number;
+  max_odds?: number;
+  team?: string[];
+  position?: string[];
+  league?: string[];
+}
+
+// Search result with grouping
+export interface SearchResult {
+  query: string;
+  total_results: number;
+  grouped_props: GroupedProps[];
+  filters: SearchFilters;
+  suggestions: string[];
 }
 
 export interface PropAnalysis {

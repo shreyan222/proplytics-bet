@@ -9,7 +9,6 @@ export const useDataProcessing = () => {
   // Manual data processing trigger
   const processData = useMutation({
     mutationFn: async () => {
-      console.log('Triggering data processing...');
       const { data, error } = await supabase.functions.invoke('data-processor');
       
       if (error) throw error;
@@ -33,7 +32,6 @@ export const useDataProcessing = () => {
   // ESPN depth chart scraping
   const scrapeDepthChart = useMutation({
     mutationFn: async (team: string) => {
-      console.log(`Scraping depth chart for team: ${team}`);
       const { data, error } = await supabase.functions.invoke('espn-scraper', {
         body: { team }
       });
@@ -64,7 +62,6 @@ export const useDataProcessing = () => {
       timeframe: string;
       stat_type?: string;
     }) => {
-      console.log('Fetching StatMuse data:', params);
       const { data, error } = await supabase.functions.invoke('statmuse-scraper', {
         body: params
       });

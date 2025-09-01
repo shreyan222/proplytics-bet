@@ -5,12 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthPage: React.FC = () => {
-  const { user, signIn, signUp, checkUsernameAvailability } = useSupabaseAuth();
+  const { user, signIn, signUp } = useSupabaseAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +18,7 @@ export const AuthPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -27,43 +27,18 @@ export const AuthPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  // Check username availability when user types
-  useEffect(() => {
-    if (isSignUp && username.length >= 3) {
-      const checkUsername = async () => {
-        setUsernameStatus('checking');
-        const isAvailable = await checkUsernameAvailability(username);
-        setUsernameStatus(isAvailable ? 'available' : 'taken');
-      };
-
-      const timeoutId = setTimeout(checkUsername, 500);
-      return () => clearTimeout(timeoutId);
-    } else {
-      setUsernameStatus('idle');
-    }
-  }, [username, isSignUp, checkUsernameAvailability]);
-
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthLoading(true);
     setError(null);
     
     try {
-      console.log(`Attempting to ${isSignUp ? 'sign up' : 'sign in'} with email:`, email);
-      
       let result;
       if (isSignUp) {
-        if (usernameStatus !== 'available') {
-          setError('Please choose an available username');
-          setAuthLoading(false);
-          return;
-        }
         result = await signUp(email, password, username);
       } else {
         result = await signIn(email, password);
       }
-      
-      console.log('Auth result:', result);
       
       if (result.error) {
         console.error('Auth error:', result.error);
@@ -81,31 +56,7 @@ export const AuthPage: React.FC = () => {
     }
   };
 
-  const getUsernameStatusIcon = () => {
-    switch (usernameStatus) {
-      case 'checking':
-        return <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>;
-      case 'available':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'taken':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return null;
-    }
-  };
 
-  const getUsernameStatusMessage = () => {
-    switch (usernameStatus) {
-      case 'checking':
-        return 'Checking availability...';
-      case 'available':
-        return 'Username is available!';
-      case 'taken':
-        return 'Username is already taken';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -148,29 +99,15 @@ export const AuthPage: React.FC = () => {
               {isSignUp && (
                 <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
-                  <div className="relative">
-                    <Input
-                      id="username"
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
-                      placeholder="Choose a unique username"
-                      minLength={3}
-                      className="pr-10"
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      {getUsernameStatusIcon()}
-                    </div>
-                  </div>
-                  {usernameStatus !== 'idle' && (
-                    <p className={`text-sm ${
-                      usernameStatus === 'available' ? 'text-green-600' :
-                      usernameStatus === 'taken' ? 'text-red-600' : 'text-muted-foreground'
-                    }`}>
-                      {getUsernameStatusMessage()}
-                    </p>
-                  )}
+                  <Input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    placeholder="Choose a username"
+                    minLength={3}
+                  />
                 </div>
               )}
               <div className="space-y-2">
@@ -184,26 +121,54 @@ export const AuthPage: React.FC = () => {
                   placeholder="Enter your email"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Enter your password"
-                  minLength={6}
-                />
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={authLoading || (isSignUp && usernameStatus !== 'available')}
-              >
-                {authLoading ? 'Loading...' : (isSignUp ? 'Create Account' : 'Sign In')}
-              </Button>
-            </form>
+                             <div className="space-y-2">
+                 <Label htmlFor="password">Password</Label>
+                 <div className="relative">
+                   <Input
+                     id="password"
+                     type={showPassword ? "text" : "password"}
+                     value={password}
+                     onChange={(e) => setPassword(e.target.value)}
+                     required
+                     placeholder="Enter your password"
+                     minLength={6}
+                     className="pr-10"
+                   />
+                   <Button
+                     type="button"
+                     variant="ghost"
+                     size="sm"
+                     className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                     onClick={() => setShowPassword(!showPassword)}
+                   >
+                     {showPassword ? (
+                       <EyeOff className="h-4 w-4" />
+                     ) : (
+                       <Eye className="h-4 w-4" />
+                     )}
+                   </Button>
+                 </div>
+               </div>
+                             <Button 
+                 type="submit" 
+                 className="w-full" 
+                 disabled={authLoading}
+               >
+                 {authLoading ? 'Loading...' : (isSignUp ? 'Create Account' : 'Sign In')}
+               </Button>
+             </form>
+
+             {!isSignUp && (
+               <div className="text-center">
+                 <Button 
+                   variant="link" 
+                   onClick={() => navigate('/forgot-password')}
+                   className="text-sm text-muted-foreground"
+                 >
+                   Forgot your password?
+                 </Button>
+               </div>
+             )}
             
             <div className="mt-6 text-center">
               <Button 
@@ -212,7 +177,6 @@ export const AuthPage: React.FC = () => {
                   setIsSignUp(!isSignUp);
                   setError(null);
                   setUsername('');
-                  setUsernameStatus('idle');
                 }}
                 className="text-sm"
               >

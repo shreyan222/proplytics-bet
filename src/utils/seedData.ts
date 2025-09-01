@@ -155,7 +155,6 @@ export const seedSampleData = async () => {
       }
     }
 
-    console.log('Sample data seeded successfully!');
     return true;
   } catch (error) {
     console.error('Error seeding sample data:', error);

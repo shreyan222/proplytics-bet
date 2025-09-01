@@ -55,8 +55,6 @@ export const useRealtime = () => {
       return;
     }
 
-    console.log('Connecting to WebSocket...');
-    
     // Use the Supabase project URL for WebSocket connection
     const wsUrl = `wss://tlpzzneewikrpqfqygxi.supabase.co/functions/v1/realtime-updates`;
     
@@ -64,7 +62,6 @@ export const useRealtime = () => {
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
-        console.log('WebSocket connected');
         setIsConnected(true);
         setConnectionAttempts(0);
 
@@ -92,7 +89,6 @@ export const useRealtime = () => {
       wsRef.current.onmessage = (event) => {
         try {
           const message: RealtimeMessage = JSON.parse(event.data);
-          console.log('WebSocket message received:', message);
 
           switch (message.type) {
             case 'connection_established':
@@ -116,11 +112,10 @@ export const useRealtime = () => {
               break;
 
             case 'pong':
-              console.log('Received pong from server');
               break;
 
             default:
-              console.log('Unknown message type:', message.type);
+              // Unknown message type
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
@@ -128,7 +123,6 @@ export const useRealtime = () => {
       };
 
       wsRef.current.onclose = () => {
-        console.log('WebSocket disconnected');
         setIsConnected(false);
         
         if (pingIntervalRef.current) {

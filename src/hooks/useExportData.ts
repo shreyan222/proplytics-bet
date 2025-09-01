@@ -23,8 +23,6 @@ export const useExportData = () => {
       filters: PropFilters; 
       options: ExportOptions 
     }) => {
-      console.log('Exporting data:', { props: props.length, filters, options });
-
       // Sort data if specified
       let sortedProps = [...props];
       if (options.sortBy && options.sortDirection) {

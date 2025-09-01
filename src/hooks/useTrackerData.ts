@@ -131,7 +131,6 @@ export const useTrackerData = () => {
   return useQuery({
     queryKey: ['tracker-data'],
     queryFn: async () => {
-      console.log('Fetching tracker data...');
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       return mockTrackerData;

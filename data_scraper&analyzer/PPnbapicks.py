@@ -112,6 +112,11 @@ def filter_rows_by_league_id(df, league_id):
         if row['League ID'] == league_id:
             filtered_rows.append(row)
 
+    # Check if there are any filtered rows before concatenating
+    if not filtered_rows:
+        # Return an empty DataFrame with the same columns as the original
+        return pd.DataFrame(columns=df.columns)
+    
     filtered_df = pd.concat(filtered_rows, axis=1).transpose()
 
     return filtered_df

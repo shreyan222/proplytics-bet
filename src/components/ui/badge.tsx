@@ -35,16 +35,15 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
     function Badge({ className, variant, ...props }: BadgeProps) {
-      if (variant === "goblin" || variant === "demon" ) {
+      if (variant === "goblin" || variant === "demon") {
         const src = {
           goblin: "goblin_updated.png",
           demon: "demon.png",
-          standard: "standard.png",
         }[variant];
     
         return (
           <div className={cn("inline-flex items-center", className)} {...props}>
-            <img src={src} alt={variant} className="h-10 w-10" />
+            <img src={src} alt={variant} className="h-8 w-8" />
           </div>
         );
       }

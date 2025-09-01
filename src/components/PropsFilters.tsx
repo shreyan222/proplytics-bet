@@ -20,54 +20,32 @@ interface PropsFiltersProps {
   isRefreshing?: boolean;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
-  selectedLeague?: 'NBA' | 'NFL' | 'MLB';
+  selectedLeague?: 'NBA' | 'NFL';
+  allProps?: any[]; // Add this to receive the actual props data
 }
 
-const LEAGUE_DATA = {
-  NBA: {
-    teams: [
-      'ATL', 'BOS', 'BKN', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW',
-      'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 'MIN', 'NOP', 'NYK',
-      'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS'
-    ],
-    positions: ['PG', 'SG', 'SF', 'PF', 'C'],
-    statTypes: [
-      'Points', 'Rebounds', 'Assists', 'Steals', 'Blocks', '3-Pointers Made',
-      'Field Goals Made', 'Free Throws Made', 'Turnovers', 'Double-Double'
-    ]
-  },
-  NFL: {
-    teams: [
-      'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN',
-      'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC', 'LV', 'LAC', 'LAR', 'MIA',
-      'MIN', 'NE', 'NO', 'NYG', 'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB',
-      'TEN', 'WAS'
-    ],
-    positions: ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'],
-    statTypes: [
-      'Passing Yards', 'Rushing Yards', 'Receiving Yards', 'Touchdowns', 'Receptions',
-      'Passing TDs', 'Rushing TDs', 'Receiving TDs', 'Interceptions', 'Sacks'
-    ]
-  },
-  MLB: {
-    teams: [
-      'ARI', 'ATL', 'BAL', 'BOS', 'CHC', 'CWS', 'CIN', 'CLE', 'COL', 'DET',
-      'HOU', 'KC', 'LAA', 'LAD', 'MIA', 'MIL', 'MIN', 'NYM', 'NYY', 'OAK',
-      'PHI', 'PIT', 'SD', 'SF', 'SEA', 'STL', 'TB', 'TEX', 'TOR', 'WAS'
-    ],
-    positions: ['P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'DH'],
-    statTypes: [
-      'Hits', 'Runs', 'RBIs', 'Home Runs', 'Stolen Bases', 'Strikeouts',
-      'Total Bases', 'Walks', 'Doubles', 'Triples'
-    ]
+// Helper function to get unique values from props data
+const getUniqueValues = (props: any[], field: string): string[] => {
+  if (!props || props.length === 0) return [];
+  
+  // Handle potential field name variations
+  const fieldVariations = [field, field.toLowerCase(), field.replace('_', '')];
+  
+  let values: any[] = [];
+  for (const prop of props) {
+    for (const fieldVar of fieldVariations) {
+      if (prop[fieldVar] !== undefined && prop[fieldVar] !== null) {
+        values.push(prop[fieldVar]);
+        break;
+      }
+    }
   }
+  
+  // Filter out empty/null values and return unique sorted values
+  return [...new Set(values.filter(Boolean))].sort();
 };
 
-const ODDS_TYPES = [
-  { value: 'standard', label: 'Standard' },
-  { value: 'demon', label: 'Demon' },
-  { value: 'goblin', label: 'Goblin' }
-];
+
 
 export const PropsFilters: React.FC<PropsFiltersProps> = ({
   filters,
@@ -82,10 +60,19 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
   searchQuery = '',
   onSearchChange,
   selectedLeague = 'NBA',
+  allProps = [],
 }) => {
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
 
-  const currentLeagueData = LEAGUE_DATA[selectedLeague];
+  // Generate dynamic filter options from actual props data
+  const availableTeams = getUniqueValues(allProps, 'team');
+  const availablePositions = getUniqueValues(allProps, 'position');
+  const availableStatTypes = getUniqueValues(allProps, 'stat_type');
+  const availableOddsTypes = getUniqueValues(allProps, 'odds_type');
+
+  // Debug logging to see what filter options are available
+  React.useEffect(() => {
+  }, [allProps, availableTeams, availablePositions, availableStatTypes, availableOddsTypes]);
 
   React.useEffect(() => {
     const count = Object.values(filters).filter(value => 
@@ -159,16 +146,25 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         </div>
 
         {/* Filter Controls */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+        {allProps.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <p>No props data available. Filters will appear once data is loaded.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
           {/* Team Filter */}
           <Select onValueChange={(value) => handleFilterChange('teams', [value])}>
             <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Team" />
             </SelectTrigger>
             <SelectContent>
-              {currentLeagueData.teams.map((team) => (
-                <SelectItem key={team} value={team} className="text-foreground hover:bg-muted">{team}</SelectItem>
-              ))}
+              {availableTeams.length > 0 ? (
+                availableTeams.map((team) => (
+                  <SelectItem key={team} value={team} className="text-foreground hover:bg-muted">{team}</SelectItem>
+                ))
+              ) : (
+                <SelectItem value="" disabled className="text-muted-foreground">No teams available</SelectItem>
+              )}
             </SelectContent>
           </Select>
 
@@ -178,9 +174,13 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               <SelectValue placeholder="Stat Type" />
             </SelectTrigger>
             <SelectContent>
-              {currentLeagueData.statTypes.map((stat) => (
-                <SelectItem key={stat} value={stat} className="text-foreground hover:bg-muted">{stat}</SelectItem>
-              ))}
+              {availableStatTypes.length > 0 ? (
+                availableStatTypes.map((stat) => (
+                  <SelectItem key={stat} value={stat} className="text-foreground hover:bg-muted">{stat}</SelectItem>
+                ))
+              ) : (
+                <SelectItem value="" disabled className="text-muted-foreground">No stat types available</SelectItem>
+              )}
             </SelectContent>
           </Select>
 
@@ -190,9 +190,13 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               <SelectValue placeholder="Odds Type" />
             </SelectTrigger>
             <SelectContent>
-              {ODDS_TYPES.map((odds) => (
-                <SelectItem key={odds.value} value={odds.value} className="text-foreground hover:bg-muted">{odds.label}</SelectItem>
-              ))}
+              {availableOddsTypes.length > 0 ? (
+                availableOddsTypes.map((odds) => (
+                  <SelectItem key={odds} value={odds} className="text-foreground hover:bg-muted">{odds}</SelectItem>
+                ))
+              ) : (
+                <SelectItem value="" disabled className="text-muted-foreground">No odds types available</SelectItem>
+              )}
             </SelectContent>
           </Select>
 
@@ -202,9 +206,13 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
               <SelectValue placeholder="Position" />
             </SelectTrigger>
             <SelectContent>
-              {currentLeagueData.positions.map((position) => (
-                <SelectItem key={position} value={position} className="text-foreground hover:bg-muted">{position}</SelectItem>
-              ))}
+              {availablePositions.length > 0 ? (
+                availablePositions.map((position) => (
+                  <SelectItem key={position} value={position} className="text-foreground hover:bg-muted">{position}</SelectItem>
+                ))
+              ) : (
+                <SelectItem value="" disabled className="text-muted-foreground">No positions available</SelectItem>
+              )}
             </SelectContent>
           </Select>
 
@@ -224,6 +232,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
             )}
           </Button>
         </div>
+        )}
 
         {/* Active Filters */}
         {activeFiltersCount > 0 && (
@@ -271,6 +280,13 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         <div className="text-sm text-muted-foreground">
           Showing {filteredProps} of {totalProps} props
         </div>
+
+        {/* Filter Options Summary */}
+        {allProps.length > 0 && (
+          <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+            <p>Available filters: {availableTeams.length} teams, {availablePositions.length} positions, {availableStatTypes.length} stat types, {availableOddsTypes.length} odds types</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
