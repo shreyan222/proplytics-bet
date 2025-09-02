@@ -28,7 +28,7 @@ export const LeagueSelector: React.FC<LeagueSelectorProps> = ({
     color: 'bg-green-600 hover:bg-green-700'
   }];
 
-  // Initialize leagues from localStorage or default to both
+  // Initialize leagues from localStorage or default to NBA only
   useEffect(() => {
     if (!isInitialized) {
       const savedLeagues = localStorage.getItem(STORAGE_KEY);
@@ -39,19 +39,19 @@ export const LeagueSelector: React.FC<LeagueSelectorProps> = ({
           if (Array.isArray(parsedLeagues) && parsedLeagues.length > 0) {
             onLeaguesChange(parsedLeagues);
           } else {
-            // Fallback to default both if saved data is invalid
-            onLeaguesChange(['NBA', 'NFL']);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA', 'NFL']));
+            // Fallback to default NBA only if saved data is invalid
+            onLeaguesChange(['NBA']);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA']));
           }
         } catch (error) {
-          // Fallback to default both if parsing fails
-          onLeaguesChange(['NBA', 'NFL']);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA', 'NFL']));
+          // Fallback to default NBA only if parsing fails
+          onLeaguesChange(['NBA']);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA']));
         }
       } else {
-        // First time visit - default to both leagues
-        onLeaguesChange(['NBA', 'NFL']);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA', 'NFL']));
+        // First time visit - default to NBA only
+        onLeaguesChange(['NBA']);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(['NBA']));
       }
       
       setIsInitialized(true);

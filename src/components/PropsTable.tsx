@@ -16,7 +16,7 @@ interface PropsTableProps {
   viewMode?: 'table' | 'cards';
 }
 
-type SortField = 'player_name' | 'team' | 'against_team' | 'position' | 'stat_type' | 'line_score' | 'h2h_avg' | 'l5_avg' | 'matchup_rank' | 'sorting_score_computed' | 'odds_type' | 'start_time';
+type SortField = 'player_name' | 'team' | 'against_team' | 'position' | 'stat_type' | 'line_score' | 'h2h_avg' | 'l5_avg' | 'matchup_rank' | 'sorting_score' | 'odds_type' | 'start_time';
 type SortDirection = 'asc' | 'desc';
 
 export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table' }) => {
@@ -24,7 +24,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
-  const [sortField, setSortField] = useState<SortField>('sorting_score_computed');
+  const [sortField, setSortField] = useState<SortField>('sorting_score');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   // Add league filter to your table
   const [selectedLeague, setSelectedLeague] = useState<'all' | 'NBA' | 'NFL'>('all');
@@ -173,9 +173,9 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           aValue = Number(a.matchup_rank) || 0;
           bValue = Number(b.matchup_rank) || 0;
           break;
-        case 'sorting_score_computed':
-          aValue = Number(a.sorting_score_computed) || 0;
-          bValue = Number(b.sorting_score_computed) || 0;
+        case 'sorting_score':
+          aValue = Number(a.sorting_score) || 0;
+          bValue = Number(b.sorting_score) || 0;
           break;
         case 'odds_type':
           aValue = a.odds_type.toLowerCase();
@@ -654,7 +654,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
               {getSortableHeader('matchup_rank', 'Matchup Score')}
             </TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">
-              {getSortableHeader('sorting_score_computed', 'Prop Score')}
+              {getSortableHeader('sorting_score', 'Prop Score')}
             </TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">
               {getSortableHeader('odds_type', 'Odds Type')}
@@ -754,7 +754,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                 </div>
               </TableCell>
               <TableCell className="px-4 py-3 text-center">
-                <div className="text-2xl font-bold text-blue-400">{prop.sorting_score_computed?.toFixed(3) || prop.sorting_score?.toFixed(3) || 'N/A'}</div>
+                <div className="text-2xl font-bold text-blue-400">{((prop.sorting_score * 9)?.toFixed(3)) || 'N/A'}</div>
               </TableCell>
               <TableCell className="px-4 py-3 text-center">
                 {getOddsTypeBadge(prop.odds_type)}

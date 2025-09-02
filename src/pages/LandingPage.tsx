@@ -89,7 +89,7 @@ const LandingPage = () => {
            <div className="flex items-center justify-between">
                            <div className="flex items-center gap-2">
                 <img 
-                  src="/final_logo.png" 
+                  src="/logo.png" 
                   alt="Proplytics Logo" 
                   className="w-8 h-8 object-contain"
                 />

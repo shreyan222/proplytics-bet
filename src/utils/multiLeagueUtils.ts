@@ -26,13 +26,22 @@ export const useMultiLeagueProps = (leagues: ('NBA' | 'NFL')[] = ['NBA']) => {
   const propsWithLeague = allProps.filter(p => p.league);
   const propsWithoutLeague = allProps.filter(p => !p.league);
   
-  // For now, we're only supporting NBA data from Supabase
-  // Filter can be added later when we have league information in the database
+  // Filter props by selected leagues
   const filteredProps = allProps.filter(prop => {
-    // Temporarily disable league filtering to debug the issue
-    return true;
+    // If no league field exists, assume it's NBA for backward compatibility
+    const propLeague = prop.league || 'NBA';
     
+    // Map league names to our expected format
+    const leagueMapping: Record<string, 'NBA' | 'NFL'> = {
+      'NBA': 'NBA',
+      'NFL': 'NFL',
+      '9': 'NFL', // NFL has league_id of 9
+      '1': 'NBA'  // NBA has league_id of 1 (assuming)
+    };
     
+    const mappedLeague = leagueMapping[propLeague] || propLeague as 'NBA' | 'NFL';
+    
+    return leagues.includes(mappedLeague);
   });
   
   return {

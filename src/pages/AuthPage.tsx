@@ -65,7 +65,7 @@ export const AuthPage: React.FC = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img 
-              src="final_logo.png" 
+              src="logo.png" 
               alt="Proplytics Logo" 
               className="w-12 h-12"
             />

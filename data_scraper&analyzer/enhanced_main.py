@@ -524,7 +524,7 @@ class EnhancedPropsProcessor:
                             'existing_props_skipped': len(nba_props) - len(new_nba_props),
                             'league': 'NBA',
                             'timestamp': datetime.now().isoformat()
-                        })
+                        }, force_processing=True)  # Force processing to bypass filtering issues
                     else:
                         print("✅ No new NBA props to process - all already exist in database")
                         self.show_processing_efficiency(len(nba_props), 0, "NBA")
@@ -558,7 +558,7 @@ class EnhancedPropsProcessor:
                         'existing_props_skipped': len(nfl_props) - len(new_nfl_props),
                         'league': 'NFL',
                         'timestamp': datetime.now().isoformat()
-                    })
+                    }, force_processing=True)  # Force processing to bypass filtering issues
                 else:
                     print("✅ No new NFL props to process - all already exist in database")
                     self.show_processing_efficiency(len(nfl_props), 0, "NFL")
@@ -917,14 +917,14 @@ class EnhancedPropsProcessor:
         original_norm = norm.copy()
         
         # Remove unwanted prop types
-        norm = PPnbapicks.RemoveSearch(norm, "Fantasy Score")
+        '''norm = PPnbapicks.RemoveSearch(norm, "Fantasy Score")
         norm = PPnbapicks.RemoveSearch(norm, "Combo")
         norm = PPnbapicks.RemoveSearch(norm, "Longest Rush")
         norm = PPnbapicks.RemoveSearch(norm, "Longest Reception")
         norm = PPnbapicks.RemoveSearch(norm, "Longest Completion")
         norm = PPnbapicks.RemoveSearch(norm, "Sacks")
         norm = PPnbapicks.RemoveSearch(norm, "First")
-        norm = PPnbapicks.RemoveSearch(norm, "Tackles+Ast")
+        norm = PPnbapicks.RemoveSearch(norm, "Tackles+Ast")'''
         
         print(f"Original norm length: {len(original_norm)}")
         print(f"Filtered norm length: {len(norm)}")

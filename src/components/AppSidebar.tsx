@@ -113,7 +113,7 @@ export function AppSidebar() {
           <div className="px-1.5 py-2">
             <div className="flex items-center gap-3">
               <img  
-                src="/final_logo.png" 
+                src="/logo.png" 
                 alt="Proplytics Logo" 
                 className="w-10 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8" // Smaller when collapsed
               />

@@ -89,7 +89,7 @@ class SupabaseUploader:
         }
 
     
-    def upload_props(self, props: List[Prop], metadata: Dict[str, Any] = None) -> bool:
+    def upload_props(self, props: List[Prop], metadata: Dict[str, Any] = None, force_processing: bool = False) -> bool:
         """Upload props data to Supabase"""
         if not self.is_configured():
             print("❌ Supabase uploader not properly configured. Cannot upload.")
@@ -113,6 +113,8 @@ class SupabaseUploader:
                 
                 props_data.append(prop_dict)
             
+            print(f"📦 Uploading {len(props_data)} props")
+            
             payload = {
                 'job_type': 'prizepicks_scrape',
                 'props': props_data,
@@ -120,15 +122,16 @@ class SupabaseUploader:
                     'timestamp': datetime.now().isoformat(),
                     'total_props': len(props_data),
                     'script_version': '1.0',
+                    'force_processing': force_processing,
                     **(metadata or {})
                 }
             }
+            
             print("\n📦 Payload being sent to Supabase (first prop):")
-            print(json.dumps(payload['props'][0], indent=2))
+            if props_data:
+                print(json.dumps(props_data[0], indent=2))
             print("\n📦 Metadata:")
             print(json.dumps(payload['metadata'], indent=2))
-
-            print(f"Uploading {len(props_data)} props to Supabase...")
             
             response = requests.post(
                 self.ingestion_endpoint,
@@ -144,14 +147,16 @@ class SupabaseUploader:
             if response.status_code == 200:
                 result = response.json()
                 if result.get('success'):
-                    print(f"Successfully uploaded props. Job ID: {result.get('job_id')}")
-                    print(f"Processing result: {result.get('result')}")
+                    batch_result = result.get('result', {})
+                    props_processed = batch_result.get('props_processed', 0)
+                    print(f"✅ Upload completed: {props_processed} props processed")
+                    print(f"   Job ID: {result.get('job_id')}")
                     return True
                 else:
-                    print(f"Upload failed: {result.get('error')}")
+                    print(f"❌ Upload failed: {result.get('error')}")
                     return False
             else:
-                print(f"HTTP Error {response.status_code}: {response.text}")
+                print(f"❌ HTTP Error {response.status_code}: {response.text}")
                 return False
                 
         except requests.exceptions.Timeout:
@@ -164,7 +169,7 @@ class SupabaseUploader:
             print(f"Unexpected error during upload: {e}")
             return False
     
-    def upload_with_retry(self, props: List[Prop], max_retries: int = 3, metadata: Dict[str, Any] = None) -> bool:
+    def upload_with_retry(self, props: List[Prop], max_retries: int = 3, metadata: Dict[str, Any] = None, force_processing: bool = False) -> bool:
         for i, prop in enumerate(props):
             for field in ['game_id', 'against_team', 'start_time']:
                 if not hasattr(prop, field) or getattr(prop, field) in [None, '', 'Unknown']:
@@ -174,7 +179,7 @@ class SupabaseUploader:
         for attempt in range(max_retries):
             print(f"Upload attempt {attempt + 1}/{max_retries}")
             
-            if self.upload_props(props, metadata):
+            if self.upload_props(props, metadata, force_processing):
                 return True
             
             if attempt < max_retries - 1:

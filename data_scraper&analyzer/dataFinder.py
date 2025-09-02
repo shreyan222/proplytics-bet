@@ -24,7 +24,6 @@ def get_nfl_team_name(team_abbr):
         "JAC": "Jacksonville",
         "JAX": "Jacksonville",  # Alternative abbreviation
         "KC": "Kansas City",
-        "LA": "Los Angeles",
         "LAC": "Los Angeles Chargers",
         "LAR": "Los Angeles Rams",
         "LV": "Raiders",

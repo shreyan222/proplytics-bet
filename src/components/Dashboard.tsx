@@ -154,7 +154,7 @@ export const Dashboard = () => {
             {leagueDisplay} Props Analytics
           </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-0 leading-relaxed">
-            Advanced analytics and insights for {leagueDisplay} with real-time data and AI-powered insights for winning strategies
+            Advanced analytics and insights for {leagueDisplay} with real-time data taken directly from Prizepicks and AI-powered insights for winning strategies
           </p>
           
         </div>

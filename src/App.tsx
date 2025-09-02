@@ -3,6 +3,8 @@ import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { HelmetProvider } from 'react-helmet-async'
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
@@ -36,7 +38,6 @@ import { AuthWrapper } from "@/components/AuthWrapper"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Footer } from "@/components/Footer"
 import { GlobalSearch } from "@/components/GlobalSearch"
-
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -112,6 +113,8 @@ function App() {
           <ComparisonProvider>
             <Toaster />
             <AppContent />
+            <Analytics />
+            <SpeedInsights />
           </ComparisonProvider>
         </TooltipProvider>
       </QueryClientProvider>

@@ -79,193 +79,224 @@ async function processPrizePicksData(supabase, payload, jobId) {
   }
   console.log(`Processing ${payload.props.length} props`);
   
-  // First, get existing props to avoid redundant processing
-  const existingPropsQuery = await supabase
-    .from('props')
-    .select('id, player_name, stat_type, line_score, odds_type, team_name, league_id')
-    .in('league_id', [7, 9]); // NBA and NFL league IDs
-  
-  if (existingPropsQuery.error) {
-    console.error('Error fetching existing props:', existingPropsQuery.error);
-    throw existingPropsQuery.error;
-  }
-  
-  // Create a set of existing prop identifiers for fast lookup
-  const existingPropsSet = new Set();
-  existingPropsQuery.data.forEach(prop => {
-    const propKey = `${prop.player_name}|${prop.stat_type}|${prop.line_score}|${prop.odds_type}|${prop.team_name}|${prop.league_id}`;
-    existingPropsSet.add(propKey);
-  });
-  
-  console.log(`Found ${existingPropsQuery.data.length} existing props in database`);
-  
-  // Filter out props that already exist
-  const newProps = payload.props.filter(prop => {
-    const propKey = `${prop.player_name}|${prop.stat_type}|${prop.line_score}|${prop.odds_type}|${prop.team_name}|${prop.league_id}`;
-    return !existingPropsSet.has(propKey);
-  });
-  
-  console.log(`Filtered to ${newProps.length} new props that need processing`);
-  
-  if (newProps.length === 0) {
-    console.log('No new props to process');
+  if (payload.props.length === 0) {
+    console.log('No props provided - early exit');
     return {
       teams_processed: 0,
       players_processed: 0,
       games_processed: 0,
       props_processed: 0,
-      existing_props_skipped: payload.props.length,
+      existing_props_skipped: 0,
       errors: []
     };
   }
-  
+
   const results = {
     teams_processed: 0,
     players_processed: 0,
     games_processed: 0,
     props_processed: 0,
-    existing_props_skipped: payload.props.length - newProps.length,
+    existing_props_skipped: 0,
     errors: []
   };
-  
+
   const teamMap = new Map();
   const playerMap = new Map();
   const gameMap = new Map();
-  
-  // === Teams ===
-  const uniqueTeams = [
-    ...new Set(newProps.map((p)=>p.team_name))
-  ];
-  for (const teamName of uniqueTeams){
-    try {
-      const { data: existingTeam } = await supabase.from("teams").select("id").eq("abbreviation", teamName).maybeSingle();
-      if (!existingTeam) {
-        const { data: newTeam, error } = await supabase.from("teams").insert({
+
+  // Process all teams
+  const uniqueTeams = [...new Set(payload.props.map(p => p.team_name))];
+  console.log(`Processing ${uniqueTeams.length} unique teams`);
+
+  for (const teamName of uniqueTeams) {
+    const { data: existingTeam } = await supabase
+      .from("teams")
+      .select("id, abbreviation")
+      .eq("abbreviation", teamName)
+      .single();
+
+    if (existingTeam) {
+      teamMap.set(teamName, existingTeam.id);
+    } else {
+      const { data: newTeam, error } = await supabase
+        .from("teams")
+        .insert({
           abbreviation: teamName,
           city: teamName,
           full_name: `${teamName} Team`
-        }).select().single();
-        if (!error && newTeam) {
-          teamMap.set(teamName, newTeam.id);
-          results.teams_processed++;
-        }
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        results.errors.push(`Team insert error: ${error.message}`);
       } else {
-        teamMap.set(teamName, existingTeam.id);
+        teamMap.set(teamName, newTeam.id);
+        results.teams_processed++;
       }
-    } catch (error) {
-      results.errors.push(`Team ${teamName}: ${error.message}`);
     }
   }
-  
-  // === Players ===
-  const uniquePlayers = [
-    ...new Set(newProps.map((p)=>`${p.player_name}|${p.team_name}|${p.position}`))
-  ];
-  for (const playerKey of uniquePlayers){
+
+  // Process all players
+  const uniquePlayers = [...new Set(payload.props.map(p => `${p.player_name}|${p.team_name}|${p.position || 'Unknown'}`))];
+  console.log(`Processing ${uniquePlayers.length} unique players`);
+
+  for (const playerKey of uniquePlayers) {
     const [playerName, teamName, position] = playerKey.split("|");
     const teamId = teamMap.get(teamName);
+
     if (!teamId) continue;
-    try {
-      const { data: existingPlayer } = await supabase.from("players").select("id").eq("display_name", playerName).eq("team_id", teamId).maybeSingle();
-      if (!existingPlayer) {
-        const { data: newPlayer, error } = await supabase.from("players").insert({
+
+    const { data: existingPlayer } = await supabase
+      .from("players")
+      .select("id")
+      .eq("display_name", playerName)
+      .eq("team_id", teamId)
+      .single();
+
+    if (existingPlayer) {
+      playerMap.set(playerKey, existingPlayer.id);
+    } else {
+      const { data: newPlayer, error } = await supabase
+        .from("players")
+        .insert({
           display_name: playerName,
-          position,
+          position: position,
           team_id: teamId,
           is_active: true
-        }).select().single();
-        if (!error && newPlayer) {
-          playerMap.set(`${playerName}|${teamName}`, newPlayer.id);
-          results.players_processed++;
-        }
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        results.errors.push(`Player insert error: ${error.message}`);
       } else {
-        playerMap.set(`${playerName}|${teamName}`, existingPlayer.id);
+        playerMap.set(playerKey, newPlayer.id);
+        results.players_processed++;
       }
-    } catch (error) {
-      results.errors.push(`Player ${playerName}: ${error.message}`);
     }
   }
-  
-  // === Games ===
-  const uniqueGames = [
-    ...new Set(newProps.filter((p)=>p.game_id && p.start_time && p.against_team).map((p)=>`${p.game_id}|${p.team_name}|${p.against_team}|${p.start_time}`))
-  ];
-  for (const gameKey of uniqueGames){
+
+  // Process all games
+  const uniqueGames = [...new Set(payload.props
+    .filter(p => p.game_id && p.start_time && p.against_team)
+    .map(p => `${p.game_id}|${p.team_name}|${p.against_team}|${p.start_time}`))];
+  console.log(`Processing ${uniqueGames.length} unique games`);
+
+  for (const gameKey of uniqueGames) {
     const [gameId, teamName, againstTeam, startTime] = gameKey.split("|");
     const homeTeamId = teamMap.get(teamName);
     const awayTeamId = teamMap.get(againstTeam);
+
     if (!homeTeamId || !awayTeamId) continue;
-    try {
-      const { data: existingGame } = await supabase.from("games").select("id").eq("external_id", gameId).maybeSingle();
-      if (!existingGame) {
-        const { data: newGame, error } = await supabase.from("games").insert({
+
+    const { data: existingGame } = await supabase
+      .from("games")
+      .select("id")
+      .eq("external_id", gameId)
+      .single();
+
+    if (existingGame) {
+      gameMap.set(gameId, existingGame.id);
+    } else {
+      const { data: newGame, error } = await supabase
+        .from("games")
+        .insert({
           external_id: gameId,
           home_team_id: homeTeamId,
           away_team_id: awayTeamId,
           start_time: startTime,
           status: "scheduled"
-        }).select().single();
-        if (!error && newGame) {
-          gameMap.set(gameId, newGame.id);
-          results.games_processed++;
-        }
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        results.errors.push(`Game insert error: ${error.message}`);
       } else {
-        gameMap.set(gameId, existingGame.id);
+        gameMap.set(gameId, newGame.id);
+        results.games_processed++;
       }
-    } catch (error) {
-      results.errors.push(`Game ${gameId}: ${error.message}`);
     }
   }
-  
-  // === Props ===
-  for (const propData of newProps){
-    try {
-      const playerId = playerMap.get(`${propData.player_name}|${propData.team_name}`);
-      const gameId = propData.game_id ? gameMap.get(propData.game_id) : null;
-      console.log(`Processing prop: ${propData.player_name} - ${propData.stat_type}`);
-      console.log(`Player ID: ${playerId}, Game ID: ${gameId}`);
-      if (!playerId) {
-        results.errors.push(`Player not found: ${propData.player_name}`);
-        continue;
-      }
-      const propPayload = {
-        player_id: playerId,
-        game_id: gameId,
-        player_name: propData.player_name,
-        stat_type: propData.stat_type,
-        line_score: propData.line_score,
-        odds_type: propData.odds_type,
-        team_name: propData.team_name,
-        league_id: propData.league_id || (propData.league === 'NBA' ? 7 : 9),
-        h2h_array: Array.isArray(propData.h2h_array) ? propData.h2h_array.map(Number) : typeof propData.h2h_array === "string" ? propData.h2h_array.split(",").map(Number) : [],
-        l5_array: Array.isArray(propData.l5_array) ? propData.l5_array.map(Number) : typeof propData.l5_array === "string" ? propData.l5_array.split(",").map(Number) : [],
-        h2h_avg: Number(propData.h2h_avg) || 0,
-        l5_avg: Number(propData.l5_avg) || 0,
-        h2h_score: Number(propData.h2h_score) || 0,
-        l5_score: Number(propData.l5_score) || 0,
-        sample_size: Number(propData.sample_size) || 0,
-        sorting_score: Number(propData.sorting_score) || 0,
-        league: propData.league,
-        sync_run_id: jobId
-      };
-      console.log(`Prop payload:`, JSON.stringify(propPayload, null, 2));
-      const { data, error } = await supabase.from("props").upsert(propPayload, {
+
+  // Process all props at once
+  const propsToInsert = [];
+  console.log(`Processing ${payload.props.length} props for insertion`);
+
+  for (const propData of payload.props) {
+    const playerKey = `${propData.player_name}|${propData.team_name}|${propData.position || 'Unknown'}`;
+    const playerId = playerMap.get(playerKey);
+    const gameId = propData.game_id ? gameMap.get(propData.game_id) : null;
+
+    if (!playerId) {
+      results.errors.push(`Player not found: ${propData.player_name}`);
+      continue;
+    }
+
+    const propPayload = {
+      player_id: playerId,
+      game_id: gameId,
+      player_name: propData.player_name,
+      stat_type: propData.stat_type,
+      line_score: propData.line_score,
+      odds_type: propData.odds_type,
+      team_name: propData.team_name,
+      league_id: propData.league_id || (propData.league === 'NBA' ? 7 : 9),
+      h2h_array: Array.isArray(propData.h2h_array) ? propData.h2h_array.map(Number) : [],
+      l5_array: Array.isArray(propData.l5_array) ? propData.l5_array.map(Number) : [],
+      h2h_avg: Number(propData.h2h_avg) || 0,
+      l5_avg: Number(propData.l5_avg) || 0,
+      h2h_score: Number(propData.h2h_score) || 0,
+      l5_score: Number(propData.l5_score) || 0,
+      sample_size: Number(propData.sample_size) || 0,
+      sorting_score: Number(propData.sorting_score) || 0,
+      league: propData.league,
+      sync_run_id: jobId
+    };
+
+    propsToInsert.push(propPayload);
+  }
+
+  // Remove duplicates within the same batch to avoid upsert conflicts
+  if (propsToInsert.length > 0) {
+    console.log(`Removing duplicates from ${propsToInsert.length} props...`);
+    
+    // Create a map to track unique props by their conflict key
+    const uniquePropsMap = new Map();
+    
+    for (const prop of propsToInsert) {
+      const conflictKey = `${prop.player_id}|${prop.stat_type}|${prop.odds_type}|${prop.line_score}`;
+      
+      // Keep the last occurrence (most recent data)
+      uniquePropsMap.set(conflictKey, prop);
+    }
+    
+    const uniqueProps = Array.from(uniquePropsMap.values());
+    const duplicatesRemoved = propsToInsert.length - uniqueProps.length;
+    
+    console.log(`Removed ${duplicatesRemoved} duplicates, inserting ${uniqueProps.length} unique props`);
+    
+    const { data, error } = await supabase
+      .from("props")
+      .upsert(uniqueProps, {
         onConflict: "player_id,stat_type,odds_type,line_score"
       });
-      if (error) {
-        console.error(`Database error for prop ${propData.player_name}:`, error);
-        results.errors.push(`Prop ${propData.player_name} ${propData.stat_type}: ${error.message}`);
-      } else {
-        console.log(`Successfully processed prop: ${propData.player_name}`);
-        results.props_processed++;
-      }
-    } catch (error) {
-      console.error(`Unexpected error for prop ${propData.player_name}:`, error);
-      results.errors.push(`Prop ${propData.player_name} ${propData.stat_type}: ${error.message}`);
+
+    if (error) {
+      console.error('Props insert error:', error);
+      results.errors.push(`Props insert: ${error.message}`);
+    } else {
+      results.props_processed = uniqueProps.length;
+      console.log(`Successfully inserted ${uniqueProps.length} props`);
     }
   }
+
   return results;
 }
+
+
+
 async function processESPNData(supabase, payload) {
   // Implementation for ESPN depth chart data
   return {
