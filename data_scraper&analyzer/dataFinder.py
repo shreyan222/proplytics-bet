@@ -57,7 +57,7 @@ def against_team_nfl(team):
 
     # Get the HTML content
     html_text = requests.get(f'https://www.statmuse.com/nfl/ask/what-team-are-the-{team}-playing-next').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
 
     # Find the relevant span with the opponent information
     opp = soup.find('span',
@@ -93,8 +93,8 @@ def nflprop(name, team):
     team = get_nfl_team_name(team)
     if(name=="D.J. Moore"):
         name = "DJ Moore"
-    html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-against-{team}-including-playoffs').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-against-{team}-last-2-seasons').text
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
 
     stats = []
@@ -119,7 +119,7 @@ def nflprop_l5(name):
     if name == "D.J. Moore":
         name = "DJ Moore"
     html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-last-5-games').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
 
     stats = []
@@ -143,8 +143,8 @@ def nflprop_l5(name):
 def nflprop_qbrush(name, team):
     # Use centralized team mapping function
     team = get_nfl_team_name(team)
-    html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-rushing-stats-against-{team}-including-playoffs').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-rushing-stats-against-{team}-last-2-seasons').text
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
 
     stats = []
@@ -167,7 +167,7 @@ def nflprop_qbrush(name, team):
         return (filtered_items)
 def nflprop_qbrush_l5(name):
     html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-rushing-stats-last-5-games').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
 
     stats = []
@@ -358,7 +358,7 @@ def stats_against_team_t_season(name, team, timeframe):
         name = "Claxton"
     url = f'https://www.statmuse.com/nba/ask/{name}-against-{team}-{timeframe}-including playoffs'
     html_text = requests.get(url).text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
     stats = []
     if not table:
@@ -379,9 +379,10 @@ def nfl_stat(name, stat, team, pos, arr):
     """
     try:
         # Use centralized team mapping function
-        team = get_nfl_team_name(team)
-        if(name=="D.J. Moore"):
-            name = "DJ Moore"
+        
+        
+        
+        # Debug output removed for production
         # Define stat configuration lookup table
         # Format: (stat_name, position) -> (start_range, offset, modulo, data_type, use_qbrush)
         STAT_CONFIGS = {
@@ -395,6 +396,7 @@ def nfl_stat(name, stat, team, pos, arr):
             ("Rush Yards", "QB"): (17, 4, 16, int, True),  # Uses qbrush
             ("Rush TDs", "QB"): (17, 10, 16, int, True),
             ("Rush Attempts", "QB"): (17, 8, 16, int, True),
+            ("Sacks Taken", "QB"): (17, 17, 16, int, False),
             # WR/TE stats (modulo 16, start at 17)
             ("Receiving Yards", "WR"): (17, 9, 16, int, False),
             ("Receiving Yards", "TE"): (17, 9, 16, int, False),
@@ -427,6 +429,12 @@ def nfl_stat(name, stat, team, pos, arr):
             rush_arr = nflprop_qbrush(name, team)
             rush_tds = _extract_stats(rush_arr, 17, 10, 16, int, prop_context)  # Rushing TDs
             return [int(x) for x in rush_tds]
+        elif stat == "Pass+Rush+Rec TDs" and pos == "QB":
+            # For QB, combine passing TDs and rushing TDs
+            rush_arr = nflprop_qbrush(name, team)
+            rush_tds = _extract_stats(rush_arr, 17, 10, 16, int, prop_context)  # Rushing TDs
+            pass_tds = _extract_stats(arr, 21, 12, 19, int, prop_context)  # Passing TDs
+            return [x + y for x,y in zip(rush_tds, pass_tds)]
         
         elif stat == "Rush+Rec Yds" and pos == "QB":
             # For QB, combine passing yards and rushing yards
@@ -481,8 +489,8 @@ def _extract_stats(arr, start_range, offset, modulo, data_type, prop_context=Non
     """
     try:
         # Use list comprehension for better performance
+        arr = arr[0]
         extracted = [arr[i] for i in range(start_range, len(arr)) if (i - offset) % modulo == 0]
-        
         # Clean strings and convert to appropriate type
         cleaned = [s.replace(" ", "") for s in extracted]
         
@@ -504,11 +512,10 @@ def _extract_stats(arr, start_range, offset, modulo, data_type, prop_context=Non
         print(f"[DEBUG] Extracted values: {extracted}")
         print(f"[DEBUG] Cleaned values: {cleaned}")
         return []
-print(nfl_stat("bo nix", "Rush Yards", "BAL", "RB", []))
 
 def against_team(team):
     html_text = requests.get(f'https://www.statmuse.com/nba/ask/what-team-are-the-{team}-playing-next').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
     opp = soup.find('span',
                         class_='my-[1em] [&>a]:underline [&>a]:text-team-secondary whitespace-pre-wrap text-pretty')
     if not opp:
@@ -694,7 +701,7 @@ def specific_stat_l10_games(arr,stat):
     if team == "MIN":
         team = "Minesota"
     html_text = requests.get(f'https://www.statmuse.com/nba/ask/{name}-against-{team}-{timeframe}').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
     stats = []
     if not table:
@@ -713,7 +720,7 @@ def stats_ten_games(name):
     if name == "Nicolas Claxton":
         name = "Claxton"
     html_text = requests.get(f'https://www.statmuse.com/nba/ask/{name}-last-10-games').text
-    soup = BeautifulSoup(html_text, 'lxml')
+    soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
     stats = []
     if not table:
@@ -751,6 +758,7 @@ def nfl_stat_L5(name, stat, team, pos, arr):
             ("Rush Yards", "QB"): (17, 4, 16, int, True),  # Uses qbrush
             ("Rush TDs", "QB"): (17, 10, 16, int, True),
             ("Rush Attempts", "QB"): (17, 8, 16, int, True),
+            ("Sacks Taken", "QB"): (17, 17, 16, int, False),
             # WR/TE stats (modulo 16, start at 17)
             ("Receiving Yards", "WR"): (17, 9, 16, int, False),
             ("Receiving Yards", "TE"): (17, 9, 16, int, False),
@@ -829,4 +837,6 @@ def nfl_stat_L5(name, stat, team, pos, arr):
     except Exception as e:
         print(f"[ERROR] Error in nfl_stat_L5 for player '{name}', stat '{stat}', team '{team}', position '{pos}': {e}")
         return []
-print(nfl_stat_L5("Bo Nix", "Rush Yards", "NE", "QB", [nflprop_l5("Bo Nix")]))
+# Test code - uncomment to debug
+print(nflprop("Kyler Murray", "SEA"))
+print(nfl_stat("Kyler Murray", "Pass TDs", "SEA", "QB", [nflprop("Kyler Murray", "SEA")]))

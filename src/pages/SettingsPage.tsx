@@ -8,9 +8,9 @@ import { FavoritePlayersManager } from '@/components/FavoritePlayersManager';
 import { FilterPresetsManager } from '@/components/FilterPresetsManager';
 import { AlertsManager } from '@/components/AlertsManager';
 import { AccountManagement } from '@/components/AccountManagement';
-import { ThemeToggle } from '@/components/ThemeToggle';
+
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings, Bell, Users, Filter, AlertTriangle, Palette, UserCog } from 'lucide-react';
+import { ArrowLeft, Settings, Bell, Users, Filter, AlertTriangle, UserCog } from 'lucide-react';
 import { PropFilters } from '@/types/nba';
 
 export const SettingsPage: React.FC = () => {
@@ -42,12 +42,8 @@ export const SettingsPage: React.FC = () => {
       </div>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="appearance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="appearance" className="flex items-center gap-2">
-            <Palette className="h-4 w-4" />
-            Appearance
-          </TabsTrigger>
+      <Tabs defaultValue="account" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="account" className="flex items-center gap-2">
             <UserCog className="h-4 w-4" />
             Account
@@ -69,20 +65,6 @@ export const SettingsPage: React.FC = () => {
             Custom Alerts
           </TabsTrigger>
         </TabsList>
-
-        <TabsContent value="appearance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-white">Theme Settings</CardTitle>
-              <CardDescription className="text-gray-400">
-                Customize the appearance of the application
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ThemeToggle />
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="account" className="space-y-4">
           <AccountManagement />

@@ -255,18 +255,6 @@ export const UsingProplyticsPage = () => {
                 <li>• Monitor injury reports throughout the week</li>
               </ul>
             </div>
-            <div className="border rounded-lg p-4">
-              <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                MLB Strategy
-              </h4>
-              <ul className="space-y-1 text-sm text-muted-foreground">
-                <li>• Pitcher matchups are crucial for hitter props</li>
-                <li>• Park factors significantly affect offensive numbers</li>
-                <li>• Weather and wind direction impact home runs</li>
-                <li>• Bullpen quality affects late-game situations</li>
-              </ul>
-            </div>
           </div>
         </CardContent>
       </Card>

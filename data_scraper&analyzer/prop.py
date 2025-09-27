@@ -1,6 +1,6 @@
 import pickle
 class Prop:
-    def __init__(self, player_name, position, stat_type, line_score, odds_type, team_name, league_id, game_id):
+    def __init__(self, player_name, position, stat_type, line_score, odds_type, team_name, league_id, game_id,player_id,picture_url):
         self.player_name = player_name
         self.position = position
         self.stat_type = stat_type
@@ -9,6 +9,8 @@ class Prop:
         self.team_name = team_name
         self.league_id = league_id
         self.game_id = game_id
+        self.player_id = player_id
+        self.picture_url = picture_url
         self.L5 = []
         self.L10 = []
         self.L20 = []
@@ -18,6 +20,7 @@ class Prop:
         self.hitAmtH2H1Y = 0
         self.hitAmtH2H2Y = 0
         self.matchup = 0
+        self.matchup_rank = None  # Integer 1-32, where 1 = worst defense = best matchup
         self.history = []  # Store historical stats or performance
         self.score = 0     # Default score
 
@@ -44,7 +47,8 @@ class Prop:
         avg_performance = sum(self.history) / len(self.history)
         line_diff = avg_performance - self.line_score
         confidence_factor = self._confidence_factor()
-        self.score = (line_diff * confidence_factor) + self._odds_score()
+        matchup_bonus = self._matchup_bonus()
+        self.score = (line_diff * confidence_factor) + self._odds_score() + matchup_bonus
 
     def _confidence_factor(self):
         """Compute a custom confidence factor (example)."""
@@ -53,12 +57,20 @@ class Prop:
     def _odds_score(self):
         """Compute score based on odds (example)."""
         return 10 if self.odds_type == 'over' else -5
+    
+    def _matchup_bonus(self):
+        """Compute bonus based on matchup rank (1-32, where 1 = best matchup, 32 = worst matchup)."""
+        if self.matchup_rank is None or self.matchup_rank <= 0:
+            return 0
+        # Convert rank to bonus: rank 1 = +5 bonus, rank 32 = -2 penalty
+        # Linear scale from +5 to -2 (lower rank = better matchup = higher bonus)
+        return 5 - (self.matchup_rank - 1) * (7 / 31)
 
     def __repr__(self):
         return (f"Prop(player_name={self.player_name}, position={self.position}, stat_type={self.stat_type}, "
                 f"line_score={self.line_score}, odds_type={self.odds_type}, team_name={self.team_name}, "
-                f"league_id={self.league_id}, game_id={self.game_id}, score={self.score:.2f}, "
-                f"L10={self.L10}, H2H1Y={self.H2H1Y}, H2H2Y={self.H2H2Y})")
+                f"league_id={self.league_id}, game_id={self.game_id}, matchup_rank={self.matchup_rank}, "
+                f"score={self.score:.2f}, L10={self.L10}, H2H1Y={self.H2H1Y}, H2H2Y={self.H2H2Y})")
 
 def load_props_from_file(filename='nba_props.pkl'):
     try:

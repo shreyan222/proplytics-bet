@@ -79,7 +79,9 @@ def extract_player_stats(data, players):
                         odds_type=odds_type,
                         team_name=player_info['team'],
                         league_id=player_info['league_id'],
-                        game_id=game_id)
+                        game_id=game_id,
+                        player_id=player_id,
+                        picture_url=player_info['image_url'])
             props.append(prop)
             if game:
                 prizepicks_stats.append({
@@ -172,6 +174,11 @@ def fetch_and_update_data():
         save_props_to_file(nba_props, 'nba_props.pkl')
 
         print(f"Saved {len(nba_props)} NBA props to nba_props.pkl")
+
+        # Save all props (NBA + NFL) to pickle file
+        save_props_to_file(props, 'all_props.pkl')
+
+        print(f"Saved {len(props)} total props to all_props.pkl")
 
 
     except Exception as e:

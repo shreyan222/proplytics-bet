@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, ExternalLink, Clock, User, TrendingUp, ArrowUpDown, ArrowUp, ArrowDown, Target, BarChart3 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Heart, ExternalLink, Clock, User, TrendingUp, ArrowUpDown, ArrowUp, ArrowDown, Target, BarChart3, ChevronDown } from 'lucide-react';
 import { Prop } from '@/types/nba';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,7 @@ interface PropsTableProps {
 
 type SortField = 'player_name' | 'team' | 'against_team' | 'position' | 'stat_type' | 'line_score' | 'h2h_avg' | 'l5_avg' | 'matchup_rank' | 'sorting_score' | 'odds_type' | 'start_time';
 type SortDirection = 'asc' | 'desc';
+type DisplayMode = 'avg' | 'hit%';
 
 export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table' }) => {
   const [selectedProp, setSelectedProp] = useState<Prop | null>(null);
@@ -28,6 +30,9 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   // Add league filter to your table
   const [selectedLeague, setSelectedLeague] = useState<'all' | 'NBA' | 'NFL'>('all');
+  // Add display mode state for H2H and L5
+  const [h2hDisplayMode, setH2hDisplayMode] = useState<DisplayMode>('avg');
+  const [l5DisplayMode, setL5DisplayMode] = useState<DisplayMode>('avg');
 
   const toggleFavorite = (propId: string) => {
     const newFavorites = new Set(favorites);
@@ -79,6 +84,54 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
     </div>
   );
 
+  // Dropdown header component for H2H and L5
+  const getDropdownHeader = (field: SortField, label: string, displayMode: DisplayMode, setDisplayMode: (mode: DisplayMode) => void, className?: string) => (
+    <div className={cn("flex items-center gap-2", className)}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className={cn(
+              "h-auto p-0 text-slate-300 font-semibold hover:text-blue-400 transition-colors",
+              sortField === field && "text-blue-400 font-semibold"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              {label}
+              <ChevronDown className="h-4 w-4" />
+            </div>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="glass border border-slate-700">
+          <DropdownMenuItem 
+            onClick={() => setDisplayMode('avg')}
+            className={cn(
+              "text-white hover:bg-slate-700/50",
+              displayMode === 'avg' && "bg-blue-600/20 text-blue-400"
+            )}
+          >
+            Average
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            onClick={() => setDisplayMode('hit%')}
+            className={cn(
+              "text-white hover:bg-slate-700/50",
+              displayMode === 'hit%' && "bg-blue-600/20 text-blue-400"
+            )}
+          >
+            Hit %
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <div 
+        className="cursor-pointer hover:text-blue-400 transition-colors"
+        onClick={() => handleSort(field)}
+      >
+        {getSortIcon(field)}
+      </div>
+    </div>
+  );
+
   const getOddsTypeBadge = (oddsType: string) => {
     switch (oddsType.toLowerCase()) {
       case 'demon':
@@ -124,6 +177,31 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
     return `${rank}/32`;
   };
 
+  // Helper function to calculate hit percentage
+  const calculateHitPercentage = (scores: number[] | undefined, lineScore: number) => {
+    if (!scores || scores.length === 0) return null;
+    const hits = scores.filter(score => score >= lineScore).length;
+    return (hits / scores.length) * 100;
+  };
+
+  // Helper function to get H2H display value
+  const getH2hDisplayValue = (prop: Prop) => {
+    if (h2hDisplayMode === 'hit%') {
+      const hitPercentage = calculateHitPercentage(prop.h2h_array, prop.line_score);
+      return hitPercentage ? `${hitPercentage.toFixed(1)}%` : 'N/A';
+    }
+    return prop.h2h_avg ? prop.h2h_avg.toFixed(2) : 'N/A';
+  };
+
+  // Helper function to get L5 display value
+  const getL5DisplayValue = (prop: Prop) => {
+    if (l5DisplayMode === 'hit%') {
+      const hitPercentage = calculateHitPercentage(prop.l5_array, prop.line_score);
+      return hitPercentage ? `${hitPercentage.toFixed(1)}%` : 'N/A';
+    }
+    return prop.l5_avg ? prop.l5_avg.toFixed(2) : 'N/A';
+  };
+
   // Filter props by league first
   const filteredProps = useMemo(() => {
     if (selectedLeague === 'all') return props;
@@ -162,12 +240,22 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           bValue = Number(b.line_score);
           break;
         case 'h2h_avg':
-          aValue = Number(a.h2h_avg) || 0;
-          bValue = Number(b.h2h_avg) || 0;
+          if (h2hDisplayMode === 'hit%') {
+            aValue = calculateHitPercentage(a.h2h_array, a.line_score) || 0;
+            bValue = calculateHitPercentage(b.h2h_array, b.line_score) || 0;
+          } else {
+            aValue = Number(a.h2h_avg) || 0;
+            bValue = Number(b.h2h_avg) || 0;
+          }
           break;
         case 'l5_avg':
-          aValue = Number(a.l5_avg) || 0;
-          bValue = Number(b.l5_avg) || 0;
+          if (l5DisplayMode === 'hit%') {
+            aValue = calculateHitPercentage(a.l5_array, a.line_score) || 0;
+            bValue = calculateHitPercentage(b.l5_array, b.line_score) || 0;
+          } else {
+            aValue = Number(a.l5_avg) || 0;
+            bValue = Number(b.l5_avg) || 0;
+          }
           break;
         case 'matchup_rank':
           aValue = Number(a.matchup_rank) || 0;
@@ -195,7 +283,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
         return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
       }
     });
-  }, [filteredProps, sortField, sortDirection]);
+  }, [filteredProps, sortField, sortDirection, h2hDisplayMode, l5DisplayMode]);
 
   // Pagination logic using sortedProps
   const totalPages = Math.ceil(sortedProps.length / itemsPerPage);
@@ -246,15 +334,15 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           <div className="text-3xl font-bold text-blue-400">{prop.line_score}</div>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
-              <span className="text-slate-400">H2H Avg:</span>
+              <span className="text-slate-400">{h2hDisplayMode === 'avg' ? 'H2H Avg:' : 'H2H Hit%:'}</span>
               <div className="font-semibold text-blue-400">
-                {prop.h2h_avg ? prop.h2h_avg.toFixed(1) : 'N/A'}
+                {getH2hDisplayValue(prop)}
               </div>
             </div>
             <div>
-              <span className="text-slate-400">L5 Avg:</span>
+              <span className="text-slate-400">{l5DisplayMode === 'avg' ? 'L5 Avg:' : 'L5 Hit%:'}</span>
               <div className="font-semibold text-blue-400">
-                {prop.l5_avg ? prop.l5_avg.toFixed(1) : 'N/A'}
+                {getL5DisplayValue(prop)}
               </div>
             </div>
           </div>
@@ -367,7 +455,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                         : 'glass-button border-blue-500/30 text-white hover:border-blue-400/50'
                     )}
                   >
-                    H2H ({prop.h2h_avg?.toFixed(1) || 'N/A'})
+                    H2H ({getH2hDisplayValue(prop)})
                   </Button>
                   <Button
                     variant={selectedGraph === 'l5' ? 'default' : 'outline'}
@@ -379,7 +467,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                         : 'glass-button border-green-500/30 text-white hover:border-green-400/50'
                     )}
                   >
-                    L5 ({prop.l5_avg?.toFixed(1) || 'N/A'})
+                    L5 ({getL5DisplayValue(prop)})
                   </Button>
                 </div>
               </div>
@@ -389,7 +477,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                  <div className="space-y-4">
                    <div className="text-center mb-4">
                      <div className="text-sm text-slate-400">Head-to-Head Performance</div>
-                     <div className="text-lg font-bold text-blue-400">{prop.h2h_avg?.toFixed(1) || 'N/A'}</div>
+                     <div className="text-lg font-bold text-blue-400">{getH2hDisplayValue(prop)}</div>
                    </div>
                    
                    {prop.h2h_array && prop.h2h_array.length > 0 ? (
@@ -485,7 +573,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                  <div className="space-y-4">
                    <div className="text-center mb-4">
                      <div className="text-sm text-slate-400">Last 5 Games Performance</div>
-                     <div className="text-lg font-bold text-green-400">{prop.l5_avg?.toFixed(1) || 'N/A'}</div>
+                     <div className="text-lg font-bold text-green-400">{getL5DisplayValue(prop)}</div>
                    </div>
                    
                    {prop.l5_array && prop.l5_array.length > 0 ? (
@@ -645,10 +733,10 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
               {getSortableHeader('line_score', 'Line')}
             </TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">
-              {getSortableHeader('h2h_avg', 'H2H Avg')}
+              {getDropdownHeader('h2h_avg', h2hDisplayMode === 'avg' ? 'H2H Avg' : 'H2H Hit%', h2hDisplayMode, setH2hDisplayMode)}
             </TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">
-              {getSortableHeader('l5_avg', 'L5 Avg')}
+              {getDropdownHeader('l5_avg', l5DisplayMode === 'avg' ? 'L5 Avg' : 'L5 Hit%', l5DisplayMode, setL5DisplayMode)}
             </TableHead>
             <TableHead className="px-4 py-3 text-center text-slate-300 font-semibold">
               {getSortableHeader('matchup_rank', 'Matchup Score')}
@@ -667,7 +755,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
             <TableRow
               key={prop.prop_id}
               className={cn(
-                "transition-all duration-300 border-b border-slate-700 group",
+                "transition-all duration-300 border-b border-slate-700 group cursor-pointer",
                 // Base hover state
                 "hover:bg-slate-800/50",
                 // Odds type specific backgrounds
@@ -675,6 +763,7 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                 prop.odds_type === "demon" && "bg-red-500/10 hover:bg-red-500/20", 
                 prop.odds_type === "standard" && "bg-blue-500/5 hover:bg-blue-500/10"
               )}
+              onClick={() => setSelectedProp(prop)}
             >
               <TableCell className="px-4 py-3 text-left">
                 <div className="flex items-center gap-3">
@@ -706,18 +795,12 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                     ? "text-yellow-400 bg-yellow-500/20 px-3 py-1 rounded-lg border border-yellow-500/30"
                     : "text-blue-400"
                 )}>
-                  {prop.h2h_avg ? (
-                    <>
-                      {prop.h2h_avg.toFixed(2)}
-                      {/* Show fire emoji when ALL H2H games are above the line score and array size > 3 */}
-                      {prop.h2h_array && prop.line_score && prop.h2h_array.length > 3 && prop.h2h_array.every(score => score >= prop.line_score) && (
-                        <span className="text-yellow-400 text-lg" title="Cash all games! All H2H games above line (min 4 games)">
-                          🔥
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    'N/A'
+                  {getH2hDisplayValue(prop)}
+                  {/* Show fire emoji when ALL H2H games are above the line score and array size > 3 */}
+                  {prop.h2h_array && prop.line_score && prop.h2h_array.length > 3 && prop.h2h_array.every(score => score >= prop.line_score) && (
+                    <span className="text-yellow-400 text-lg" title="Cash all games! All H2H games above line (min 4 games)">
+                      🔥
+                    </span>
                   )}
                 </div>
               </TableCell>
@@ -729,18 +812,12 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                     ? "text-yellow-400 bg-yellow-500/20 px-3 py-1 rounded-lg border border-yellow-500/30"
                     : "text-blue-400"
                 )}>
-                  {prop.l5_avg ? (
-                    <>
-                      {prop.l5_avg.toFixed(2)}
-                      {/* Show fire emoji when ALL 5 games are above the line score */}
-                      {prop.l5_array && prop.line_score && prop.l5_array.length === 5 && prop.l5_array.every(score => score >= prop.line_score) && (
-                        <span className="text-yellow-400 text-lg" title="Cash all games! All 5 L5 games above line">
-                          🔥
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    'N/A'
+                  {getL5DisplayValue(prop)}
+                  {/* Show fire emoji when ALL 5 games are above the line score */}
+                  {prop.l5_array && prop.line_score && prop.l5_array.length === 5 && prop.l5_array.every(score => score >= prop.line_score) && (
+                    <span className="text-yellow-400 text-lg" title="Cash all games! All 5 L5 games above line">
+                      🔥
+                    </span>
                   )}
                 </div>
               </TableCell>
@@ -764,7 +841,10 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                   variant="outline" 
                   size="sm" 
                   className="glass-button text-white border-blue-500/30 hover:border-blue-400/50 hover:text-blue-400"
-                  onClick={() => setSelectedProp(prop)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedProp(prop);
+                  }}
                 >
                   View Details
                 </Button>

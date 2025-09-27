@@ -12,6 +12,7 @@ import time
 import logging
 from typing import List, Dict, Optional
 import json
+import os
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -324,6 +325,162 @@ class NFLDefenseScraper:
     def get_team_list(self) -> List[str]:
         """Get list of NFL teams"""
         return list(self.team_mappings.values())
+    
+    def create_matchup_rankings(self, data: List[Dict]) -> Dict[str, Dict[str, int]]:
+        """Create position-specific matchup rankings based on defense data
+        
+        Returns a dictionary mapping team names to position-specific rankings:
+        {
+            'Team Name': {
+                'QB_pass_yards': rank,
+                'QB_pass_td': rank,
+                'RB_rush_yards': rank,
+                'RB_rush_td': rank,
+                'WR_rec_yards': rank,
+                'WR_rec_td': rank,
+                'TE_rec_yards': rank,
+                'TE_rec_td': rank,
+                ...
+            }
+        }
+        Lower rank = worse defense (better matchup for offense)
+        """
+        if not data:
+            logger.warning("No defense data available for rankings")
+            return {}
+        
+        # Create DataFrame for easier ranking
+        df = pd.DataFrame(data)
+        
+        # Position-specific stat mappings
+        # Lower rank in defense stats = worse defense = better matchup for offense
+        position_stat_mappings = {
+            # Quarterback stats
+            'QB': {
+                'Passing Yards': 'pass_yards_rank',
+                'Pass TDs': 'pass_td_rank',
+                'Pass Completions': 'pass_yards_rank',  # Use pass yards as proxy
+                'Pass Attempts': 'pass_yards_rank',
+            },
+            # Running Back stats
+            'RB': {
+                'Rush Yards': 'rush_yards_rank',
+                'Rush TDs': 'rush_td_rank',
+                'Rush Attempts': 'rush_yards_rank',
+                'Rushing Yards': 'rush_yards_rank',
+                'Rushing TDs': 'rush_td_rank',
+                'Receiving Yards': 'rec_yards_rank',  # RBs can catch passes
+                'Receptions': 'receptions_rank',
+                'Rec TDs': 'rec_td_rank',
+            },
+            # Wide Receiver stats
+            'WR': {
+                'Receiving Yards': 'rec_yards_rank',
+                'Receptions': 'receptions_rank',
+                'Rec TDs': 'rec_td_rank',
+                'Rec Yards': 'rec_yards_rank',
+                'Rush Yards': 'rush_yards_rank',  # Some WRs get carries
+                'Rush TDs': 'rush_td_rank',
+            },
+            # Tight End stats
+            'TE': {
+                'Receiving Yards': 'rec_yards_rank',
+                'Receptions': 'receptions_rank',
+                'Rec TDs': 'rec_td_rank',
+                'Rec Yards': 'rec_yards_rank',
+            },
+            # Defensive stats (for team defense props)
+            'DEF': {
+                'Sacks': 'pass_yards_rank',  # Teams that allow more pass yards might give up fewer sacks
+                'Interceptions': 'pass_td_rank',
+                'Fumbles': 'rush_yards_rank',
+            }
+        }
+        
+        matchup_rankings = {}
+        
+        for _, team_row in df.iterrows():
+            team_name = team_row['team']
+            if not team_name or team_name.startswith('Team_'):
+                continue
+                
+            team_rankings = {}
+            
+            # Process each position
+            for position, stat_mappings in position_stat_mappings.items():
+                for stat_type, rank_column in stat_mappings.items():
+                    if rank_column in team_row and pd.notna(team_row[rank_column]):
+                        # Convert rank to integer (1-32, where 1 = worst defense = best matchup)
+                        rank = int(team_row[rank_column])
+                        # Ensure rank is between 1-32
+                        rank = max(1, min(32, rank))
+                        team_rankings[f"{position}_{stat_type}"] = rank
+                    else:
+                        # Default to middle rank if no data
+                        team_rankings[f"{position}_{stat_type}"] = 16
+            
+            matchup_rankings[team_name] = team_rankings
+        
+        logger.info(f"Created matchup rankings for {len(matchup_rankings)} teams")
+        return matchup_rankings
+    
+    def get_matchup_rank(self, team_name: str, position: str, stat_type: str, matchup_data: Dict[str, Dict[str, int]]) -> int:
+        """Get matchup rank for a specific team, position, and stat type
+        
+        Args:
+            team_name: Name of the opposing team
+            position: Player position (QB, RB, WR, TE, etc.)
+            stat_type: Type of stat (e.g., 'Rushing Yards', 'Receiving Yards')
+            matchup_data: Pre-computed matchup rankings
+        
+        Returns:
+            Integer rank 1-32 (1 = worst defense = best matchup)
+        """
+        if not matchup_data or team_name not in matchup_data:
+            logger.warning(f"No matchup data found for team: {team_name}")
+            return 16  # Default middle rank
+        
+        # Normalize stat type for lookup
+        normalized_stat = stat_type.replace('Rushing', 'Rush').replace('Receiving', 'Rec')
+        lookup_key = f"{position}_{normalized_stat}"
+        
+        team_data = matchup_data[team_name]
+        
+        # Try exact match first
+        if lookup_key in team_data:
+            return team_data[lookup_key]
+        
+        # Try alternative lookups based on stat type
+        alternatives = {
+            'Rush Yards': [f"{position}_Rushing Yards", f"{position}_Rush Yards"],
+            'Rushing Yards': [f"{position}_Rush Yards", f"{position}_Rushing Yards"],
+            'Rec Yards': [f"{position}_Receiving Yards", f"{position}_Rec Yards"],
+            'Receiving Yards': [f"{position}_Rec Yards", f"{position}_Receiving Yards"],
+            'Pass TDs': [f"{position}_Pass TDs", f"{position}_Passing TDs"],
+            'Rush TDs': [f"{position}_Rush TDs", f"{position}_Rushing TDs"],
+            'Rec TDs': [f"{position}_Rec TDs", f"{position}_Receiving TDs"],
+        }
+        
+        if normalized_stat in alternatives:
+            for alt_key in alternatives[normalized_stat]:
+                if alt_key in team_data:
+                    return team_data[alt_key]
+        
+        # Fallback to position-based defaults
+        position_fallbacks = {
+            'QB': [f"{position}_Passing Yards", f"{position}_Pass TDs"],
+            'RB': [f"{position}_Rush Yards", f"{position}_Rushing Yards", f"{position}_Rush TDs"],
+            'WR': [f"{position}_Receiving Yards", f"{position}_Rec Yards", f"{position}_Receptions"],
+            'TE': [f"{position}_Receiving Yards", f"{position}_Rec Yards", f"{position}_Receptions"],
+        }
+        
+        if position in position_fallbacks:
+            for fallback_key in position_fallbacks[position]:
+                if fallback_key in team_data:
+                    return team_data[fallback_key]
+        
+        logger.warning(f"No matchup rank found for {team_name} {position} {stat_type}, using default")
+        return 16  # Default middle rank
 
 
 def main():
@@ -340,9 +497,22 @@ def main():
         # Save to both CSV and JSON
         scraper.save_to_csv(defense_data)
         scraper.save_to_json(defense_data)
+        
+        # Create and save matchup rankings
+        matchup_rankings = scraper.create_matchup_rankings(defense_data)
+        if matchup_rankings:
+            with open('nfl_matchup_rankings.json', 'w') as f:
+                json.dump(matchup_rankings, f, indent=2)
+            print(f"\nMatchup rankings saved to nfl_matchup_rankings.json")
+            print(f"Sample rankings for first team:")
+            first_team = list(matchup_rankings.keys())[0]
+            sample_rankings = matchup_rankings[first_team]
+            for stat, rank in list(sample_rankings.items())[:5]:
+                print(f"  {first_team} - {stat}: {rank}/32")
 
         print(f"\nScraping completed!")
         print(f"Scraped data for {len(defense_data)} NFL teams")
+        print(f"Created matchup rankings for {len(matchup_rankings)} teams")
 
         # Display some sample data
         if defense_data:

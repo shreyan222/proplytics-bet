@@ -1,0 +1,3 @@
+﻿Name,Stat,Line,Odds,Array,Temp,Size,Avg,Diff,Rel Diff,Percent,Sample Size,Score,GameId
+LeBron James,F,LAL,GSW,Assists,7,standard,"[10, 12, 8, 9]","[3, 7, 4, 8, 6]",4,4,9.75,5.6,2.75,0.229,39.286,4,1.34,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Assists,7,standard,"[6, 13, 7]","[1, 9, 8, 2, 9]",2.5,3,8.667,5.8,1.667,0.139,23.81,3,1.058,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
