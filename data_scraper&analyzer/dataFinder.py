@@ -113,7 +113,7 @@ def nflprop(name, team):
         words_to_remove = ["afc", "nfc", "super","round"]
 
         filtered_items = [item for item in final if not any(word in item.lower() for word in words_to_remove)]
-
+        
         return (filtered_items)
 def nflprop_l5(name):
     if name == "D.J. Moore":
@@ -512,7 +512,35 @@ def _extract_stats(arr, start_range, offset, modulo, data_type, prop_context=Non
         print(f"[DEBUG] Extracted values: {extracted}")
         print(f"[DEBUG] Cleaned values: {cleaned}")
         return []
-
+def _extract_stats_l5(arr, start_range, offset, modulo, data_type, prop_context=None):
+    """
+    Extract statistics from array using optimized list comprehension.
+    """
+    try:
+        # Use list comprehension for better performance
+        
+        extracted = [arr[i] for i in range(start_range, len(arr)) if (i - offset) % modulo == 0]
+        # Clean strings and convert to appropriate type
+        cleaned = [s.replace(" ", "") for s in extracted]
+        
+        # Filter out empty strings before conversion
+        cleaned = [s for s in cleaned if s.strip()]
+        
+        if data_type == float:
+            return [float(x) for x in cleaned]
+        else:
+            return [int(x) for x in cleaned]
+            
+    except (ValueError, IndexError) as e:
+        if prop_context:
+            player, stat, team, pos = prop_context
+            print(f"[WARNING] Error extracting stats for player '{player}', stat '{stat}', team '{team}', position '{pos}': {e}")
+        else:
+            print(f"[WARNING] Error extracting stats: {e}")
+        print(f"[DEBUG] Array length: {len(arr)}, start_range: {start_range}, offset: {offset}, modulo: {modulo}")
+        print(f"[DEBUG] Extracted values: {extracted}")
+        print(f"[DEBUG] Cleaned values: {cleaned}")
+        return []
 def against_team(team):
     html_text = requests.get(f'https://www.statmuse.com/nba/ask/what-team-are-the-{team}-playing-next').text
     soup = BeautifulSoup(html_text, 'html.parser')
@@ -788,47 +816,47 @@ def nfl_stat_L5(name, stat, team, pos, arr):
         if stat == "Rush+Rec TDs" and pos == "QB":
             # For QB, combine passing TDs and rushing TDs
             rush_arr = nflprop_qbrush_l5(name)
-            rush_tds = _extract_stats(rush_arr, 17, 10, 16, int, prop_context)  # Rushing TDs
+            rush_tds = _extract_stats_l5(rush_arr, 17, 10, 16, int, prop_context)  # Rushing TDs
             return [int(x) for x in rush_tds]
         
         elif stat == "Rush+Rec Yds" and pos == "QB":
             # For QB, combine passing yards and rushing yards
             rush_arr = nflprop_qbrush_l5(name)
-            rush_yds = _extract_stats(rush_arr, 17, 4, 16, int, prop_context)  # Rushing yards
+            rush_yds = _extract_stats_l5(rush_arr, 17, 4, 16, int, prop_context)  # Rushing yards
             return [int(x) for x in rush_yds]
         
         elif stat == "Pass+Rush Yds":
-            pass_yds = _extract_stats(arr, 21, 10, 19, int, prop_context)
+            pass_yds = _extract_stats_l5(arr, 21, 10, 19, int, prop_context)
             rush_arr = nflprop_qbrush_l5(name)
-            rush_yds = _extract_stats(rush_arr, 17, 4, 16, int, prop_context)
+            rush_yds = _extract_stats_l5(rush_arr, 17, 4, 16, int, prop_context)
             return [x + y for x, y in zip(pass_yds, rush_yds)]
         
         # Handle other position combined stats
         elif stat == "Rush+Rec TDs" and pos == "RB":
-            rush_tds = _extract_stats(arr, 17, 10, 16, int, prop_context)
-            rec_tds = _extract_stats(arr, 17, 15, 16, int, prop_context)
+            rush_tds = _extract_stats_l5(arr, 17, 10, 16, int, prop_context)
+            rec_tds = _extract_stats_l5(arr, 17, 15, 16, int, prop_context)
             return [x + y for x, y in zip(rush_tds, rec_tds)]
         
         elif stat == "Rush+Rec TDs" and (pos == "WR" or pos == "TE"):
             # For WR/TE, Rush+Rec TDs is just receiving TDs (offset 11)
-            return _extract_stats(arr, 17, 11, 16, int, prop_context)
+            return _extract_stats_l5(arr, 17, 11, 16, int, prop_context)
         
         elif stat == "Rush+Rec Yds" and pos == "RB":
-            rush_yds = _extract_stats(arr, 17, 7, 16, int, prop_context)
-            rec_yds = _extract_stats(arr, 17, 11, 16, int, prop_context)
+            rush_yds = _extract_stats_l5(arr, 17, 7, 16, int, prop_context)
+            rec_yds = _extract_stats_l5(arr, 17, 11, 16, int, prop_context)
             return [x + y for x, y in zip(rush_yds, rec_yds)]
         
         elif stat == "Rush+Rec Yds" and (pos == "WR" or pos == "TE"):
             # For WR/TE, Rush+Rec Yds is just receiving yards (offset 9)
-            return _extract_stats(arr, 17, 9, 16, int, prop_context)
+            return _extract_stats_l5(arr, 17, 9, 16, int, prop_context)
         elif stat == "Kicking Points" and (pos == "K"):
-            fg_made = _extract_stats(arr, 14, 8, 13, int, prop_context)
-            extra_point_made = _extract_stats(arr, 14, 11, 13, int, prop_context)
+            fg_made = _extract_stats_l5(arr, 14, 8, 13, int, prop_context)
+            extra_point_made = _extract_stats_l5(arr, 14, 11, 13, int, prop_context)
             return [x * 3 + y for x, y in zip(fg_made, extra_point_made)]
         # Handle regular stats using lookup table
         if config:
             start_range, offset, modulo, data_type, _ = config
-            return _extract_stats(arr, start_range, offset, modulo, data_type, prop_context)
+            return _extract_stats_l5(arr, start_range, offset, modulo, data_type, prop_context)
         
         # If no configuration found, return empty list
         print(f"[WARNING] No configuration found for stat '{stat}' and position '{pos}'")
@@ -840,3 +868,5 @@ def nfl_stat_L5(name, stat, team, pos, arr):
 # Test code - uncomment to debug
 print(nflprop("Kyler Murray", "SEA"))
 print(nfl_stat("Kyler Murray", "Pass TDs", "SEA", "QB", [nflprop("Kyler Murray", "SEA")]))
+print(nflprop_l5("Kyler Murray"))
+print(nfl_stat_L5("Kyler Murray", "Pass TDs", "SEA", "QB", nflprop_l5("Kyler Murray")))

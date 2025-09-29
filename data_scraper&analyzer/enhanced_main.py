@@ -369,6 +369,7 @@ class EnhancedPropsProcessor:
             Integer rank 1-32 (1 = best matchup, 32 = worst matchup)
         """
         if not matchup_rankings or not hasattr(prop, 'against_team') or not prop.against_team:
+            print(f"⚠️ Default rank 16: matchup_rankings={bool(matchup_rankings)}, has_against_team={hasattr(prop, 'against_team')}, against_team_value={getattr(prop, 'against_team', 'NOT_SET')}")
             return 16  # Default middle rank
         
         team_name = prop.against_team
@@ -377,10 +378,13 @@ class EnhancedPropsProcessor:
         
         # Handle "Unknown" or combo teams
         if team_name == "Unknown" or "/" in team_name:
+            print(f"⚠️ Default rank 16 for {prop.player_name}: team_name='{team_name}' (Unknown or combo)")
             return 16  # Default middle rank
         
         # Check if team exists in rankings
         if team_name not in matchup_rankings:
+            print(f"⚠️ Default rank 16 for {prop.player_name}: team '{team_name}' not found in rankings")
+            print(f"   Available teams: {list(matchup_rankings.keys())[:5]}...")
             return 16
         
         team_data = matchup_rankings[team_name]
@@ -399,6 +403,8 @@ class EnhancedPropsProcessor:
         
         # Check if position exists in team data
         if mapped_position not in team_data:
+            print(f"⚠️ Default rank 16 for {prop.player_name}: position '{mapped_position}' not found for team '{team_name}'")
+            print(f"   Available positions: {list(team_data.keys())}")
             return 16
         
         position_stats = team_data[mapped_position]
@@ -467,7 +473,9 @@ class EnhancedPropsProcessor:
             print(f"🎯 Found fallback match: {prop.player_name} ({mapped_position}) vs {team_name} - {fallback_stat}: {rank}/32")
             return rank
         
-        print(f"⚠️ No matchup rank found for {prop.player_name} ({mapped_position}) vs {team_name} - {stat_type}, using default 16")
+        print(f"⚠️ No matchup rank found for {prop.player_name} ({mapped_position}) vs {team_name} - {stat_type}")
+        print(f"   Tried mapped_stat: '{mapped_stat}', available stats: {list(position_stats.keys())}")
+        print(f"   Using default rank 16")
         return 16  # Default middle rank
     
     def fix_missing_player_names(self, nfl_props, all_props):
@@ -572,12 +580,13 @@ class EnhancedPropsProcessor:
         
         return nfl_props
 
-    def auto_upload_and_filter_props(self, props, league_name=""):
+    def auto_upload_and_filter_props(self, props, league_name="", game_mapping=None):
         """Automatically upload props with specific stat types and return filtered props for analysis
         
         Args:
             props: List of Prop objects
             league_name: "NFL" or "NBA" for context
+            game_mapping: Dictionary mapping game IDs to team matchups
             
         Returns:
             tuple: (props_to_analyze, props_auto_uploaded)
@@ -619,8 +628,26 @@ class EnhancedPropsProcessor:
         for prop in props:
             stat_type = getattr(prop, 'stat_type', '')
             if stat_type in auto_upload_stat_types:
+                # Set against_team for auto-upload props using game mapping
+                team_name = prop.team_name
+                game_id = getattr(prop, 'game_id', None)
+                against_team = "Unknown"
+                
+                # Use the same team mapping logic as in the main processors
+                if "/" in team_name:
+                    against_team = team_name  # Combo maps to itself
+                    print(f"🔀 Auto-upload combo prop: {team_name}")
+                elif game_mapping and game_id in game_mapping:
+                    against_team = game_mapping[game_id].get(team_name, "Unknown")
+                    if against_team != "Unknown":
+                        print(f"✅ Auto-upload team mapped: {team_name} vs {against_team}")
+                    else:
+                        print(f"⚠️ Auto-upload team mapping failed: {team_name} not found in game {game_id}")
+                else:
+                    print(f"⚠️ Auto-upload: Game ID {game_id} not found in game_mapping")
+                
                 # Set basic properties for auto-upload props
-                prop.against_team = getattr(prop, 'against_team', 'Unknown')
+                prop.against_team = against_team
                 prop.matchup_rank = 16  # Default middle rank
                 prop.score = 0  # No analysis score
                 
@@ -664,9 +691,9 @@ class EnhancedPropsProcessor:
         print(f"🎯 assign_matchup_ranks_to_props called with {len(props)} {league_name} props")
         
         if league_name != "NFL":
-            print(f"⚠️ League {league_name} not supported for matchup ranks, defaulting to 16")
+            print(f"⚠️ League {league_name} not supported for matchup ranks, defaulting to N/A")
             for prop in props:
-                prop.matchup_rank = 16  # Default middle rank
+                prop.matchup_rank = 'N/A'  # Default middle rank
             return
         
         # Load NFL matchup rankings
@@ -743,7 +770,7 @@ class EnhancedPropsProcessor:
                         self.show_processing_efficiency(len(nba_props), len(new_nba_props), "NBA")
                         
                         # Auto-upload props with unsupported stat types and filter remaining props
-                        props_to_analyze, props_auto_uploaded = self.auto_upload_and_filter_props(new_nba_props, "NBA")
+                        props_to_analyze, props_auto_uploaded = self.auto_upload_and_filter_props(new_nba_props, "NBA", nba_game_mapping)
                         
                         if props_to_analyze:
                             # Assign matchup ranks to NBA props that will be analyzed
@@ -778,20 +805,22 @@ class EnhancedPropsProcessor:
                                     unanalyzed_count += 1
                             
                             if unanalyzed_count > 0:
-                                print(f"⚠️ Filtering out {unanalyzed_count} props without analysis data")
+                                print(f"ℹ️ {unanalyzed_count} props without analysis data will still be uploaded")
                             
-                            # Upload only analyzed props to Supabase (auto-uploaded props were already uploaded)
-                            if analyzed_props:
-                                success = self.uploader.upload_with_retry(analyzed_props, metadata={
+                            # Upload ALL props to Supabase (auto-uploaded props were already uploaded)
+                            if props_to_analyze:
+                                success = self.uploader.upload_with_retry(props_to_analyze, metadata={
                                     'processing_time_seconds': time.time() - start_time,
-                                    'total_props': len(analyzed_props),
+                                    'total_props': len(props_to_analyze),
+                                    'analyzed_props': len(analyzed_props),
+                                    'unanalyzed_props': unanalyzed_count,
                                     'auto_uploaded_props': len(props_auto_uploaded),
                                     'existing_props_skipped': len(nba_props) - len(new_nba_props),
                                     'league': 'NBA',
                                     'timestamp': datetime.now().isoformat()
                                 })
                             else:
-                                print("ℹ️ No analyzed NBA props to upload (all were either auto-uploaded or failed analysis)")
+                                print("ℹ️ No NBA props to upload (all were auto-uploaded)")
                         else:
                             print("ℹ️ No NBA props were analyzed (all were auto-uploaded)")
                     else:
@@ -815,14 +844,14 @@ class EnhancedPropsProcessor:
                     new_nfl_props = self.fix_missing_player_names(new_nfl_props, all_props)
                     
                     # Auto-upload props with unsupported stat types and filter remaining props
-                    props_to_analyze, props_auto_uploaded = self.auto_upload_and_filter_props(new_nfl_props, "NFL")
+                    props_to_analyze, props_auto_uploaded = self.auto_upload_and_filter_props(new_nfl_props, "NFL", nfl_game_mapping)
                     
                     if props_to_analyze:
-                        # Assign matchup ranks to NFL props that will be analyzed
-                        self.assign_matchup_ranks_to_props(props_to_analyze, "NFL")
-                        
-                        # Process NFL data (only analyzed props)
+                        # Process NFL data (only analyzed props) - this sets against_team
                         self.nfl_processing(0, nfl_norm, props_to_analyze, nfl_game_mapping)
+                        
+                        # Assign matchup ranks to NFL props AFTER against_team is set
+                        self.assign_matchup_ranks_to_props(props_to_analyze, "NFL")
                         
                         # Combine analyzed and auto-uploaded props for final processing
                         new_nfl_props = props_to_analyze + props_auto_uploaded
@@ -849,20 +878,22 @@ class EnhancedPropsProcessor:
                                 unanalyzed_count += 1
                         
                         if unanalyzed_count > 0:
-                            print(f"⚠️ Filtering out {unanalyzed_count} props without analysis data")
+                            print(f"ℹ️ {unanalyzed_count} props without analysis data will still be uploaded")
                         
-                        # Upload only analyzed props to Supabase (auto-uploaded props were already uploaded)
-                        if analyzed_props:
-                            success = self.uploader.upload_with_retry(analyzed_props, metadata={
+                        # Upload ALL props to Supabase (auto-uploaded props were already uploaded)
+                        if props_to_analyze:
+                            success = self.uploader.upload_with_retry(props_to_analyze, metadata={
                                 'processing_time_seconds': time.time() - start_time,
-                                'total_props': len(analyzed_props),
+                                'total_props': len(props_to_analyze),
+                                'analyzed_props': len(analyzed_props),
+                                'unanalyzed_props': unanalyzed_count,
                                 'auto_uploaded_props': len(props_auto_uploaded),
                                 'existing_props_skipped': len(nfl_props) - len(new_nfl_props),
                                 'league': 'NFL',
                                 'timestamp': datetime.now().isoformat()
                             })
                         else:
-                            print("ℹ️ No analyzed NFL props to upload (all were either auto-uploaded or failed analysis)")
+                            print("ℹ️ No NFL props to upload (all were auto-uploaded)")
                     else:
                         print("ℹ️ No NFL props were analyzed (all were auto-uploaded)")
                 else:
@@ -945,6 +976,10 @@ class EnhancedPropsProcessor:
         previous_player = None
         previous_stat = None
         
+        # Initialize cache variables for optimization
+        cached_h2h_data = None
+        cached_stat_data = None
+        
         # Sort props by player name to optimize caching
         props_sorted = sorted(props, key=lambda p: (p.player_name or "", p.stat_type or ""))
         print(f"🔄 Processing {len(props_sorted)} props (sorted by player for optimization)")
@@ -1000,44 +1035,43 @@ class EnhancedPropsProcessor:
                 request_start_time = time.time()
                 request_count += 1
                 
-                # Enhanced stats fetching with retry logic and detailed error logging
+                # Enhanced stats fetching with optimized caching
                 h2harr = None
                 h2hstatarr = None
                 
                 try:
-                    # Fetch H2H data (with caching optimization)
+                    # Fetch H2H data (only when player changes)
                     if i == 0 or current_player != previous_player:
                         print(f"🔄 Fetching H2H data: {current_player} vs {against_team} ({timeframe})")
                         
-                        # Retry logic for H2H data
-                        for attempt in range(3):  # Try up to 3 times
-                            try:
-                                h2harr = self.fetch_stats_instant(
-                                    lambda: dataFinder.stats_against_team_t_season(current_player, against_team, timeframe),
-                                    f"H2H stats for {current_player} vs {against_team}"
-                                )
-                                if h2harr:
-                                    print(f"✅ H2H data fetched: {len(h2harr)} games (attempt {attempt + 1})")
-                                    stats_fetch_success += 1
-                                    break
-                                else:
-                                    print(f"⚠️ H2H data empty on attempt {attempt + 1}")
-                            except Exception as retry_e:
-                                print(f"❌ H2H fetch attempt {attempt + 1} failed: {str(retry_e)}")
-                                if attempt == 2:  # Last attempt
-                                    raise retry_e
-                        
-                        if not h2harr:
-                            print(f"❌ FAIL: No H2H data for {current_player} vs {against_team}")
+                        try:
+                            h2harr = self.fetch_stats_instant(
+                                lambda: dataFinder.stats_against_team_t_season(current_player, against_team, timeframe),
+                                f"H2H stats for {current_player} vs {against_team}"
+                            )
+                            if h2harr:
+                                print(f"✅ H2H data fetched: {len(h2harr)} games")
+                                stats_fetch_success += 1
+                                # Cache the H2H data for the current player
+                                cached_h2h_data = h2harr
+                            else:
+                                print(f"❌ FAIL: No H2H data for {current_player} vs {against_team}")
+                                h2h_fetch_failures += 1
+                                stats_fetch_failed += 1
+                                skipped_props += 1
+                                continue
+                        except Exception as h2h_e:
+                            print(f"❌ H2H fetch failed: {str(h2h_e)}")
                             h2h_fetch_failures += 1
                             stats_fetch_failed += 1
                             skipped_props += 1
                             continue
                     else:
                         print(f"📋 Using cached H2H data for {current_player}")
+                        h2harr = cached_h2h_data  # Use cached data
                     
-                    # Fetch specific stat data (with caching optimization)
-                    if i == 0 or prop.stat_type != previous_stat or not h2hstatarr:
+                    # Fetch specific stat data (only when stat type changes)
+                    if i == 0 or prop.stat_type != previous_stat:
                         print(f"🎯 Extracting {prop.stat_type} from H2H data")
                         
                         try:
@@ -1047,6 +1081,8 @@ class EnhancedPropsProcessor:
                             )
                             if h2hstatarr:
                                 print(f"✅ Stat data extracted: {len(h2hstatarr)} values - {h2hstatarr}")
+                                # Cache the stat data for the current stat type
+                                cached_stat_data = h2hstatarr
                             else:
                                 print(f"❌ FAIL: Could not extract {prop.stat_type} from H2H data")
                                 h2hstat_fetch_failures += 1
@@ -1059,6 +1095,7 @@ class EnhancedPropsProcessor:
                             continue
                     else:
                         print(f"📋 Using cached stat data for {prop.stat_type}")
+                        h2hstatarr = cached_stat_data  # Use cached data
                     
                     request_time = time.time() - request_start_time
                     print(f"⏱️ Data fetch completed in {request_time:.2f}s")
@@ -1109,107 +1146,113 @@ class EnhancedPropsProcessor:
                 
                 print(f"🎯 H2H Analysis: {h2htemp}/{h2hsize} hits ({h2h_success_rate:.3f}), avg: {h2h_avg:.2f}, line: {prop.line_score}")
 
-                if h2h_success_rate >= threshold and h2h_avg - prop.line_score >= 0:
-                    print(f"✅ Passed H2H threshold ({threshold}), fetching L5 data...")
-                    
-                    try:
-                        L5arr = dataFinder.stats_ten_games(current_player)
-                        if not L5arr:
-                            print(f"❌ No L10 data available for {current_player}")
-                            skipped_props += 1
-                            continue
-                            
-                        L5statarr = dataFinder.specific_stat_l10_games(L5arr, prop.stat_type)
-                        L5statarr = L5statarr[-5:]  # Take last 5 games
-                        L5size = len(L5statarr)
-                        
-                        if L5size == 0:
-                            print(f"❌ No L5 stat data for {current_player} - {prop.stat_type}")
-                            skipped_props += 1
-                            continue
-                            
-                        print(f"📊 L5 data: {L5statarr}")
-                        prop.add_performance_data(L5statarr, "L5")
-                        
-                        for j in range(num, L5size):
-                            if L5statarr[j] >= prop.line_score:
-                                L5temp += 1
-                            elif prop.stat_type not in ["Blks+Stls", "Steals", "Blocked Shots", "Turnovers"]:
-                                if L5statarr[j] + 1 >= prop.line_score:
-                                    L5temp += 0.5
-                                    
-                        if L5size == 0:
-                            L5size = 1
-                        L5score.append(L5temp / L5size)
-                        L5avg = round(sum(L5statarr) / 5, 3)
-                        L5diff = round(L5avg - prop.line_score, 3)
-                        L5relative_diff = round((L5avg - prop.line_score) / (prop.line_score + 5), 3)
-                        L5percent = round(100 * (sum(L5statarr) / 5 - prop.line_score) / prop.line_score, 3)
-
-                        print(f"🎯 L5 Analysis: {L5temp}/{L5size} hits ({L5temp/L5size:.3f}), avg: {L5avg}")
-
-                    except Exception as l5_e:
-                        print(f"❌ L5 data fetch failed: {str(l5_e)}")
+                # ALWAYS fetch L5 data regardless of H2H threshold
+                print(f"🔄 Fetching L5 data for {current_player}...")
+                
+                try:
+                    L5arr = dataFinder.stats_ten_games(current_player)
+                    if not L5arr:
+                        print(f"❌ No L10 data available for {current_player}")
                         skipped_props += 1
                         continue
-
-                    h2havg = round(sum(h2hstatarr) / len(h2hstatarr), 3)
-                    h2hdiff = round(h2havg - prop.line_score, 3)
-                    h2hrelative_diff = round((h2havg - prop.line_score) / (prop.line_score + 5), 3)
-                    h2hpercent = round(100 * (sum(h2hstatarr) / len(h2hstatarr) - prop.line_score) / prop.line_score, 3)
-                    sample_size = h2hsize
-                    sorting_score = (
-                            (h2htemp / h2hsize) * 0.45 +
-                            (h2hrelative_diff * 0.20) +
-                            (sample_size * 0.20) +
-                            (L5temp / 5) * 0.1 +
-                            (L5relative_diff * 0.05)
-                    )
-                    sorting_score = round(sorting_score, 3)
+                        
+                    L5statarr = dataFinder.specific_stat_l10_games(L5arr, prop.stat_type)
+                    L5statarr = L5statarr[-5:]  # Take last 5 games
+                    L5size = len(L5statarr)
                     
-                    # ESSENTIAL DEBUG: Print prop analysis results
-                    print(f"📊 FINAL: {current_player} ({prop.stat_type} {prop.line_score}): H2H={h2hstatarr}, L5={L5statarr}, vs={against_team}, score={sorting_score}")
+                    if L5size == 0:
+                        print(f"❌ No L5 stat data for {current_player} - {prop.stat_type}")
+                        skipped_props += 1
+                        continue
+                        
+                    print(f"📊 L5 data: {L5statarr}")
+                    prop.add_performance_data(L5statarr, "L5")
                     
-                    row = [
-                        current_player,
-                        getattr(prop, 'position', 'Unknown'),
-                        prop.team_name,
-                        against_team,
-                        prop.stat_type,
-                        prop.line_score,
-                        prop.odds_type,
-                        str(h2hstatarr),
-                        str(L5statarr),
-                        h2htemp,
-                        h2hsize,
-                        h2havg,
-                        L5avg,
-                        h2hdiff,
-                        h2hrelative_diff,
-                        h2hpercent,
-                        sample_size,
-                        sorting_score,
-                        game_id
-                    ]
-                    if prop.odds_type == "standard":
-                        data_rows.append(row)
-                    elif prop.odds_type == "demon":
-                        data_rows_demon.append(row)
-                    elif prop.odds_type == "goblin":
-                        data_rows_goblin.append(row)
-                    col_widths = [max(col_widths[i], len(str(row[i])) + 2) for i in range(len(headers))]
+                    for j in range(num, L5size):
+                        if L5statarr[j] >= prop.line_score:
+                            L5temp += 1
+                        elif prop.stat_type not in ["Blks+Stls", "Steals", "Blocked Shots", "Turnovers"]:
+                            if L5statarr[j] + 1 >= prop.line_score:
+                                L5temp += 0.5
+                                
+                    if L5size == 0:
+                        L5size = 1
+                    L5score.append(L5temp / L5size)
+                    L5avg = round(sum(L5statarr) / 5, 3)
+                    L5diff = round(L5avg - prop.line_score, 3)
+                    L5relative_diff = round((L5avg - prop.line_score) / (prop.line_score + 5), 3)
+                    L5percent = round(100 * (sum(L5statarr) / 5 - prop.line_score) / prop.line_score, 3)
 
-                    if len(row) != len(col_widths):
-                        print(f"⚠️ Row length mismatch: expected {len(col_widths)}, got {len(row)}")
-                    else:
-                        formatted_row = "".join(f"{str(item):<{col_widths[i]}}" for i, item in enumerate(row))
+                    print(f"🎯 L5 Analysis: {L5temp}/{L5size} hits ({L5temp/L5size:.3f}), avg: {L5avg}")
 
-                    # Increment processed count
-                    processed_props += 1
-                    print(f"✅ Successfully processed prop {processed_props}")
-                else:
-                    print(f"❌ SKIP: Failed H2H threshold - success rate: {h2h_success_rate:.3f} (need {threshold}), avg diff: {h2h_avg - prop.line_score:.2f}")
+                except Exception as l5_e:
+                    print(f"❌ L5 data fetch failed: {str(l5_e)}")
                     skipped_props += 1
+                    continue
+
+                # Calculate H2H metrics
+                h2havg = round(sum(h2hstatarr) / len(h2hstatarr), 3)
+                h2hdiff = round(h2havg - prop.line_score, 3)
+                h2hrelative_diff = round((h2havg - prop.line_score) / (prop.line_score + 5), 3)
+                h2hpercent = round(100 * (sum(h2hstatarr) / len(h2hstatarr) - prop.line_score) / prop.line_score, 3)
+                sample_size = h2hsize
+                
+                # Calculate sorting score (always calculate, regardless of H2H threshold)
+                sorting_score = (
+                        (h2htemp / h2hsize) * 0.45 +
+                        (h2hrelative_diff * 0.20) +
+                        (sample_size * 0.20) +
+                        (L5temp / 5) * 0.1 +
+                        (L5relative_diff * 0.05)
+                )
+                sorting_score = round(sorting_score, 3)
+                
+                # ESSENTIAL DEBUG: Print prop analysis results
+                print(f"📊 FINAL: {current_player} ({prop.stat_type} {prop.line_score}): H2H={h2hstatarr}, L5={L5statarr}, vs={against_team}, score={sorting_score}")
+                
+                row = [
+                    current_player,
+                    getattr(prop, 'position', 'Unknown'),
+                    prop.team_name,
+                    against_team,
+                    prop.stat_type,
+                    prop.line_score,
+                    prop.odds_type,
+                    str(h2hstatarr),
+                    str(L5statarr),
+                    h2htemp,
+                    h2hsize,
+                    h2havg,
+                    L5avg,
+                    h2hdiff,
+                    h2hrelative_diff,
+                    h2hpercent,
+                    sample_size,
+                    sorting_score,
+                    game_id
+                ]
+                if prop.odds_type == "standard":
+                    data_rows.append(row)
+                elif prop.odds_type == "demon":
+                    data_rows_demon.append(row)
+                elif prop.odds_type == "goblin":
+                    data_rows_goblin.append(row)
+                col_widths = [max(col_widths[i], len(str(row[i])) + 2) for i in range(len(headers))]
+
+                if len(row) != len(col_widths):
+                    print(f"⚠️ Row length mismatch: expected {len(col_widths)}, got {len(row)}")
+                else:
+                    formatted_row = "".join(f"{str(item):<{col_widths[i]}}" for i, item in enumerate(row))
+
+                # Increment processed count
+                processed_props += 1
+                print(f"✅ Successfully processed prop {processed_props}")
+                
+                # Log H2H threshold status for reference (but don't skip)
+                if h2h_success_rate >= threshold and h2h_avg - prop.line_score >= 0:
+                    print(f"✅ Passed H2H threshold ({threshold})")
+                else:
+                    print(f"⚠️ Did not pass H2H threshold ({threshold}) - success rate: {h2h_success_rate:.3f}, avg diff: {h2h_avg - prop.line_score:.2f} - but still processed")
 
                 # Update previous values for caching optimization
                 previous_player = current_player
@@ -1341,6 +1384,21 @@ class EnhancedPropsProcessor:
         previous_player = None
         previous_stat = None
         
+        # Initialize cache variables for optimization
+        cached_h2h_data = None
+        cached_l5_data = None
+        cached_h2h_stat_data = None
+        cached_l5_stat_data = None
+        
+        # Helper function to determine if prop requires QB rushing data
+        def is_qb_rushing_prop(prop):
+            """Check if this prop requires QB rushing data (qbrushingprop)"""
+            position = getattr(prop, 'position', 'Unknown')
+            stat_type = prop.stat_type
+            if position == "QB" and stat_type in ["Rush Yards", "Rush TDs", "Rush Attempts", "Rush+Rec TDs", "Rush+Rec Yds", "Pass+Rush Yds"]:
+                return True
+            return False
+        
         # Sort props by player name to optimize potential caching
         props_sorted = sorted(props, key=lambda p: (p.player_name or "", p.stat_type or ""))
         print(f"🔄 Processing {len(props_sorted)} NFL props (sorted by player for optimization)")
@@ -1394,106 +1452,139 @@ class EnhancedPropsProcessor:
                 request_start_time = time.time()
                 request_count += 1
                 
-                # Enhanced stats fetching with retry logic and detailed error logging
+                # Enhanced stats fetching with single attempt
                 h2harr = []
                 L5arr = []
                 h2hstatarr = []
                 L5statarr = []
                 
                 try:
-                    # Fetch H2H data with retry logic
-                    print(f"🔄 Fetching NFL H2H data: {current_player} vs {against_team}")
+                    # Check if this is a QB rushing prop that needs special handling
+                    is_qb_rush = is_qb_rushing_prop(prop)
                     
-                    for attempt in range(3):  # Try up to 3 times
+                    # Fetch H2H data (only when player changes OR it's a QB rushing prop)
+                    if i == 0 or current_player != previous_player or is_qb_rush:
+                        print(f"🔄 Fetching NFL H2H data: {current_player} vs {against_team}" + (" (QB rushing)" if is_qb_rush else ""))
+                        
                         try:
                             h2harr = self.fetch_stats_instant(
                                 lambda: dataFinder.nflprop(current_player, against_team),
                                 f"NFL H2H stats for {current_player} vs {against_team}"
                             )
                             if h2harr:
-                                print(f"✅ H2H data fetched: {len(h2harr)} games (attempt {attempt + 1})")
+                                print(f"✅ H2H data fetched: {len(h2harr)} games")
                                 stats_fetch_success += 1
-                                break
+                                # Cache the H2H data for the current player
+                                cached_h2h_data = h2harr
                             else:
-                                print(f"⚠️ H2H data empty on attempt {attempt + 1}")
-                        except Exception as retry_e:
-                            print(f"❌ H2H fetch attempt {attempt + 1} failed: {str(retry_e)}")
-                            if attempt == 2:  # Last attempt
-                                print(f"❌ All H2H fetch attempts failed for {current_player}")
-                                h2h_fetch_failures += 1
+                                print(f"⚠️ H2H data empty for {current_player}")
+                                cached_h2h_data = []
+                        except Exception as h2h_e:
+                            print(f"❌ H2H fetch failed: {str(h2h_e)}")
+                            h2h_fetch_failures += 1
+                            cached_h2h_data = []
+                    else:
+                        print(f"📋 Using cached H2H data for {current_player}")
+                        h2harr = cached_h2h_data or []
                     
-                    # Always try to get h2harr even if empty (for consistency with original code)
-                    h2harr = h2harr or []
-                    
-                    # Fetch L5 data with retry logic
-                    print(f"🔄 Fetching NFL L5 data: {current_player}")
-                    
-                    for attempt in range(3):  # Try up to 3 times
+                    # Always ensure h2harr is defined
+                    h2harr = h2harr if 'h2harr' in locals() else (cached_h2h_data or [])
+                   
+                    # Fetch L5 data (only when player changes)
+                    if i == 0 or current_player != previous_player:
+                        print(f"🔄 Fetching NFL L5 data: {current_player}")
+                        
                         try:
                             L5arr = self.fetch_stats_instant(
                                 lambda: dataFinder.nflprop_l5(current_player),
                                 f"NFL L5 stats for {current_player}"
                             )
                             if L5arr:
-                                print(f"✅ L5 data fetched: {len(L5arr)} games (attempt {attempt + 1})")
+                                print(f"✅ L5 data fetched: {len(L5arr)} games")
                                 stats_fetch_success += 1
-                                break
+                                # Cache the L5 data for the current player
+                                cached_l5_data = L5arr
                             else:
-                                print(f"⚠️ L5 data empty on attempt {attempt + 1}")
-                        except Exception as retry_e:
-                            print(f"❌ L5 fetch attempt {attempt + 1} failed: {str(retry_e)}")
-                            if attempt == 2:  # Last attempt
-                                print(f"❌ CRITICAL: All L5 fetch attempts failed for {current_player}")
+                                print(f"❌ SKIP: No L5 data available for {current_player}")
                                 l5_fetch_failures += 1
                                 stats_fetch_failed += 1
                                 skipped_props += 1
                                 continue
+                        except Exception as l5_e:
+                            print(f"❌ L5 fetch failed: {str(l5_e)}")
+                            l5_fetch_failures += 1
+                            stats_fetch_failed += 1
+                            skipped_props += 1
+                            continue
+                    else:
+                        print(f"📋 Using cached L5 data for {current_player}")
+                        L5arr = cached_l5_data
+                        if not L5arr:
+                            print(f"❌ SKIP: Cached L5 data is empty for {current_player}")
+                            l5_fetch_failures += 1
+                            stats_fetch_failed += 1
+                            skipped_props += 1
+                            continue
                     
-                    if not L5arr:
-                        print(f"❌ SKIP: No L5 data available for {current_player}")
-                        skipped_props += 1
-                        continue
-                    
-                    # Fetch H2H specific stat data
-                    if h2harr and len(h2harr) > 0:
-                        print(f"🎯 Extracting H2H {prop.stat_type} data from {len(h2harr)} games")
-                        try:
-                            h2hstatarr = self.fetch_stats_instant(
-                                lambda: dataFinder.nfl_stat(current_player, prop.stat_type, against_team, getattr(prop, 'position', 'Unknown'), h2harr),
-                                f"NFL specific stat {prop.stat_type} for {current_player}"
-                            )
-                            if h2hstatarr:
-                                print(f"✅ H2H stat data extracted: {len(h2hstatarr)} values - {h2hstatarr}")
-                            else:
-                                print(f"⚠️ H2H stat extraction returned empty array")
+                    # Fetch H2H specific stat data (only when stat type changes)
+                    if len(h2harr) > 0:
+                        if i == 0 or prop.stat_type != previous_stat:
+                            print(f"🎯 Extracting H2H {prop.stat_type} data from {len(h2harr)} games")
+                            try:
+                                h2hstatarr = self.fetch_stats_instant(
+                                    lambda: dataFinder.nfl_stat(current_player, prop.stat_type, against_team, getattr(prop, 'position', 'Unknown'), h2harr),
+                                    f"NFL specific stat {prop.stat_type} for {current_player}"
+                                )
+                                if h2hstatarr:
+                                    print(f"✅ H2H stat data extracted: {len(h2hstatarr)} values - {h2hstatarr}")
+                                    # Cache the H2H stat data for the current stat type
+                                    cached_h2h_stat_data = h2hstatarr
+                                else:
+                                    print(f"⚠️ H2H stat extraction returned empty array")
+                                    cached_h2h_stat_data = []
+                                    h2hstatarr = []
+                            except Exception as stat_e:
+                                print(f"❌ H2H stat extraction error: {str(stat_e)}")
+                                h2hstat_fetch_failures += 1
+                                cached_h2h_stat_data = []
                                 h2hstatarr = []
-                        except Exception as stat_e:
-                            print(f"❌ H2H stat extraction error: {str(stat_e)}")
-                            h2hstat_fetch_failures += 1
-                            h2hstatarr = []
+                        else:
+                            print(f"📋 Using cached H2H stat data for {prop.stat_type}")
+                            h2hstatarr = cached_h2h_stat_data or []
                     else:
                         print(f"📝 No H2H data available - will use L5 only")
                         h2hstatarr = []
                     
-                    # Fetch L5 specific stat data
-                    print(f"🎯 Extracting L5 {prop.stat_type} data from {len(L5arr)} games")
-                    try:
-                        L5statarr = self.fetch_stats_instant(
-                            lambda: dataFinder.nfl_stat_L5(current_player, prop.stat_type, against_team, getattr(prop, 'position', 'Unknown'), L5arr),
-                            f"NFL L5 specific stat {prop.stat_type} for {current_player}"
-                        )
-                        if L5statarr:
-                            print(f"✅ L5 stat data extracted: {len(L5statarr)} values - {L5statarr}")
-                        else:
-                            print(f"❌ SKIP: L5 stat extraction returned empty for {current_player} - {prop.stat_type}")
+                    # Fetch L5 specific stat data (only when stat type changes)
+                    if i == 0 or prop.stat_type != previous_stat:
+                        print(f"🎯 Extracting L5 {prop.stat_type} data from {len(L5arr)} games")
+                        try:
+                            L5statarr = self.fetch_stats_instant(
+                                lambda: dataFinder.nfl_stat_L5(current_player, prop.stat_type, against_team, getattr(prop, 'position', 'Unknown'), L5arr),
+                                f"NFL L5 specific stat {prop.stat_type} for {current_player}"
+                            )
+                            if L5statarr:
+                                print(f"✅ L5 stat data extracted: {len(L5statarr)} values - {L5statarr}")
+                                # Cache the L5 stat data for the current stat type
+                                cached_l5_stat_data = L5statarr
+                            else:
+                                print(f"❌ SKIP: L5 stat extraction returned empty for {current_player} - {prop.stat_type}")
+                                l5stat_fetch_failures += 1
+                                skipped_props += 1
+                                continue
+                        except Exception as stat_e:
+                            print(f"❌ L5 stat extraction error: {str(stat_e)}")
                             l5stat_fetch_failures += 1
                             skipped_props += 1
                             continue
-                    except Exception as stat_e:
-                        print(f"❌ L5 stat extraction error: {str(stat_e)}")
-                        l5stat_fetch_failures += 1
-                        skipped_props += 1
-                        continue
+                    else:
+                        print(f"📋 Using cached L5 stat data for {prop.stat_type}")
+                        L5statarr = cached_l5_stat_data
+                        if not L5statarr:
+                            print(f"❌ SKIP: Cached L5 stat data is empty for {prop.stat_type}")
+                            l5stat_fetch_failures += 1
+                            skipped_props += 1
+                            continue
                     
                     request_time = time.time() - request_start_time
                     print(f"⏱️ Data fetch completed in {request_time:.2f}s")

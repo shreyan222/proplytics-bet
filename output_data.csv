@@ -1,3 +1,55 @@
 ﻿Name,Stat,Line,Odds,Array,Temp,Size,Avg,Diff,Rel Diff,Percent,Sample Size,Score,GameId
+Alperen Sengun,C,HOU,OKC,Assists,5,standard,"[6, 9, 2, 4]","[4, 5, 9, 6, 5]",2.5,4,5.25,5.8,0.25,0.025,5.0,4,1.18,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Alperen Sengun,C,HOU,OKC,Points,19.5,standard,"[11, 20, 13, 31]","[15, 31, 15, 21, 21]",2,4,18.75,20.6,-0.75,-0.031,-3.846,4,1.081,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Alperen Sengun,C,HOU,OKC,Pts+Asts,24.5,standard,"[17, 29, 15, 35]","[19, 36, 24, 27, 26]",2,4,24.0,26.4,-0.5,-0.017,-2.041,4,1.095,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Alperen Sengun,C,HOU,OKC,Pts+Rebs,30.5,standard,"[20, 34, 24, 33]","[26, 41, 24, 35, 35]",2,4,27.75,32.2,-2.75,-0.077,-9.016,4,1.072,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Alperen Sengun,C,HOU,OKC,Pts+Rebs+Asts,35.5,standard,"[26, 43, 26, 37]","[30, 46, 33, 41, 40]",2,4,33.0,38.0,-2.5,-0.062,-7.042,4,1.076,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Alperen Sengun,C,HOU,OKC,Rebounds,10.5,standard,"[9, 14, 11, 2]","[11, 10, 9, 14, 14]",2,4,9.0,11.6,-1.5,-0.097,-14.286,4,1.079,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Alperen Sengun,C,HOU,OKC,Rebs+Asts,15.5,standard,"[15, 23, 13, 6]","[15, 15, 18, 20, 19]",1.5,4,14.25,17.4,-1.25,-0.061,-8.065,4,1.041,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Chet Holmgren,C-F,OKC,HOU,Points,16,standard,"[29, 11, 20]","[20, 14, 9, 4, 18]",2,3,20.0,13.0,4.0,0.19,25.0,3,0.971,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Chet Holmgren,C-F,OKC,HOU,Pts+Rebs,24.5,standard,"[34, 22, 24]","[30, 29, 20, 10, 26]",1.5,3,26.667,23.0,2.167,0.073,8.844,3,0.897,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Chet Holmgren,C-F,OKC,HOU,Pts+Rebs+Asts,26.5,standard,"[35, 25, 25]","[32, 30, 20, 10, 26]",1,3,28.333,23.6,1.833,0.058,6.918,3,0.807,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Chet Holmgren,C-F,OKC,HOU,Rebounds,8.5,standard,"[5, 11, 4]","[10, 15, 11, 6, 8]",1,3,6.667,10.0,-1.833,-0.136,-21.569,3,0.798,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Chet Holmgren,C-F,OKC,HOU,Rebs+Asts,10.5,standard,"[6, 14, 5]","[12, 16, 11, 6, 8]",1,3,8.333,10.6,-2.167,-0.14,-20.635,3,0.782,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Assists,5,standard,"[3, 7, 5, 3, 4]","[3, 3, 4, 1, 4]",2.5,5,4.4,3.0,-0.6,-0.06,-12.0,5,1.223,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Points,21.5,standard,"[14, 22, 20, 24, 33]","[26, 27, 40, 16, 20]",3,5,22.6,25.8,1.1,0.042,5.116,5,1.347,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Pts+Asts,26.5,standard,"[17, 29, 25, 27, 37]","[29, 30, 44, 17, 24]",3,5,27.0,28.8,0.5,0.016,1.887,5,1.337,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Pts+Rebs,26.5,standard,"[19, 27, 25, 28, 36]","[32, 34, 46, 19, 24]",3,5,27.0,31.0,0.5,0.016,1.887,5,1.34,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Pts+Rebs+Asts,31.5,standard,"[22, 34, 30, 31, 40]","[35, 37, 50, 20, 28]",2.5,5,31.4,34.0,-0.1,-0.003,-0.317,5,1.288,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Rebounds,5,standard,"[5, 5, 5, 4, 3]","[6, 7, 6, 3, 4]",3.5,5,4.4,5.2,-0.6,-0.06,-12.0,5,1.374,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jalen Williams,G-F,OKC,HOU,Rebs+Asts,10,standard,"[8, 12, 10, 7, 7]","[9, 10, 10, 4, 8]",2,5,8.8,8.2,-1.2,-0.08,-12.0,5,1.208,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Jimmy Butler,F,GSW,LAL,Assists,6,standard,"[5, 2]","[8, 4, 7, 3, 6]",0.5,2,3.5,5.6,-2.5,-0.227,-41.667,2,0.525,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Jimmy Butler,F,GSW,LAL,Points,18.5,standard,"[17, 11]","[20, 17, 33, 14, 17]",0,2,14.0,20.2,-4.5,-0.191,-24.324,2,0.405,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Jimmy Butler,F,GSW,LAL,Pts+Asts,24.5,standard,"[22, 13]","[28, 21, 40, 17, 23]",0,2,17.5,25.8,-7.0,-0.237,-28.571,2,0.395,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Jimmy Butler,F,GSW,LAL,Pts+Rebs,24.5,standard,"[26, 15]","[31, 24, 40, 20, 23]",1,2,20.5,27.6,-4.0,-0.136,-16.327,2,0.653,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Jimmy Butler,F,GSW,LAL,Pts+Rebs+Asts,30.5,standard,"[31, 17]","[39, 28, 47, 23, 29]",1,2,24.0,33.2,-6.5,-0.183,-21.311,2,0.632,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Jimmy Butler,F,GSW,LAL,Rebounds,6,standard,"[9, 4]","[11, 7, 7, 6, 6]",1,2,6.5,7.4,0.5,0.045,8.333,2,0.74,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Jimmy Butler,F,GSW,LAL,Rebs+Asts,12,standard,"[14, 6]","[19, 11, 14, 9, 12]",1,2,10.0,13.0,-2.0,-0.118,-16.667,2,0.674,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
 LeBron James,F,LAL,GSW,Assists,7,standard,"[10, 12, 8, 9]","[3, 7, 4, 8, 6]",4,4,9.75,5.6,2.75,0.229,39.286,4,1.34,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+LeBron James,F,LAL,GSW,Points,23,standard,"[31, 25, 42, 33]","[19, 21, 38, 27, 22]",4,4,32.75,25.4,9.75,0.348,42.391,4,1.374,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+LeBron James,F,LAL,GSW,Pts+Asts,30.5,standard,"[41, 37, 50, 42]","[22, 28, 42, 35, 28]",4,4,42.5,31.0,12.0,0.338,39.344,4,1.358,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+LeBron James,F,LAL,GSW,Pts+Rebs,31.5,standard,"[35, 30, 59, 38]","[24, 32, 48, 39, 29]",3,4,40.5,34.4,9.0,0.247,28.571,4,1.251,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+LeBron James,F,LAL,GSW,Pts+Rebs+Asts,38.5,standard,"[45, 42, 67, 47]","[27, 39, 52, 47, 35]",4,4,50.25,40.0,11.75,0.27,30.519,4,1.366,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+LeBron James,F,LAL,GSW,Rebounds,7.5,standard,"[4, 5, 17, 5]","[5, 11, 10, 12, 7]",1,4,7.75,9.0,0.25,0.02,3.333,4,0.993,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+LeBron James,F,LAL,GSW,Rebs+Asts,14.5,standard,"[14, 17, 25, 14]","[8, 18, 14, 20, 13]",3.0,4,17.5,14.6,3.0,0.154,20.69,4,1.219,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
 Luka Dončić,F-G,LAL,GSW,Assists,7,standard,"[6, 13, 7]","[1, 9, 8, 2, 9]",2.5,3,8.667,5.8,1.667,0.139,23.81,3,1.058,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Points,29,standard,"[31, 45, 19]","[37, 31, 17, 38, 28]",2,3,31.667,30.2,2.667,0.078,9.195,3,0.987,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Pts+Asts,36,standard,"[37, 58, 26]","[38, 40, 25, 40, 37]",2,3,40.333,36.0,4.333,0.106,12.037,3,1.001,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Pts+Rebs,36.5,standard,"[39, 56, 27]","[45, 43, 24, 39, 35]",2,3,40.667,37.2,4.167,0.1,11.416,3,0.981,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Pts+Rebs+Asts,43.5,standard,"[45, 69, 34]","[46, 52, 32, 41, 44]",2,3,49.333,43.0,5.833,0.12,13.41,3,0.984,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Rebounds,8,standard,"[8, 11, 8]","[8, 12, 7, 1, 7]",3,3,9.0,7.0,1.0,0.077,12.5,3,1.122,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Luka Dončić,F-G,LAL,GSW,Rebs+Asts,15,standard,"[14, 24, 15]","[9, 21, 15, 3, 16]",2.5,3,17.667,12.8,2.667,0.133,17.778,3,1.056,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Shai Gilgeous-Alexander,G,OKC,HOU,Assists,6,standard,"[4, 5, 6, 7, 8]","[4, 0, 10, 2, 12]",3.5,5,6.0,5.6,0.0,0.0,0.0,5,1.353,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Shai Gilgeous-Alexander,G,OKC,HOU,Points,31,standard,"[29, 32, 32, 51, 22]","[24, 35, 31, 21, 29]",3,5,33.2,28.0,2.2,0.061,7.097,5,1.318,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Shai Gilgeous-Alexander,G,OKC,HOU,Pts+Asts,37,standard,"[33, 37, 38, 58, 30]","[28, 35, 41, 23, 41]",3,5,39.2,33.6,2.2,0.052,5.946,5,1.316,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Shai Gilgeous-Alexander,G,OKC,HOU,Pts+Rebs,36,standard,"[34, 40, 40, 56, 26]","[32, 38, 33, 25, 34]",3,5,39.2,32.4,3.2,0.078,8.889,5,1.301,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Shai Gilgeous-Alexander,G,OKC,HOU,Pts+Rebs+Asts,42,standard,"[38, 45, 46, 63, 34]","[36, 38, 43, 27, 46]",3,5,45.2,38.0,3.2,0.068,7.619,5,1.319,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Shai Gilgeous-Alexander,G,OKC,HOU,Rebounds,5,standard,"[5, 8, 8, 5, 4]","[8, 3, 2, 4, 5]",4.5,5,6.0,4.4,1.0,0.1,20.0,5,1.472,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Shai Gilgeous-Alexander,G,OKC,HOU,Rebs+Asts,11,standard,"[9, 13, 14, 12, 12]","[12, 3, 12, 6, 17]",4,5,12.0,10.0,1.0,0.062,9.091,5,1.429,NBA_game_7PPiOxz6yAASFUleS5n4QS0
+Stephen Curry,G,GSW,LAL,Assists,5.5,standard,"[6, 9, 4, 6]","[3, 7, 2, 7, 1]",3,4,6.25,4.0,0.75,0.071,13.636,4,1.185,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Stephen Curry,G,GSW,LAL,Points,24.5,standard,"[38, 13, 37, 37]","[17, 13, 29, 22, 13]",3,4,31.25,18.8,6.75,0.229,27.551,4,1.194,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Stephen Curry,G,GSW,LAL,Pts+Asts,30.5,standard,"[44, 22, 41, 43]","[20, 20, 31, 29, 14]",3,4,37.5,22.8,7.0,0.197,22.951,4,1.186,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Stephen Curry,G,GSW,LAL,Pts+Rebs,29.5,standard,"[39, 14, 44, 40]","[20, 16, 36, 32, 14]",3,4,34.25,23.6,4.75,0.138,16.102,4,1.197,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Stephen Curry,G,GSW,LAL,Pts+Rebs+Asts,34.5,standard,"[45, 23, 48, 46]","[23, 23, 38, 39, 15]",3,4,40.5,27.6,6.0,0.152,17.391,4,1.199,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Stephen Curry,G,GSW,LAL,Rebounds,4.5,standard,"[1, 1, 7, 3]","[3, 3, 7, 10, 1]",1,4,3.0,4.8,-1.5,-0.158,-33.333,4,0.923,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
+Stephen Curry,G,GSW,LAL,Rebs+Asts,10,standard,"[7, 10, 11, 9]","[6, 10, 9, 17, 2]",2.5,4,9.25,8.8,-0.75,-0.05,-7.5,4,1.117,NBA_game_BQ7gsVxFHOlgaiBCECLCcVGd
