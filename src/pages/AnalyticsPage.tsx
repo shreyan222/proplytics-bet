@@ -13,16 +13,18 @@ import { Button } from '@/components/ui/button';
 
 export const AnalyticsPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
-  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
   
   const [filters, setFilters] = useState<PropFilters>({});
 
   // Simple filtering logic for now
   const filteredProps = props.filter(prop => {
+    if (locked) return true;
     if (filters.teams && filters.teams.length > 0 && !filters.teams.includes(prop.team)) return false;
     if (filters.positions && filters.positions.length > 0 && !filters.positions.includes(prop.position)) return false;
     if (filters.stat_types && filters.stat_types.length > 0 && !filters.stat_types.includes(prop.stat_type)) return false;
     if (filters.odds_types && filters.odds_types.length > 0 && !filters.odds_types.includes(prop.odds_type)) return false;
+    if (filters.sample_sizes && filters.sample_sizes.length > 0 && !filters.sample_sizes.includes(prop.sample_size)) return false;
     if (filters.min_score && prop.sorting_score < filters.min_score) return false;
     if (filters.max_score && prop.sorting_score > filters.max_score) return false;
     return true;
@@ -34,6 +36,10 @@ export const AnalyticsPage: React.FC = () => {
 
   const clearFilters = () => {
     setFilters({});
+  };
+
+  const updateSearchQuery = (_query: string) => {
+    // Search remains available across table pages, but AnalyticsPage doesn’t use search today.
   };
 
   if (isLoading) {
@@ -86,6 +92,10 @@ export const AnalyticsPage: React.FC = () => {
         onClearFilters={clearFilters}
         totalProps={props.length}
         filteredProps={filteredProps.length}
+        locked={locked}
+        searchQuery={''}
+        onSearchChange={updateSearchQuery}
+        allProps={props}
       />
 
       {/* Main Content */}

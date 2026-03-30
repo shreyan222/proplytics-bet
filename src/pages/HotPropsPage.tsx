@@ -14,7 +14,7 @@ import { Prop } from '@/types/nba';
 
 const HotPropsPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
-  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -49,6 +49,8 @@ const HotPropsPage: React.FC = () => {
           prop.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
           prop.stat_type.toLowerCase().includes(searchQuery.toLowerCase());
         
+        if (locked) return matchesSearch;
+
         const matchesTeam = selectedTeam === 'all' || prop.team === selectedTeam;
         const matchesPosition = selectedPosition === 'all' || prop.position === selectedPosition;
         const matchesStatType = selectedStatType === 'all' || prop.stat_type === selectedStatType;
@@ -196,6 +198,11 @@ const HotPropsPage: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {locked && (
+            <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
+              Subscribe to view all props and unlock filters.
+            </div>
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
             <div className="lg:col-span-2">
               <div className="relative">
@@ -209,7 +216,7 @@ const HotPropsPage: React.FC = () => {
               </div>
             </div>
             
-            <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+            <Select disabled={locked} value={selectedTeam} onValueChange={setSelectedTeam}>
               <SelectTrigger>
                 <SelectValue placeholder="Team" />
               </SelectTrigger>
@@ -223,7 +230,7 @@ const HotPropsPage: React.FC = () => {
               </SelectContent>
             </Select>
 
-            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+            <Select disabled={locked} value={selectedPosition} onValueChange={setSelectedPosition}>
               <SelectTrigger>
                 <SelectValue placeholder="Position" />
               </SelectTrigger>
@@ -237,7 +244,7 @@ const HotPropsPage: React.FC = () => {
               </SelectContent>
             </Select>
 
-            <Select value={selectedStatType} onValueChange={setSelectedStatType}>
+            <Select disabled={locked} value={selectedStatType} onValueChange={setSelectedStatType}>
               <SelectTrigger>
                 <SelectValue placeholder="Stat Type" />
               </SelectTrigger>
@@ -257,6 +264,7 @@ const HotPropsPage: React.FC = () => {
                 placeholder="Min Score"
                 value={minScore}
                 onChange={(e) => setMinScore(Number(e.target.value))}
+                disabled={locked}
                 min="0"
                 max="100"
                 step="1"
@@ -269,6 +277,7 @@ const HotPropsPage: React.FC = () => {
               id="favorites-only"
               checked={showFavoritesOnly}
               onCheckedChange={setShowFavoritesOnly}
+              disabled={locked}
             />
             <label htmlFor="favorites-only" className="text-sm font-medium flex items-center gap-2 text-white">
               <Star className="h-4 w-4" />

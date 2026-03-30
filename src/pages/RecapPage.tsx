@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,10 @@ import { Calendar, TrendingUp, TrendingDown, Target, BarChart3, RefreshCw, Check
 import { LeagueSelector } from '@/components/LeagueSelector';
 import { useMultiLeagueProps } from '@/utils/multiLeagueUtils';
 import { SEO } from '@/components/SEO';
+import { PropsTable } from '@/components/PropsTable';
+import { useYesterdayProps } from '@/hooks/useYesterdayProps';
+import { PropsFilters } from '@/components/PropsFilters';
+import { PropFilters } from '@/types/nba';
 
 interface DayPerformance {
   date: string;
@@ -25,7 +29,68 @@ interface DayPerformance {
 export const RecapPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
+  const [filters, setFilters] = useState<PropFilters>({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const { props, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
+  const previousDate = (() => {
+    const d = new Date(selectedDate);
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  })();
+  // Fetch yesterday's props when a date is selected
+  const {
+    data: yesterdayData,
+    isLoading: isLoadingYesterday,
+    error: yesterdayError,
+    refetch: refetchYesterday,
+  } = useYesterdayProps(selectedDate, selectedLeagues);
+  const yesterdayProps = yesterdayData?.props ?? [];
+  const lockedYesterday = yesterdayData?.locked ?? locked;
+  const filteredYesterdayProps = useMemo(() => {
+    return yesterdayProps.filter(prop => {
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        if (!prop.player_name.toLowerCase().includes(searchLower) &&
+            !prop.team.toLowerCase().includes(searchLower) &&
+            !prop.stat_type.toLowerCase().includes(searchLower)) {
+          return false;
+        }
+      }
+
+      if (lockedYesterday) return true;
+
+      if (filters.teams && filters.teams.length > 0) {
+        if (!filters.teams.includes(prop.team)) return false;
+      }
+
+      if (filters.stat_types && filters.stat_types.length > 0) {
+        if (!filters.stat_types.includes(prop.stat_type)) return false;
+      }
+
+      if (filters.odds_types && filters.odds_types.length > 0) {
+        if (!filters.odds_types.includes(prop.odds_type)) return false;
+      }
+
+      if (filters.positions && filters.positions.length > 0) {
+        if (!filters.positions.includes(prop.position)) return false;
+      }
+
+      if (filters.sample_sizes && filters.sample_sizes.length > 0) {
+        if (!filters.sample_sizes.includes(prop.sample_size)) return false;
+      }
+
+      return true;
+    });
+  }, [filters.odds_types, filters.positions, filters.stat_types, filters.teams, filters.sample_sizes, searchQuery, yesterdayProps, lockedYesterday]);
+
+  const handleFiltersChange = (newFilters: PropFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({});
+    setSearchQuery('');
+  };
 
   // Generate calendar dates for the last 30 days
   const generateCalendarDates = (): string[] => {
@@ -35,7 +100,11 @@ export const RecapPage: React.FC = () => {
     for (let i = 29; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
-      dates.push(date.toISOString().split('T')[0]);
+      dates.push(
+        new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+          .toISOString()
+          .split('T')[0]
+      );
     }
     
     return dates;
@@ -48,12 +117,6 @@ export const RecapPage: React.FC = () => {
     // This would be replaced with actual data from your backend
     // For now, return null to show empty state
     return null;
-  };
-
-  const getTopPropsForDate = (date: string) => {
-    // This would fetch actual top props for the selected date from your backend
-    // For now, return empty array
-    return [];
   };
 
   const formatDate = (dateString: string): string => {
@@ -154,6 +217,7 @@ export const RecapPage: React.FC = () => {
                 const status = getDateStatus(date);
                 const performance = getDayPerformance(date);
                 const isClickable = status === 'past';
+                
                 
                 return (
                   <div
@@ -264,87 +328,56 @@ export const RecapPage: React.FC = () => {
                 </Card>
               </div>
 
-              {/* Top Props Table */}
+              {/* Props Table */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Top Props Results</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-white">Props from {formatDate(previousDate)}</h3>
+                  <p className="text-sm text-slate-400">
+                    Showing props from the day before ({(() => {
+                      const date = new Date(selectedDate);
+                      date.setDate(date.getDate() - 1);
+                      return formatDate(date.toISOString().split('T')[0]);
+                    })()})
+                  </p>
+                </div>
                 
-                {/* Overs Section */}
-                <div>
-                  <h4 className="text-md font-medium text-green-400 mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Overs Performance
-                  </h4>
-                  <div className="space-y-2">
-                    {getTopPropsForDate(selectedDate).length > 0 ? (
-                      getTopPropsForDate(selectedDate).map((prop, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border border-slate-700 rounded-lg bg-slate-800/30">
-                          <div className="flex items-center gap-3">
-                            <span className="text-slate-400 text-sm">#{index + 1}</span>
-                            <div>
-                              <div className="text-white font-medium">{prop.player_name}</div>
-                              <div className="text-slate-400 text-sm">{prop.stat_type} vs {prop.against_team}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="text-white font-bold">{prop.line_score}</span>
-                            <span className="text-slate-400">→</span>
-                            <span className="text-white font-bold">{prop.actual_score || 'N/A'}</span>
-                            {prop.result === 'hit' ? (
-                              <CheckCircle className="h-5 w-5 text-green-400" />
-                            ) : (
-                              <XCircle className="h-5 w-5 text-red-400" />
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-slate-400">
-                        <BarChart3 className="h-12 w-12 mx-auto mb-3 text-slate-600" />
-                        <p>No props data available for this date</p>
-                        <p className="text-sm">Check back later or select a different date</p>
-                      </div>
-                    )}
+                {isLoadingYesterday ? (
+                  <div className="text-center py-8 text-slate-400">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p>Loading props...</p>
                   </div>
-                </div>
-
-                {/* Unders Section */}
-                <div>
-                  <h4 className="text-md font-medium text-red-400 mb-3 flex items-center gap-2">
-                    <TrendingDown className="h-4 w-4" />
-                    Unders Performance
-                  </h4>
-                  <div className="space-y-2">
-                    {getTopPropsForDate(selectedDate).length > 0 ? (
-                      getTopPropsForDate(selectedDate).map((prop, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 border border-slate-700 rounded-lg bg-slate-800/30">
-                          <div className="flex items-center gap-3">
-                            <span className="text-slate-400 text-sm">#{index + 1}</span>
-                            <div>
-                              <div className="text-white font-medium">{prop.player_name}</div>
-                              <div className="text-slate-400 text-sm">{prop.stat_type} vs {prop.against_team}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="text-white font-bold">{prop.line_score}</span>
-                            <span className="text-slate-400">→</span>
-                            <span className="text-white font-bold">{prop.actual_score || 'N/A'}</span>
-                            {prop.result === 'hit' ? (
-                              <CheckCircle className="h-5 w-5 text-green-400" />
-                            ) : (
-                              <XCircle className="h-5 w-5 text-red-400" />
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-slate-400">
-                        <BarChart3 className="h-12 w-12 mx-auto mb-3 text-slate-600" />
-                        <p>No props data available for this date</p>
-                        <p className="text-sm">Check back later or select a different date</p>
-                      </div>
-                    )}
+                ) : yesterdayError ? (
+                  <div className="text-center py-8 text-red-400">
+                    <XCircle className="h-12 w-12 mx-auto mb-4" />
+                    <p>Error loading props: {yesterdayError.message}</p>
+                    <Button onClick={() => refetchYesterday()} variant="outline" className="mt-4">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Try Again
+                    </Button>
                   </div>
-                </div>
+                ) : yesterdayProps.length > 0 ? (
+                  <div className="space-y-6">
+                    <PropsFilters
+                      filters={filters}
+                      onFiltersChange={handleFiltersChange}
+                      onClearFilters={handleClearFilters}
+                      totalProps={yesterdayProps.length}
+                      filteredProps={filteredYesterdayProps.length}
+                      locked={lockedYesterday}
+                      searchQuery={searchQuery}
+                      onSearchChange={setSearchQuery}
+                      allProps={yesterdayProps}
+                      selectedLeague={selectedLeagues[0]}
+                    />
+                    <PropsTable props={filteredYesterdayProps} viewMode="table" />
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-400">
+                    <BarChart3 className="h-12 w-12 mx-auto mb-3 text-slate-600" />
+                    <p>No props data available for this date</p>
+                    <p className="text-sm">Check back later or select a different date</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

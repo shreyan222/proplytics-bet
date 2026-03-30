@@ -152,29 +152,23 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
     }
   };
 
-  const getMatchupScoreColor = (rank: number | null | undefined) => {
-    if (!rank || rank <= 0) return 'text-slate-400'; // Gray for N/A or invalid values
-    
-    // Color gradient based on rank (1-32)
-    if (rank <= 8) return 'text-green-400'; // Top 25% - Green
-    if (rank <= 16) return 'text-yellow-400'; // 25-50% - Yellow
-    if (rank <= 24) return 'text-orange-400'; // 50-75% - Orange
-    return 'text-red-400'; // Bottom 25% - Red
+  const getMatchupScoreColor = (score: number | null | undefined) => {
+    if (score == null) return 'text-slate-400'; // Gray for N/A
+    if (score >= 75) return 'text-green-400';   // Great matchup
+    if (score <= 25) return 'text-red-400';     // Poor matchup
+    return 'text-yellow-400';                   // Medium matchup
   };
 
-  const getMatchupScoreBackground = (rank: number | null | undefined) => {
-    if (!rank || rank <= 0) return 'bg-slate-500/20'; // Gray background for N/A
-    
-    // Background gradient based on rank (1-32)
-    if (rank <= 8) return 'bg-green-500/20'; // Top 25% - Green
-    if (rank <= 16) return 'bg-yellow-500/20'; // 25-50% - Yellow
-    if (rank <= 24) return 'bg-orange-500/20'; // 50-75% - Orange
-    return 'bg-red-500/20'; // Bottom 25% - Red
+  const getMatchupScoreBackground = (score: number | null | undefined) => {
+    if (score == null) return 'bg-slate-500/20'; // Gray for N/A
+    if (score >= 75) return 'bg-green-500/20';
+    if (score <= 25) return 'bg-red-500/20';
+    return 'bg-yellow-500/20';
   };
 
-  const formatMatchupScore = (rank: number | null | undefined) => {
-    if (!rank || rank <= 0) return 'N/A';
-    return `${rank}/32`;
+  const formatMatchupScore = (score: number | null | undefined) => {
+    if (score == null) return 'N/A';
+    return score.toFixed(1);
   };
 
   // Helper function to calculate hit percentage
@@ -258,8 +252,8 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
           }
           break;
         case 'matchup_rank':
-          aValue = Number(a.matchup_rank) || 0;
-          bValue = Number(b.matchup_rank) || 0;
+          aValue = Number(a.final_matchup_score) || 0;
+          bValue = Number(b.final_matchup_score) || 0;
           break;
         case 'sorting_score':
           aValue = Number(a.sorting_score) || 0;
@@ -402,10 +396,10 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
                     <div className="text-sm text-slate-400">Matchup Rank</div>
                     <div className={cn(
                       "text-2xl font-bold px-3 py-2 rounded-lg",
-                      getMatchupScoreColor(prop.matchup_rank),
-                      getMatchupScoreBackground(prop.matchup_rank)
+                      getMatchupScoreColor(prop.final_matchup_score),
+                      getMatchupScoreBackground(prop.final_matchup_score)
                     )}>
-                      {formatMatchupScore(prop.matchup_rank)}
+                      {formatMatchupScore(prop.final_matchup_score)}
                     </div>
                   </div>
                   <div className="text-center">
@@ -824,10 +818,10 @@ export const PropsTable: React.FC<PropsTableProps> = ({ props, viewMode = 'table
               <TableCell className="px-4 py-3 text-center">
                 <div className={cn(
                   "inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-semibold",
-                  getMatchupScoreBackground(prop.matchup_rank),
-                  getMatchupScoreColor(prop.matchup_rank)
+                  getMatchupScoreBackground(prop.final_matchup_score),
+                  getMatchupScoreColor(prop.final_matchup_score)
                 )}>
-                  {formatMatchupScore(prop.matchup_rank)}
+                  {formatMatchupScore(prop.final_matchup_score)}
                 </div>
               </TableCell>
               <TableCell className="px-4 py-3 text-center">

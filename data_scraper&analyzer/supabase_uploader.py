@@ -83,6 +83,31 @@ class SupabaseUploader:
         if team_name is not None:
             team_name = str(team_name).strip()
         
+        def compute_final_matchup_score():
+            """Compute weighted matchup score if not already set on the prop."""
+            existing = getattr(prop, 'final_matchup_score', None)
+            if existing is not None:
+                try:
+                    return float(existing)
+                except (TypeError, ValueError):
+                    pass
+
+            ranks = getattr(prop, 'matchup_ranks', {}) or {}
+            l7 = ranks.get("l7")
+            l15 = ranks.get("l15")
+            l30 = ranks.get("l30")
+
+            def to_num(v):
+                return float(v) if isinstance(v, (int, float)) else 16.0
+
+            l7 = to_num(l7)
+            l15 = to_num(l15)
+            l30 = to_num(l30)
+            weighted_avg = (3 * l7 + 2 * l15 + 1 * l30) / 6.0
+            return round(weighted_avg * 3.33, 3)
+
+        final_matchup_score = compute_final_matchup_score()
+
         return {
             'player_name': player_name,
             'position': getattr(prop, 'position', None) or "UNK",
@@ -95,6 +120,8 @@ class SupabaseUploader:
             'against_team': getattr(prop, 'against_team', None) or "Unknown",
             'start_time': getattr(prop, 'start_time', None) or "2025-01-01T00:00:00Z",
             'matchup_rank': getattr(prop, 'matchup_rank', 16),  # Default to middle rank if not set
+            'matchup_ranks': getattr(prop, 'matchup_ranks', {}) or {},
+            'final_matchup_score': final_matchup_score,
             'h2h_array': h2h_array,
             'l5_array': l5_array,
             'h2h_avg': h2h_avg,

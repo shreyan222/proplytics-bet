@@ -14,6 +14,8 @@ import { useComparisonTitle } from "@/hooks/useComparisonTitle"
 
 import Index from "@/pages/Index"
 import LandingPage from "@/pages/LandingPage"
+import PricingPage from "@/pages/PricingPage"
+import CheckoutSuccessPage from "@/pages/CheckoutSuccessPage"
 import AuthPage from "@/pages/AuthPage"
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage"
 import ResetPasswordPage from "@/pages/ResetPasswordPage"
@@ -56,6 +58,8 @@ function AppContent() {
     <BrowserRouter>
       <Routes>
         <Route path="/landing" element={<LandingPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

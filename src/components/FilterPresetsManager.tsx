@@ -90,6 +90,9 @@ export const FilterPresetsManager: React.FC<FilterPresetsManagerProps> = ({
   const getFilterDescription = (filters: PropFilters): string => {
     const parts: string[] = [];
     
+    if (filters.teams?.length) {
+      parts.push(`${filters.teams.join(', ')} teams`);
+    }
     if (filters.odds_types?.length) {
       parts.push(`${filters.odds_types.join(', ')} odds`);
     }
@@ -98,6 +101,9 @@ export const FilterPresetsManager: React.FC<FilterPresetsManagerProps> = ({
     }
     if (filters.stat_types?.length) {
       parts.push(`${filters.stat_types.join(', ')} stats`);
+    }
+    if (filters.sample_sizes?.length) {
+      parts.push(`sample sizes ${filters.sample_sizes.join(', ')}`);
     }
     if (filters.min_score) {
       parts.push(`min score ${filters.min_score}`);

@@ -7,7 +7,8 @@ export const useNormalizedSearch = () => {
   const [filters, setFilters] = useState<SearchFilters>({});
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   
-  const { data: allProps = [], isLoading, error } = usePropsData();
+  const { data, isLoading, error } = usePropsData();
+  const allProps = data?.props ?? [];
 
   // Transform legacy props to normalized schema
   const normalizedProps = useMemo(() => {

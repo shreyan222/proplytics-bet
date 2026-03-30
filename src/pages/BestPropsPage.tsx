@@ -14,7 +14,7 @@ import { Prop } from '@/types/nba';
 
 export const BestPropsPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
-  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
@@ -23,10 +23,33 @@ export const BestPropsPage: React.FC = () => {
   const [minScore, setMinScore] = useState<number>(0);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
-  // Get unique teams, positions, and stat types from all selected leagues
-  const teams = [...new Set(props.map(prop => prop.team))].sort();
-  const positions = [...new Set(props.map(prop => prop.position))].filter(Boolean).sort();
-  const statTypes = [...new Set(props.map(prop => prop.stat_type))].sort();
+  // Helper function to calculate H2H hit rate
+  const calculateH2HHitRate = (h2hArray: number[], lineScore: number): number => {
+    if (!h2hArray || h2hArray.length === 0) return 0;
+    const hits = h2hArray.filter(score => score >= lineScore).length;
+    return (hits / h2hArray.length) * 100;
+  };
+
+  // Filter props to only show those with at least 75 matchup score and 100% h2h hit rate
+  const filteredProps = useMemo(() => {
+    return props.filter(prop => {
+      // Matchup score filter: at least 75
+      const hasValidMatchupScore = prop.final_matchup_score !== null && 
+                                   prop.final_matchup_score !== undefined && 
+                                   prop.final_matchup_score >= 75;
+      
+      // H2H hit rate filter: 100% (all values in h2h_array must be >= line_score)
+      const h2hHitRate = calculateH2HHitRate(prop.h2h_array, prop.line_score);
+      const has100PercentH2HHitRate = h2hHitRate === 100;
+      
+      return hasValidMatchupScore && has100PercentH2HHitRate;
+    });
+  }, [props]);
+
+  // Get unique teams, positions, and stat types from filtered props
+  const teams = [...new Set(filteredProps.map(prop => prop.team))].sort();
+  const positions = [...new Set(filteredProps.map(prop => prop.position))].filter(Boolean).sort();
+  const statTypes = [...new Set(filteredProps.map(prop => prop.stat_type))].sort();
 
   // Filter and sort props by odds type and score
   const { standardProps, demonProps, goblinProps } = useMemo(() => {
@@ -39,6 +62,8 @@ export const BestPropsPage: React.FC = () => {
             prop.team.toLowerCase().includes(searchQuery.toLowerCase()) ||
             prop.stat_type.toLowerCase().includes(searchQuery.toLowerCase());
           
+          if (locked) return matchesSearch;
+
           const matchesTeam = selectedTeam === 'all' || prop.team === selectedTeam;
           const matchesPosition = selectedPosition === 'all' || prop.position === selectedPosition;
           const matchesStatType = selectedStatType === 'all' || prop.stat_type === selectedStatType;
@@ -50,11 +75,11 @@ export const BestPropsPage: React.FC = () => {
     };
 
     return {
-      standardProps: filterProps(props, 'standard'),
-      demonProps: filterProps(props, 'demon'),
-      goblinProps: filterProps(props, 'goblin'),
+      standardProps: filterProps(filteredProps, 'standard'),
+      demonProps: filterProps(filteredProps, 'demon'),
+      goblinProps: filterProps(filteredProps, 'goblin'),
     };
-  }, [props, searchQuery, selectedTeam, selectedPosition, selectedStatType, minScore]);
+  }, [filteredProps, searchQuery, selectedTeam, selectedPosition, selectedStatType, minScore]);
 
   const handleRefresh = () => {
     refetch();
@@ -169,7 +194,7 @@ export const BestPropsPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-400">Total Props</p>
-                <p className="text-3xl font-bold text-purple-400">{props.length}</p>
+                <p className="text-3xl font-bold text-purple-400">{filteredProps.length}</p>
               </div>
               <BarChart3 className="h-8 w-8 text-purple-400" />
             </div>
@@ -186,6 +211,11 @@ export const BestPropsPage: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {locked && (
+            <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
+              Subscribe to view all props and unlock filters.
+            </div>
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
             <div className="lg:col-span-2">
               <div className="relative">
@@ -199,7 +229,7 @@ export const BestPropsPage: React.FC = () => {
               </div>
             </div>
             
-            <Select value={selectedTeam} onValueChange={setSelectedTeam}>
+            <Select disabled={locked} value={selectedTeam} onValueChange={setSelectedTeam}>
               <SelectTrigger>
                 <SelectValue placeholder="Team" />
               </SelectTrigger>
@@ -213,7 +243,7 @@ export const BestPropsPage: React.FC = () => {
               </SelectContent>
             </Select>
 
-            <Select value={selectedPosition} onValueChange={setSelectedPosition}>
+            <Select disabled={locked} value={selectedPosition} onValueChange={setSelectedPosition}>
               <SelectTrigger>
                 <SelectValue placeholder="Position" />
               </SelectTrigger>
@@ -227,7 +257,7 @@ export const BestPropsPage: React.FC = () => {
               </SelectContent>
             </Select>
 
-            <Select value={selectedStatType} onValueChange={setSelectedStatType}>
+            <Select disabled={locked} value={selectedStatType} onValueChange={setSelectedStatType}>
               <SelectTrigger>
                 <SelectValue placeholder="Stat Type" />
               </SelectTrigger>
@@ -247,6 +277,7 @@ export const BestPropsPage: React.FC = () => {
                 placeholder="Min Score"
                 value={minScore}
                 onChange={(e) => setMinScore(Number(e.target.value))}
+                disabled={locked}
                 min="0"
                 max="100"
                 step="1"
@@ -259,6 +290,7 @@ export const BestPropsPage: React.FC = () => {
               id="favorites-only"
               checked={showFavoritesOnly}
               onCheckedChange={setShowFavoritesOnly}
+              disabled={locked}
             />
             <label htmlFor="favorites-only" className="text-sm font-medium flex items-center gap-2 text-white">
               <Star className="h-4 w-4" />

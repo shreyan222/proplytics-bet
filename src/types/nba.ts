@@ -59,6 +59,7 @@ export interface Prop {
   h2h_percent_computed?: number;
   l5_percent_computed?: number;
   matchup_rank?: number | null;
+  final_matchup_score?: number | null;
   league?: string;
 }
 
@@ -143,4 +144,5 @@ export interface PropFilters {
   min_score?: number;
   max_score?: number;
   min_sample_size?: number;
+  sample_sizes?: number[];
 }

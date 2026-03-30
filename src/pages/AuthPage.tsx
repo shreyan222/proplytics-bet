@@ -170,7 +170,7 @@ export const AuthPage: React.FC = () => {
                </div>
              )}
             
-            <div className="mt-6 text-center">
+            <div className="mt-6 text-center space-y-2">
               <Button 
                 variant="link" 
                 onClick={() => {
@@ -182,6 +182,11 @@ export const AuthPage: React.FC = () => {
               >
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </Button>
+              <div>
+                <Button variant="link" className="text-sm text-muted-foreground" onClick={() => navigate('/pricing')}>
+                  Subscribe to Pro
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

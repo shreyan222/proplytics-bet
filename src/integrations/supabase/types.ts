@@ -279,6 +279,39 @@ export type Database = {
           },
         ]
       }
+      stripe_subscriptions: {
+        Row: {
+          id: string
+          user_id: string | null
+          customer_email: string
+          stripe_customer_id: string
+          stripe_subscription_id: string | null
+          status: string
+          current_period_end: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          customer_email: string
+          stripe_customer_id: string
+          stripe_subscription_id?: string | null
+          status?: string
+          current_period_end?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          customer_email?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string | null
+          status?: string
+          current_period_end?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       teams: {
         Row: {
           abbreviation: string

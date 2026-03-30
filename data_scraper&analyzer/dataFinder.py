@@ -22,7 +22,6 @@ def get_nfl_team_name(team_abbr):
         "HOU": "Houston",
         "IND": "Indianapolis",
         "JAC": "Jacksonville",
-        "JAX": "Jacksonville",  # Alternative abbreviation
         "KC": "Kansas City",
         "LAC": "Los Angeles Chargers",
         "LAR": "Los Angeles Rams",
@@ -45,11 +44,11 @@ def get_nfl_team_name(team_abbr):
     
     return team_mapping.get(team_abbr, team_abbr)  # Return original if not found
 
-def truncate_list_after_two_empty_elements(lst):
+def truncate_list_after_three_empty_elements(lst):
 
-    for i in range(len(lst) - 1):
-        if lst[i] == "" and lst[i + 1] == "":
-            return lst[:i]  # Return the sublist excluding the two empty elements
+    for i in range(len(lst) - 2):
+        if lst[i] == "" and lst[i + 1] == "" and lst[i + 2] == "":
+            return lst[:i]  # Return the sublist excluding the three empty elements
     return lst
 def against_team_nfl(team):
     # Use centralized team mapping function and convert to lowercase for this specific use case
@@ -86,6 +85,7 @@ def against_team_nfl(team):
             return substring
         else:
             return "minnesota"
+        
 
     return None  # In case neither '@ ' nor 'vs ' is found
 def nflprop(name, team):
@@ -96,7 +96,7 @@ def nflprop(name, team):
     html_text = requests.get(f'https://www.statmuse.com/nfl/ask/{name}-against-{team}-last-2-seasons').text
     soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
-
+    
     stats = []
     if not table:
         return stats
@@ -108,8 +108,7 @@ def nflprop(name, team):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final =  truncate_list_after_two_empty_elements(stats)
-
+        final =  truncate_list_after_three_empty_elements(stats)
         words_to_remove = ["afc", "nfc", "super","round"]
 
         filtered_items = [item for item in final if not any(word in item.lower() for word in words_to_remove)]
@@ -133,7 +132,7 @@ def nflprop_l5(name):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final =  truncate_list_after_two_empty_elements(stats)
+        final =  truncate_list_after_three_empty_elements(stats)
 
         words_to_remove = ["afc", "nfc", "super","round"]
 
@@ -158,7 +157,7 @@ def nflprop_qbrush(name, team):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final = truncate_list_after_two_empty_elements(stats)
+        final = truncate_list_after_three_empty_elements(stats)
 
         words_to_remove = ["afc", "nfc", "super", "round"]
 
@@ -181,7 +180,7 @@ def nflprop_qbrush_l5(name):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final = truncate_list_after_two_empty_elements(stats)
+        final = truncate_list_after_three_empty_elements(stats)
 
         words_to_remove = ["afc", "nfc", "super", "round"]
 
@@ -353,10 +352,11 @@ def old_nfl_stat(name, stat, team, pos):
 def stats_against_team_t_season(name, team, timeframe):
     if team == "MIN":
         team = "Minesota"
-
+    if team == "CHA":
+        team = "hornets"
     if name == "Nicolas Claxton":
         name = "Claxton"
-    url = f'https://www.statmuse.com/nba/ask/{name}-against-{team}-{timeframe}-including playoffs'
+    url = f'https://www.statmuse.com/nba/ask/{name}-against-{team}-{timeframe}'
     html_text = requests.get(url).text
     soup = BeautifulSoup(html_text, 'html.parser')
     table = soup.find('table', class_='whitespace-nowrap w-full')
@@ -371,7 +371,7 @@ def stats_against_team_t_season(name, team, timeframe):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final = truncate_list_after_two_empty_elements(stats)
+        final = truncate_list_after_three_empty_elements(stats)
     return final
 def nfl_stat(name, stat, team, pos, arr):
     """
@@ -574,6 +574,7 @@ def against_team(team):
             return substring
         else:
             return "minnesota"
+        
 
     return None
 def find_stat(num,arr):
@@ -742,7 +743,7 @@ def specific_stat_l10_games(arr,stat):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final = truncate_list_after_two_empty_elements(stats)
+        final = truncate_list_after_three_empty_elements(stats)
     return final
 def stats_ten_games(name):
     if name == "Nicolas Claxton":
@@ -761,7 +762,7 @@ def stats_ten_games(name):
             for i in cells:
                 stat = i.text
                 stats.append(stat)
-        final = truncate_list_after_two_empty_elements(stats)
+        final = truncate_list_after_three_empty_elements(stats)
     return final
 
 def nfl_stat_L5(name, stat, team, pos, arr):
@@ -865,8 +866,3 @@ def nfl_stat_L5(name, stat, team, pos, arr):
     except Exception as e:
         print(f"[ERROR] Error in nfl_stat_L5 for player '{name}', stat '{stat}', team '{team}', position '{pos}': {e}")
         return []
-# Test code - uncomment to debug
-print(nflprop("Kyler Murray", "SEA"))
-print(nfl_stat("Kyler Murray", "Pass TDs", "SEA", "QB", [nflprop("Kyler Murray", "SEA")]))
-print(nflprop_l5("Kyler Murray"))
-print(nfl_stat_L5("Kyler Murray", "Pass TDs", "SEA", "QB", nflprop_l5("Kyler Murray")))

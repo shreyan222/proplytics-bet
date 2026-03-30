@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Proplytics</string>
+    <string name="title_activity_main">Proplytics</string>
+    <string name="package_name">com.shreyan.proplytics</string>
+    <string name="custom_url_scheme">com.shreyan.proplytics</string>
+</resources>

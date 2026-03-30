@@ -26,7 +26,8 @@ export function GlobalSearch() {
   const containerRef = useRef<HTMLDivElement>(null)
   
   // Get props data using the same hook as Dashboard
-  const { data: allProps = [], isLoading: propsLoading } = usePropsData();
+  const { data, isLoading: propsLoading } = usePropsData();
+  const allProps = data?.props ?? [];
 
   // Search function using the same logic as Dashboard
   const searchItems = async (query: string): Promise<SearchResult[]> => {

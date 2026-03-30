@@ -67,7 +67,7 @@ def extract_player_stats(data, players):
 
             # Convert start_time to UTC and format it
             if start_time_str:
-                start_time_with_tz = datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M:%S%z')
+                start_time_with_tz = datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
                 start_time_utc = start_time_with_tz.astimezone(pytz.utc)
                 start_time_for_sqlite = start_time_utc.strftime('%Y-%m-%d %H:%M:%S')
             else:

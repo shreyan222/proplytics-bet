@@ -17,6 +17,11 @@ export const useFilteredProps = (props: Prop[], filters: PropFilters) => {
       if (filters.min_sample_size !== undefined && prop.sample_size < filters.min_sample_size) {
         return false;
       }
+      if (filters.sample_sizes && filters.sample_sizes.length > 0) {
+        if (!filters.sample_sizes.includes(prop.sample_size)) {
+          return false;
+        }
+      }
 
       // Odds types filter
       if (filters.odds_types && filters.odds_types.length > 0) {

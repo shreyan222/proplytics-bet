@@ -3,6 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const seedSampleData = async () => {
   try {
+    // This helper is for local/dev seeding. It assumes elevated DB access and may not work
+    // once RLS is enabled for the props tables in production.
+
     // First, let's add some players for the existing teams
     const { data: teams } = await supabase.from('teams').select('*');
     if (!teams || teams.length === 0) {

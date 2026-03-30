@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, User, RefreshCw } from 'lucide-react';
-import { usePropsData } from '@/hooks/usePropsData';
+import { useGetProps } from '@/hooks/useGetProps';
 import { PropsTable } from '@/components/PropsTable';
 
 export const PlayerDetail: React.FC = () => {
@@ -25,11 +25,22 @@ export const PlayerDetail: React.FC = () => {
     }
   };
   
-  // Get all props from Supabase
-  const { data: allProps = [], isLoading, error, refetch } = usePropsData();
-  
-  // Filter props for this player
-  const playerProps = allProps.filter(prop => prop.player_id === playerId);
+  const { data, isLoading, error, refetch } = useGetProps(
+    ['player-props', playerId],
+    {
+      table: 'props',
+      filters: {
+        eq: {
+          player_id: playerId ?? '',
+        },
+      },
+      orderBy: [{ column: 'sorting_score_computed', ascending: false }],
+    },
+    !!playerId,
+  );
+
+  const playerProps = data?.props ?? [];
+  const locked = data?.locked ?? true;
   
   // Enhance player props with calculated values if missing
   const enhancedPlayerProps = playerProps.map(prop => {
@@ -190,6 +201,11 @@ export const PlayerDetail: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
+          {locked && (
+            <div className="m-4 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
+              Subscribe to view all props and unlock filters.
+            </div>
+          )}
           <PropsTable props={enhancedPlayerProps} viewMode="table" />
         </CardContent>
       </Card>

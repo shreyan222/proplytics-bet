@@ -20,7 +20,8 @@ export const getSelectedLeaguesDisplay = (leagues: ('NBA' | 'NFL')[]): string =>
 
 // Hook to get props data for multiple leagues
 export const useMultiLeagueProps = (leagues: ('NBA' | 'NFL')[] = ['NBA']) => {
-  const { data: allProps = [], isLoading, error, refetch } = usePropsData();
+  const { data, isLoading, error, refetch } = usePropsData();
+  const allProps = data?.props ?? [];
   
   // Check for league field issues
   const propsWithLeague = allProps.filter(p => p.league);
@@ -49,6 +50,8 @@ export const useMultiLeagueProps = (leagues: ('NBA' | 'NFL')[] = ['NBA']) => {
     isLoading,
     error,
     refetch,
-    leagueDisplay: getSelectedLeaguesDisplay(leagues)
+    leagueDisplay: getSelectedLeaguesDisplay(leagues),
+    isPremium: data?.isPremium ?? false,
+    locked: data?.locked ?? true,
   };
 };

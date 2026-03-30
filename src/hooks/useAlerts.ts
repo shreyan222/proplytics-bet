@@ -20,7 +20,8 @@ interface Alert {
 }
 
 export const useAlerts = () => {
-  const { data: props = [] } = usePropsData();
+  const { data } = usePropsData();
+  const props = data?.props ?? [];
   const { preferences } = useUserPreferences();
   const { toast } = useToast();
   const [previousProps, setPreviousProps] = useState<Prop[]>([]);

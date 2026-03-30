@@ -11,7 +11,8 @@ import { Users, X, Plus, Search } from 'lucide-react';
 
 export const FavoritePlayersManager: React.FC = () => {
   const { preferences, updatePreferences } = useUserPreferences();
-  const { data: props = [] } = usePropsData();
+  const { data } = usePropsData();
+  const props = data?.props ?? [];
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
 

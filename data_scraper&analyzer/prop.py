@@ -1,6 +1,6 @@
 import pickle
 class Prop:
-    def __init__(self, player_name, position, stat_type, line_score, odds_type, team_name, league_id, game_id,player_id,picture_url):
+    def __init__(self, player_name, position, stat_type, line_score, odds_type, team_name, league_id, game_id,player_id,picture_url, matchup_rank=None, matchup_ranks=None, final_matchup_score=None):
         self.player_name = player_name
         self.position = position
         self.stat_type = stat_type
@@ -20,7 +20,9 @@ class Prop:
         self.hitAmtH2H1Y = 0
         self.hitAmtH2H2Y = 0
         self.matchup = 0
-        self.matchup_rank = None  # Integer 1-32, where 1 = worst defense = best matchup
+        self.matchup_rank = matchup_rank  # Integer 1-32, where 1 = worst defense = best matchup
+        self.matchup_ranks = matchup_ranks or {}  # Timeframe-specific matchup ranks (e.g., l7/l15/l30)
+        self.final_matchup_score = final_matchup_score  # Weighted matchup score across timeframes
         self.history = []  # Store historical stats or performance
         self.score = 0     # Default score
 

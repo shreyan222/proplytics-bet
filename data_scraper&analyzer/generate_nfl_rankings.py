@@ -19,6 +19,7 @@ import sys
 import os
 import json
 from datetime import datetime
+import re
 
 # Add the current directory to the path (we're already in data_scraper&analyzer)
 sys.path.append(os.path.dirname(__file__))
@@ -30,6 +31,108 @@ except ImportError as e:
     print("Make sure you have the required dependencies installed:")
     print("pip install requests beautifulsoup4 pandas")
     sys.exit(1)
+
+# Mapping from full team names to abbreviations used in props
+TEAM_NAME_TO_ABBREV = {
+    # Full names to abbreviations
+    "Arizona Cardinals": "ARI",
+    "Atlanta Falcons": "ATL",
+    "Baltimore Ravens": "BAL",
+    "Buffalo Bills": "BUF",
+    "Carolina Panthers": "CAR",
+    "Chicago Bears": "CHI",
+    "Cincinnati Bengals": "CIN",
+    "Cleveland Browns": "CLE",
+    "Dallas Cowboys": "DAL",
+    "Denver Broncos": "DEN",
+    "Detroit Lions": "DET",
+    "Green Bay Packers": "GB",
+    "Houston Texans": "HOU",
+    "Indianapolis Colts": "IND",
+    "Jacksonville Jaguars": "JAC",
+    "Kansas City Chiefs": "KC",
+    "Las Vegas Raiders": "LV",
+    "Los Angeles Chargers": "LAC",
+    "Los Angeles Rams": "LA",
+    "Miami Dolphins": "MIA",
+    "Minnesota Vikings": "MIN",
+    "New England Patriots": "NE",
+    "New Orleans Saints": "NO",
+    "New York Giants": "NYG",
+    "New York Jets": "NYJ",
+    "Philadelphia Eagles": "PHI",
+    "Pittsburgh Steelers": "PIT",
+    "San Francisco 49ers": "SF",
+    "Seattle Seahawks": "SEA",
+    "Tampa Bay Buccaneers": "TB",
+    "Tennessee Titans": "TEN",
+    "Washington Commanders": "WAS",
+    # Partial name matches (for "Cardinals Logo" etc.)
+    "Cardinals": "ARI",
+    "Falcons": "ATL",
+    "Ravens": "BAL",
+    "Bills": "BUF",
+    "Panthers": "CAR",
+    "Bears": "CHI",
+    "Bengals": "CIN",
+    "Browns": "CLE",
+    "Cowboys": "DAL",
+    "Broncos": "DEN",
+    "Lions": "DET",
+    "Packers": "GB",
+    "Texans": "HOU",
+    "Colts": "IND",
+    "Jaguars": "JAC",
+    "Chiefs": "KC",
+    "Raiders": "LV",
+    "Chargers": "LAC",
+    "Rams": "LA",
+    "Dolphins": "MIA",
+    "Vikings": "MIN",
+    "Patriots": "NE",
+    "Saints": "NO",
+    "Giants": "NYG",
+    "Jets": "NYJ",
+    "Eagles": "PHI",
+    "Steelers": "PIT",
+    "49ers": "SF",
+    "Seahawks": "SEA",
+    "Buccaneers": "TB",
+    "Titans": "TEN",
+    "Commanders": "WAS",
+}
+
+def normalize_team_name(team_name):
+    """Normalize team name to abbreviation used in props
+    
+    Args:
+        team_name: Team name from scraped data (e.g., "Cardinals Logo", "Arizona Cardinals")
+        
+    Returns:
+        Team abbreviation (e.g., "ARI") or None if not found
+    """
+    if not team_name:
+        return None
+    
+    # Remove common suffixes like "Logo"
+    cleaned_name = re.sub(r'\s+Logo$', '', team_name, flags=re.IGNORECASE).strip()
+    
+    # Try exact match first
+    if cleaned_name in TEAM_NAME_TO_ABBREV:
+        return TEAM_NAME_TO_ABBREV[cleaned_name]
+    
+    # Try case-insensitive match
+    for full_name, abbrev in TEAM_NAME_TO_ABBREV.items():
+        if cleaned_name.lower() == full_name.lower():
+            return abbrev
+    
+    # Try partial match (find team name in the string)
+    for full_name, abbrev in TEAM_NAME_TO_ABBREV.items():
+        if full_name.lower() in cleaned_name.lower() or cleaned_name.lower() in full_name.lower():
+            return abbrev
+    
+    print(f"⚠️ Could not normalize team name: '{team_name}' (cleaned: '{cleaned_name}')")
+    return None
 
 def generate_matchup_rankings():
     """Generate NFL matchup rankings by scraping defense data"""
@@ -76,7 +179,21 @@ def generate_matchup_rankings():
     }
     
     # Convert the flat structure to organized position-based structure
+    # AND normalize team names to abbreviations
+    teams_normalized = 0
+    teams_skipped = 0
+    
     for team_name, team_data in matchup_rankings.items():
+        # Normalize team name to abbreviation
+        team_abbrev = normalize_team_name(team_name)
+        
+        if not team_abbrev:
+            print(f"⚠️ Skipping team with unrecognized name: '{team_name}'")
+            teams_skipped += 1
+            continue
+        
+        teams_normalized += 1
+        
         organized_team_data = {
             "QB": {},
             "RB": {},
@@ -99,7 +216,12 @@ def generate_matchup_rankings():
                 stat_name = stat_key.replace("TE_", "")
                 organized_team_data["TE"][stat_name] = rank
         
-        rankings_data["team_rankings"][team_name] = organized_team_data
+        # Use the abbreviation as the key instead of the full name
+        rankings_data["team_rankings"][team_abbrev] = organized_team_data
+    
+    print(f"✅ Normalized {teams_normalized} team names to abbreviations")
+    if teams_skipped > 0:
+        print(f"⚠️ Skipped {teams_skipped} teams with unrecognized names")
     
     # Save the generated rankings
     output_file = "nfl_generated_matchup_rankings.json"
@@ -112,10 +234,10 @@ def generate_matchup_rankings():
     
     # Show some sample rankings
     print("\n📋 Sample Rankings:")
-    sample_teams = list(matchup_rankings.keys())[:3]
-    for team in sample_teams:
-        team_data = rankings_data["team_rankings"][team]
-        print(f"\n  {team}:")
+    sample_teams = list(rankings_data["team_rankings"].keys())[:3]
+    for team_abbrev in sample_teams:
+        team_data = rankings_data["team_rankings"][team_abbrev]
+        print(f"\n  {team_abbrev}:")
         for position in ["QB", "RB"]:
             if position in team_data and team_data[position]:
                 sample_stat = list(team_data[position].items())[0]

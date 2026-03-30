@@ -14,6 +14,7 @@ interface PropsFiltersProps {
   onClearFilters: () => void;
   totalProps: number;
   filteredProps: number;
+  locked?: boolean;
   onViewModeChange?: (mode: 'table' | 'cards') => void;
   viewMode?: 'table' | 'cards';
   onRefresh?: () => void;
@@ -53,6 +54,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
   onClearFilters,
   totalProps,
   filteredProps,
+  locked = false,
   onViewModeChange,
   viewMode = 'table',
   onRefresh,
@@ -69,10 +71,22 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
   const availablePositions = getUniqueValues(allProps, 'position');
   const availableStatTypes = getUniqueValues(allProps, 'stat_type');
   const availableOddsTypes = getUniqueValues(allProps, 'odds_type');
+  
+  // Get unique sample sizes (convert to numbers and sort)
+  const availableSampleSizes = React.useMemo(() => {
+    if (!allProps || allProps.length === 0) return [];
+    const sizes = allProps
+      .map(prop => {
+        const size = prop.sample_size ?? prop.sampleSize;
+        return typeof size === 'number' ? size : parseInt(size, 10);
+      })
+      .filter(size => !isNaN(size) && size > 0);
+    return [...new Set(sizes)].sort((a, b) => a - b);
+  }, [allProps]);
 
   // Debug logging to see what filter options are available
   React.useEffect(() => {
-  }, [allProps, availableTeams, availablePositions, availableStatTypes, availableOddsTypes]);
+  }, [allProps, availableTeams, availablePositions, availableStatTypes, availableOddsTypes, availableSampleSizes]);
 
   React.useEffect(() => {
     const count = Object.values(filters).filter(value => 
@@ -95,6 +109,11 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
   return (
     <Card className="mb-6 bg-card border-border">
       <CardContent className="p-6">
+        {locked && (
+          <div className="mb-4 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
+            Subscribe to view all props and unlock filters.
+          </div>
+        )}
         {/* Top Control Bar */}
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-4">
           {/* Left Side - Search */}
@@ -153,7 +172,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
           {/* Team Filter */}
-          <Select onValueChange={(value) => handleFilterChange('teams', [value])}>
+          <Select disabled={locked} onValueChange={(value) => handleFilterChange('teams', [value])}>
             <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Team" />
             </SelectTrigger>
@@ -169,7 +188,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
           </Select>
 
           {/* Stat Type Filter */}
-          <Select onValueChange={(value) => handleFilterChange('stat_types', [value])}>
+          <Select disabled={locked} onValueChange={(value) => handleFilterChange('stat_types', [value])}>
             <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Stat Type" />
             </SelectTrigger>
@@ -185,7 +204,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
           </Select>
 
           {/* Odds Type Filter */}
-          <Select onValueChange={(value) => handleFilterChange('odds_types', [value])}>
+          <Select disabled={locked} onValueChange={(value) => handleFilterChange('odds_types', [value])}>
             <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Odds Type" />
             </SelectTrigger>
@@ -201,7 +220,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
           </Select>
 
           {/* Position Filter */}
-          <Select onValueChange={(value) => handleFilterChange('positions', [value])}>
+          <Select disabled={locked} onValueChange={(value) => handleFilterChange('positions', [value])}>
             <SelectTrigger className="bg-background text-foreground border-border">
               <SelectValue placeholder="Position" />
             </SelectTrigger>
@@ -216,11 +235,27 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
             </SelectContent>
           </Select>
 
+          {/* Sample Size Filter */}
+          <Select disabled={locked} onValueChange={(value) => handleFilterChange('sample_sizes', [parseInt(value, 10)])}>
+            <SelectTrigger className="bg-background text-foreground border-border">
+              <SelectValue placeholder="Sample Size" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableSampleSizes.length > 0 ? (
+                availableSampleSizes.map((size) => (
+                  <SelectItem key={size} value={size.toString()} className="text-foreground hover:bg-muted">{size}</SelectItem>
+                ))
+              ) : (
+                <SelectItem value="" disabled className="text-muted-foreground">No sample sizes available</SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+
           {/* Clear Filters */}
           <Button
             variant="outline"
             onClick={onClearFilters}
-            disabled={activeFiltersCount === 0}
+            disabled={locked || activeFiltersCount === 0}
             className="flex items-center gap-2 text-foreground border-border hover:bg-muted"
           >
             <Filter className="h-4 w-4" />
@@ -235,7 +270,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         )}
 
         {/* Active Filters */}
-        {activeFiltersCount > 0 && (
+        {!locked && activeFiltersCount > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {filters.teams?.map((team) => (
               <Badge key={`team-${team}`} variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground hover:bg-muted/80">
@@ -273,6 +308,15 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
                 />
               </Badge>
             ))}
+            {filters.sample_sizes?.map((size) => (
+              <Badge key={`size-${size}`} variant="secondary" className="flex items-center gap-1 bg-muted text-muted-foreground hover:bg-muted/80">
+                Sample Size: {size}
+                <X 
+                  className="h-3 w-3 cursor-pointer" 
+                  onClick={() => removeFilter('sample_sizes')}
+                />
+              </Badge>
+            ))}
           </div>
         )}
 
@@ -284,7 +328,7 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
         {/* Filter Options Summary */}
         {allProps.length > 0 && (
           <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-            <p>Available filters: {availableTeams.length} teams, {availablePositions.length} positions, {availableStatTypes.length} stat types, {availableOddsTypes.length} odds types</p>
+            <p>Available filters: {availableTeams.length} teams, {availablePositions.length} positions, {availableStatTypes.length} stat types, {availableOddsTypes.length} odds types, {availableSampleSizes.length} sample sizes</p>
           </div>
         )}
       </CardContent>

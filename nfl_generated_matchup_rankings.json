@@ -2,45 +2,13 @@
   "_metadata": {
     "description": "Auto-generated NFL Matchup Rankings from defense data",
     "ranking_scale": "1-32 where 1 = best matchup (worst defense), 32 = worst matchup (best defense)",
-    "generated_at": "2025-09-28T22:05:52.649598",
+    "generated_at": "2025-10-14T01:40:34.446445",
     "source": "draftedge.com/nfl/nfl-defense-vs-pos/",
     "teams_count": 33,
     "total_rankings": 825
   },
   "team_rankings": {
-    "Team Name": {
-      "QB": {
-        "Passing Yards": 16,
-        "Pass TDs": 16,
-        "Pass Completions": 16,
-        "Pass Attempts": 16
-      },
-      "RB": {
-        "Rush Yards": 16,
-        "Rush TDs": 16,
-        "Rush Attempts": 16,
-        "Rushing Yards": 16,
-        "Rushing TDs": 16,
-        "Receiving Yards": 16,
-        "Receptions": 16,
-        "Rec TDs": 16
-      },
-      "WR": {
-        "Receiving Yards": 16,
-        "Receptions": 16,
-        "Rec TDs": 16,
-        "Rec Yards": 16,
-        "Rush Yards": 16,
-        "Rush TDs": 16
-      },
-      "TE": {
-        "Receiving Yards": 16,
-        "Receptions": 16,
-        "Rec TDs": 16,
-        "Rec Yards": 16
-      }
-    },
-    "Cardinals Logo": {
+    "ARI": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -48,415 +16,31 @@
         "Pass Attempts": 1
       },
       "RB": {
-        "Rush Yards": 12,
+        "Rush Yards": 10,
         "Rush TDs": 1,
-        "Rush Attempts": 12,
-        "Rushing Yards": 12,
+        "Rush Attempts": 10,
+        "Rushing Yards": 10,
         "Rushing TDs": 1,
-        "Receiving Yards": 21,
-        "Receptions": 30,
-        "Rec TDs": 5
+        "Receiving Yards": 24,
+        "Receptions": 26,
+        "Rec TDs": 2
       },
       "WR": {
-        "Receiving Yards": 21,
-        "Receptions": 30,
-        "Rec TDs": 5,
-        "Rec Yards": 21,
-        "Rush Yards": 12,
+        "Receiving Yards": 24,
+        "Receptions": 26,
+        "Rec TDs": 2,
+        "Rec Yards": 24,
+        "Rush Yards": 10,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 21,
-        "Receptions": 30,
-        "Rec TDs": 5,
-        "Rec Yards": 21
+        "Receiving Yards": 24,
+        "Receptions": 26,
+        "Rec TDs": 2,
+        "Rec Yards": 24
       }
     },
-    "Falcons Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 13,
-        "Rush TDs": 1,
-        "Rush Attempts": 13,
-        "Rushing Yards": 13,
-        "Rushing TDs": 1,
-        "Receiving Yards": 11,
-        "Receptions": 3,
-        "Rec TDs": 7
-      },
-      "WR": {
-        "Receiving Yards": 11,
-        "Receptions": 3,
-        "Rec TDs": 7,
-        "Rec Yards": 11,
-        "Rush Yards": 13,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 11,
-        "Receptions": 3,
-        "Rec TDs": 7,
-        "Rec Yards": 11
-      }
-    },
-    "Ravens Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 20,
-        "Rush TDs": 1,
-        "Rush Attempts": 20,
-        "Rushing Yards": 20,
-        "Rushing TDs": 1,
-        "Receiving Yards": 17,
-        "Receptions": 19,
-        "Rec TDs": 14
-      },
-      "WR": {
-        "Receiving Yards": 17,
-        "Receptions": 19,
-        "Rec TDs": 14,
-        "Rec Yards": 17,
-        "Rush Yards": 20,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 17,
-        "Receptions": 19,
-        "Rec TDs": 14,
-        "Rec Yards": 17
-      }
-    },
-    "Bills Logo": {
-      "QB": {
-        "Passing Yards": 32,
-        "Pass TDs": 1,
-        "Pass Completions": 32,
-        "Pass Attempts": 32
-      },
-      "RB": {
-        "Rush Yards": 22,
-        "Rush TDs": 1,
-        "Rush Attempts": 22,
-        "Rushing Yards": 22,
-        "Rushing TDs": 1,
-        "Receiving Yards": 6,
-        "Receptions": 5,
-        "Rec TDs": 22
-      },
-      "WR": {
-        "Receiving Yards": 6,
-        "Receptions": 5,
-        "Rec TDs": 22,
-        "Rec Yards": 6,
-        "Rush Yards": 22,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 6,
-        "Receptions": 5,
-        "Rec TDs": 22,
-        "Rec Yards": 6
-      }
-    },
-    "Panthers Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 19,
-        "Rush TDs": 29,
-        "Rush Attempts": 19,
-        "Rushing Yards": 19,
-        "Rushing TDs": 29,
-        "Receiving Yards": 1,
-        "Receptions": 1,
-        "Rec TDs": 1
-      },
-      "WR": {
-        "Receiving Yards": 1,
-        "Receptions": 1,
-        "Rec TDs": 1,
-        "Rec Yards": 1,
-        "Rush Yards": 19,
-        "Rush TDs": 29
-      },
-      "TE": {
-        "Receiving Yards": 1,
-        "Receptions": 1,
-        "Rec TDs": 1,
-        "Rec Yards": 1
-      }
-    },
-    "Bears Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 27,
-        "Rush TDs": 1,
-        "Rush Attempts": 27,
-        "Rushing Yards": 27,
-        "Rushing TDs": 1,
-        "Receiving Yards": 28,
-        "Receptions": 6,
-        "Rec TDs": 31
-      },
-      "WR": {
-        "Receiving Yards": 28,
-        "Receptions": 6,
-        "Rec TDs": 31,
-        "Rec Yards": 28,
-        "Rush Yards": 27,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 28,
-        "Receptions": 6,
-        "Rec TDs": 31,
-        "Rec Yards": 28
-      }
-    },
-    "Bengals Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 13,
-        "Rush TDs": 1,
-        "Rush Attempts": 13,
-        "Rushing Yards": 13,
-        "Rushing TDs": 1,
-        "Receiving Yards": 19,
-        "Receptions": 19,
-        "Rec TDs": 7
-      },
-      "WR": {
-        "Receiving Yards": 19,
-        "Receptions": 19,
-        "Rec TDs": 7,
-        "Rec Yards": 19,
-        "Rush Yards": 13,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 19,
-        "Receptions": 19,
-        "Rec TDs": 7,
-        "Rec Yards": 19
-      }
-    },
-    "Browns Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 17,
-        "Rush TDs": 1,
-        "Rush Attempts": 17,
-        "Rushing Yards": 17,
-        "Rushing TDs": 1,
-        "Receiving Yards": 10,
-        "Receptions": 3,
-        "Rec TDs": 22
-      },
-      "WR": {
-        "Receiving Yards": 10,
-        "Receptions": 3,
-        "Rec TDs": 22,
-        "Rec Yards": 10,
-        "Rush Yards": 17,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 10,
-        "Receptions": 3,
-        "Rec TDs": 22,
-        "Rec Yards": 10
-      }
-    },
-    "Cowboys Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 28,
-        "Rush TDs": 1,
-        "Rush Attempts": 28,
-        "Rushing Yards": 28,
-        "Rushing TDs": 1,
-        "Receiving Yards": 32,
-        "Receptions": 22,
-        "Rec TDs": 31
-      },
-      "WR": {
-        "Receiving Yards": 32,
-        "Receptions": 22,
-        "Rec TDs": 31,
-        "Rec Yards": 32,
-        "Rush Yards": 28,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 32,
-        "Receptions": 22,
-        "Rec TDs": 31,
-        "Rec Yards": 32
-      }
-    },
-    "Broncos Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 16,
-        "Rush TDs": 1,
-        "Rush Attempts": 16,
-        "Rushing Yards": 16,
-        "Rushing TDs": 1,
-        "Receiving Yards": 13,
-        "Receptions": 25,
-        "Rec TDs": 1
-      },
-      "WR": {
-        "Receiving Yards": 13,
-        "Receptions": 25,
-        "Rec TDs": 1,
-        "Rec Yards": 13,
-        "Rush Yards": 16,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 13,
-        "Receptions": 25,
-        "Rec TDs": 1,
-        "Rec Yards": 13
-      }
-    },
-    "Lions Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 13,
-        "Rush TDs": 1,
-        "Rush Attempts": 13,
-        "Rushing Yards": 13,
-        "Rushing TDs": 1,
-        "Receiving Yards": 22,
-        "Receptions": 13,
-        "Rec TDs": 22
-      },
-      "WR": {
-        "Receiving Yards": 22,
-        "Receptions": 13,
-        "Rec TDs": 22,
-        "Rec Yards": 22,
-        "Rush Yards": 13,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 22,
-        "Receptions": 13,
-        "Rec TDs": 22,
-        "Rec Yards": 22
-      }
-    },
-    "Packers Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 5,
-        "Rush TDs": 1,
-        "Rush Attempts": 5,
-        "Rushing Yards": 5,
-        "Rushing TDs": 1,
-        "Receiving Yards": 3,
-        "Receptions": 13,
-        "Rec TDs": 7
-      },
-      "WR": {
-        "Receiving Yards": 3,
-        "Receptions": 13,
-        "Rec TDs": 7,
-        "Rec Yards": 3,
-        "Rush Yards": 5,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 3,
-        "Receptions": 13,
-        "Rec TDs": 7,
-        "Rec Yards": 3
-      }
-    },
-    "Texans Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 9,
-        "Rush TDs": 1,
-        "Rush Attempts": 9,
-        "Rushing Yards": 9,
-        "Rushing TDs": 1,
-        "Receiving Yards": 27,
-        "Receptions": 25,
-        "Rec TDs": 7
-      },
-      "WR": {
-        "Receiving Yards": 27,
-        "Receptions": 25,
-        "Rec TDs": 7,
-        "Rec Yards": 27,
-        "Rush Yards": 9,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 27,
-        "Receptions": 25,
-        "Rec TDs": 7,
-        "Rec Yards": 27
-      }
-    },
-    "Colts Logo": {
+    "ATL": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -469,26 +53,26 @@
         "Rush Attempts": 25,
         "Rushing Yards": 25,
         "Rushing TDs": 1,
-        "Receiving Yards": 9,
-        "Receptions": 22,
-        "Rec TDs": 14
+        "Receiving Yards": 4,
+        "Receptions": 5,
+        "Rec TDs": 18
       },
       "WR": {
-        "Receiving Yards": 9,
-        "Receptions": 22,
-        "Rec TDs": 14,
-        "Rec Yards": 9,
+        "Receiving Yards": 4,
+        "Receptions": 5,
+        "Rec TDs": 18,
+        "Rec Yards": 4,
         "Rush Yards": 25,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 9,
-        "Receptions": 22,
-        "Rec TDs": 14,
-        "Rec Yards": 9
+        "Receiving Yards": 4,
+        "Receptions": 5,
+        "Rec TDs": 18,
+        "Rec Yards": 4
       }
     },
-    "Jaguars Logo": {
+    "BAL": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -496,31 +80,63 @@
         "Pass Attempts": 1
       },
       "RB": {
-        "Rush Yards": 2,
+        "Rush Yards": 32,
         "Rush TDs": 1,
-        "Rush Attempts": 2,
-        "Rushing Yards": 2,
+        "Rush Attempts": 32,
+        "Rushing Yards": 32,
         "Rushing TDs": 1,
-        "Receiving Yards": 24,
-        "Receptions": 31,
-        "Rec TDs": 22
+        "Receiving Yards": 23,
+        "Receptions": 26,
+        "Rec TDs": 31
       },
       "WR": {
-        "Receiving Yards": 24,
-        "Receptions": 31,
-        "Rec TDs": 22,
-        "Rec Yards": 24,
-        "Rush Yards": 2,
+        "Receiving Yards": 23,
+        "Receptions": 26,
+        "Rec TDs": 31,
+        "Rec Yards": 23,
+        "Rush Yards": 32,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 24,
-        "Receptions": 31,
-        "Rec TDs": 22,
-        "Rec Yards": 24
+        "Receiving Yards": 23,
+        "Receptions": 26,
+        "Rec TDs": 31,
+        "Rec Yards": 23
       }
     },
-    "Chiefs Logo": {
+    "BUF": {
+      "QB": {
+        "Passing Yards": 30,
+        "Pass TDs": 1,
+        "Pass Completions": 30,
+        "Pass Attempts": 30
+      },
+      "RB": {
+        "Rush Yards": 16,
+        "Rush TDs": 1,
+        "Rush Attempts": 16,
+        "Rushing Yards": 16,
+        "Rushing TDs": 1,
+        "Receiving Yards": 5,
+        "Receptions": 9,
+        "Rec TDs": 18
+      },
+      "WR": {
+        "Receiving Yards": 5,
+        "Receptions": 9,
+        "Rec TDs": 18,
+        "Rec Yards": 5,
+        "Rush Yards": 16,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 5,
+        "Receptions": 9,
+        "Rec TDs": 18,
+        "Rec Yards": 5
+      }
+    },
+    "CAR": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -528,31 +144,95 @@
         "Pass Attempts": 1
       },
       "RB": {
-        "Rush Yards": 5,
-        "Rush TDs": 1,
-        "Rush Attempts": 5,
-        "Rushing Yards": 5,
-        "Rushing TDs": 1,
-        "Receiving Yards": 12,
-        "Receptions": 18,
-        "Rec TDs": 14
+        "Rush Yards": 12,
+        "Rush TDs": 29,
+        "Rush Attempts": 12,
+        "Rushing Yards": 12,
+        "Rushing TDs": 29,
+        "Receiving Yards": 2,
+        "Receptions": 2,
+        "Rec TDs": 6
       },
       "WR": {
-        "Receiving Yards": 12,
-        "Receptions": 18,
-        "Rec TDs": 14,
-        "Rec Yards": 12,
-        "Rush Yards": 5,
+        "Receiving Yards": 2,
+        "Receptions": 2,
+        "Rec TDs": 6,
+        "Rec Yards": 2,
+        "Rush Yards": 12,
+        "Rush TDs": 29
+      },
+      "TE": {
+        "Receiving Yards": 2,
+        "Receptions": 2,
+        "Rec TDs": 6,
+        "Rec Yards": 2
+      }
+    },
+    "CHI": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 29,
+        "Rush TDs": 1,
+        "Rush Attempts": 29,
+        "Rushing Yards": 29,
+        "Rushing TDs": 1,
+        "Receiving Yards": 15,
+        "Receptions": 3,
+        "Rec TDs": 30
+      },
+      "WR": {
+        "Receiving Yards": 15,
+        "Receptions": 3,
+        "Rec TDs": 30,
+        "Rec Yards": 15,
+        "Rush Yards": 29,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 12,
-        "Receptions": 18,
-        "Rec TDs": 14,
-        "Rec Yards": 12
+        "Receiving Yards": 15,
+        "Receptions": 3,
+        "Rec TDs": 30,
+        "Rec Yards": 15
       }
     },
-    "Rams Logo": {
+    "CIN": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 20,
+        "Rush TDs": 29,
+        "Rush Attempts": 20,
+        "Rushing Yards": 20,
+        "Rushing TDs": 29,
+        "Receiving Yards": 20,
+        "Receptions": 20,
+        "Rec TDs": 10
+      },
+      "WR": {
+        "Receiving Yards": 20,
+        "Receptions": 20,
+        "Rec TDs": 10,
+        "Rec Yards": 20,
+        "Rush Yards": 20,
+        "Rush TDs": 29
+      },
+      "TE": {
+        "Receiving Yards": 20,
+        "Receptions": 20,
+        "Rec TDs": 10,
+        "Rec Yards": 20
+      }
+    },
+    "CLE": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -565,58 +245,26 @@
         "Rush Attempts": 18,
         "Rushing Yards": 18,
         "Rushing TDs": 1,
-        "Receiving Yards": 16,
-        "Receptions": 22,
-        "Rec TDs": 14
+        "Receiving Yards": 11,
+        "Receptions": 9,
+        "Rec TDs": 28
       },
       "WR": {
-        "Receiving Yards": 16,
-        "Receptions": 22,
-        "Rec TDs": 14,
-        "Rec Yards": 16,
+        "Receiving Yards": 11,
+        "Receptions": 9,
+        "Rec TDs": 28,
+        "Rec Yards": 11,
         "Rush Yards": 18,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 16,
-        "Receptions": 22,
-        "Rec TDs": 14,
-        "Rec Yards": 16
+        "Receiving Yards": 11,
+        "Receptions": 9,
+        "Rec TDs": 28,
+        "Rec Yards": 11
       }
     },
-    "Chargers Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 11,
-        "Rush TDs": 1,
-        "Rush Attempts": 11,
-        "Rushing Yards": 11,
-        "Rushing TDs": 1,
-        "Receiving Yards": 14,
-        "Receptions": 17,
-        "Rec TDs": 1
-      },
-      "WR": {
-        "Receiving Yards": 14,
-        "Receptions": 17,
-        "Rec TDs": 1,
-        "Rec Yards": 14,
-        "Rush Yards": 11,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 14,
-        "Receptions": 17,
-        "Rec TDs": 1,
-        "Rec Yards": 14
-      }
-    },
-    "Raiders Logo": {
+    "DAL": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -629,26 +277,26 @@
         "Rush Attempts": 23,
         "Rushing Yards": 23,
         "Rushing TDs": 1,
-        "Receiving Yards": 30,
-        "Receptions": 28,
-        "Rec TDs": 22
+        "Receiving Yards": 32,
+        "Receptions": 25,
+        "Rec TDs": 31
       },
       "WR": {
-        "Receiving Yards": 30,
-        "Receptions": 28,
-        "Rec TDs": 22,
-        "Rec Yards": 30,
+        "Receiving Yards": 32,
+        "Receptions": 25,
+        "Rec TDs": 31,
+        "Rec Yards": 32,
         "Rush Yards": 23,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 30,
-        "Receptions": 28,
-        "Rec TDs": 22,
-        "Rec Yards": 30
+        "Receiving Yards": 32,
+        "Receptions": 25,
+        "Rec TDs": 31,
+        "Rec Yards": 32
       }
     },
-    "Dolphins Logo": {
+    "DEN": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -656,287 +304,31 @@
         "Pass Attempts": 1
       },
       "RB": {
-        "Rush Yards": 28,
+        "Rush Yards": 13,
         "Rush TDs": 1,
-        "Rush Attempts": 28,
-        "Rushing Yards": 28,
+        "Rush Attempts": 13,
+        "Rushing Yards": 13,
         "Rushing TDs": 1,
-        "Receiving Yards": 5,
-        "Receptions": 6,
-        "Rec TDs": 22
-      },
-      "WR": {
-        "Receiving Yards": 5,
-        "Receptions": 6,
-        "Rec TDs": 22,
-        "Rec Yards": 5,
-        "Rush Yards": 28,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 5,
-        "Receptions": 6,
-        "Rec TDs": 22,
-        "Rec Yards": 5
-      }
-    },
-    "Vikings Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 20,
-        "Rush TDs": 1,
-        "Rush Attempts": 20,
-        "Rushing Yards": 20,
-        "Rushing TDs": 1,
-        "Receiving Yards": 2,
-        "Receptions": 1,
+        "Receiving Yards": 13,
+        "Receptions": 23,
         "Rec TDs": 1
       },
       "WR": {
-        "Receiving Yards": 2,
-        "Receptions": 1,
+        "Receiving Yards": 13,
+        "Receptions": 23,
         "Rec TDs": 1,
-        "Rec Yards": 2,
-        "Rush Yards": 20,
+        "Rec Yards": 13,
+        "Rush Yards": 13,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 2,
-        "Receptions": 1,
+        "Receiving Yards": 13,
+        "Receptions": 23,
         "Rec TDs": 1,
-        "Rec Yards": 2
+        "Rec Yards": 13
       }
     },
-    "Patriots Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 25,
-        "Rush TDs": 1,
-        "Rush Attempts": 25,
-        "Rushing Yards": 25,
-        "Rushing TDs": 1,
-        "Receiving Yards": 26,
-        "Receptions": 13,
-        "Rec TDs": 22
-      },
-      "WR": {
-        "Receiving Yards": 26,
-        "Receptions": 13,
-        "Rec TDs": 22,
-        "Rec Yards": 26,
-        "Rush Yards": 25,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 26,
-        "Receptions": 13,
-        "Rec TDs": 22,
-        "Rec Yards": 26
-      }
-    },
-    "Saints Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 1,
-        "Rush TDs": 1,
-        "Rush Attempts": 1,
-        "Rushing Yards": 1,
-        "Rushing TDs": 1,
-        "Receiving Yards": 15,
-        "Receptions": 10,
-        "Rec TDs": 22
-      },
-      "WR": {
-        "Receiving Yards": 15,
-        "Receptions": 10,
-        "Rec TDs": 22,
-        "Rec Yards": 15,
-        "Rush Yards": 1,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 15,
-        "Receptions": 10,
-        "Rec TDs": 22,
-        "Rec Yards": 15
-      }
-    },
-    "Giants Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 30,
-        "Rush TDs": 29,
-        "Rush Attempts": 30,
-        "Rushing Yards": 30,
-        "Rushing TDs": 29,
-        "Receiving Yards": 31,
-        "Receptions": 32,
-        "Rec TDs": 14
-      },
-      "WR": {
-        "Receiving Yards": 31,
-        "Receptions": 32,
-        "Rec TDs": 14,
-        "Rec Yards": 31,
-        "Rush Yards": 30,
-        "Rush TDs": 29
-      },
-      "TE": {
-        "Receiving Yards": 31,
-        "Receptions": 32,
-        "Rec TDs": 14,
-        "Rec Yards": 31
-      }
-    },
-    "Jets Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 9,
-        "Rush TDs": 29,
-        "Rush Attempts": 9,
-        "Rushing Yards": 9,
-        "Rushing TDs": 29,
-        "Receiving Yards": 24,
-        "Receptions": 6,
-        "Rec TDs": 14
-      },
-      "WR": {
-        "Receiving Yards": 24,
-        "Receptions": 6,
-        "Rec TDs": 14,
-        "Rec Yards": 24,
-        "Rush Yards": 9,
-        "Rush TDs": 29
-      },
-      "TE": {
-        "Receiving Yards": 24,
-        "Receptions": 6,
-        "Rec TDs": 14,
-        "Rec Yards": 24
-      }
-    },
-    "Eagles Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 24,
-        "Rush TDs": 1,
-        "Rush Attempts": 24,
-        "Rushing Yards": 24,
-        "Rushing TDs": 1,
-        "Receiving Yards": 17,
-        "Receptions": 19,
-        "Rec TDs": 7
-      },
-      "WR": {
-        "Receiving Yards": 17,
-        "Receptions": 19,
-        "Rec TDs": 7,
-        "Rec Yards": 17,
-        "Rush Yards": 24,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 17,
-        "Receptions": 19,
-        "Rec TDs": 7,
-        "Rec Yards": 17
-      }
-    },
-    "Steelers Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 2,
-        "Rush TDs": 1,
-        "Rush Attempts": 2,
-        "Rushing Yards": 2,
-        "Rushing TDs": 1,
-        "Receiving Yards": 20,
-        "Receptions": 25,
-        "Rec TDs": 7
-      },
-      "WR": {
-        "Receiving Yards": 20,
-        "Receptions": 25,
-        "Rec TDs": 7,
-        "Rec Yards": 20,
-        "Rush Yards": 2,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 20,
-        "Receptions": 25,
-        "Rec TDs": 7,
-        "Rec Yards": 20
-      }
-    },
-    "Seahawks Logo": {
-      "QB": {
-        "Passing Yards": 1,
-        "Pass TDs": 1,
-        "Pass Completions": 1,
-        "Pass Attempts": 1
-      },
-      "RB": {
-        "Rush Yards": 5,
-        "Rush TDs": 1,
-        "Rush Attempts": 5,
-        "Rushing Yards": 5,
-        "Rushing TDs": 1,
-        "Receiving Yards": 4,
-        "Receptions": 9,
-        "Rec TDs": 5
-      },
-      "WR": {
-        "Receiving Yards": 4,
-        "Receptions": 9,
-        "Rec TDs": 5,
-        "Rec Yards": 4,
-        "Rush Yards": 5,
-        "Rush TDs": 1
-      },
-      "TE": {
-        "Receiving Yards": 4,
-        "Receptions": 9,
-        "Rec TDs": 5,
-        "Rec Yards": 4
-      }
-    },
-    "49ers Logo": {
+    "DET": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -949,26 +341,506 @@
         "Rush Attempts": 8,
         "Rushing Yards": 8,
         "Rushing TDs": 1,
-        "Receiving Yards": 8,
+        "Receiving Yards": 26,
         "Receptions": 11,
-        "Rec TDs": 7
+        "Rec TDs": 28
       },
       "WR": {
-        "Receiving Yards": 8,
+        "Receiving Yards": 26,
         "Receptions": 11,
-        "Rec TDs": 7,
-        "Rec Yards": 8,
+        "Rec TDs": 28,
+        "Rec Yards": 26,
         "Rush Yards": 8,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 8,
+        "Receiving Yards": 26,
         "Receptions": 11,
-        "Rec TDs": 7,
-        "Rec Yards": 8
+        "Rec TDs": 28,
+        "Rec Yards": 26
       }
     },
-    "Buccaneers Logo": {
+    "GB": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 17,
+        "Rush TDs": 1,
+        "Rush Attempts": 17,
+        "Rushing Yards": 17,
+        "Rushing TDs": 1,
+        "Receiving Yards": 7,
+        "Receptions": 22,
+        "Rec TDs": 18
+      },
+      "WR": {
+        "Receiving Yards": 7,
+        "Receptions": 22,
+        "Rec TDs": 18,
+        "Rec Yards": 7,
+        "Rush Yards": 17,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 7,
+        "Receptions": 22,
+        "Rec TDs": 18,
+        "Rec Yards": 7
+      }
+    },
+    "HOU": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 5,
+        "Rush TDs": 1,
+        "Rush Attempts": 5,
+        "Rushing Yards": 5,
+        "Rushing TDs": 1,
+        "Receiving Yards": 14,
+        "Receptions": 8,
+        "Rec TDs": 2
+      },
+      "WR": {
+        "Receiving Yards": 14,
+        "Receptions": 8,
+        "Rec TDs": 2,
+        "Rec Yards": 14,
+        "Rush Yards": 5,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 14,
+        "Receptions": 8,
+        "Rec TDs": 2,
+        "Rec Yards": 14
+      }
+    },
+    "IND": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 23,
+        "Rush TDs": 1,
+        "Rush Attempts": 23,
+        "Rushing Yards": 23,
+        "Rushing TDs": 1,
+        "Receiving Yards": 28,
+        "Receptions": 29,
+        "Rec TDs": 23
+      },
+      "WR": {
+        "Receiving Yards": 28,
+        "Receptions": 29,
+        "Rec TDs": 23,
+        "Rec Yards": 28,
+        "Rush Yards": 23,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 28,
+        "Receptions": 29,
+        "Rec TDs": 23,
+        "Rec Yards": 28
+      }
+    },
+    "JAC": {
+      "QB": {
+        "Passing Yards": 32,
+        "Pass TDs": 1,
+        "Pass Completions": 32,
+        "Pass Attempts": 32
+      },
+      "RB": {
+        "Rush Yards": 8,
+        "Rush TDs": 1,
+        "Rush Attempts": 8,
+        "Rushing Yards": 8,
+        "Rushing TDs": 1,
+        "Receiving Yards": 22,
+        "Receptions": 26,
+        "Rec TDs": 10
+      },
+      "WR": {
+        "Receiving Yards": 22,
+        "Receptions": 26,
+        "Rec TDs": 10,
+        "Rec Yards": 22,
+        "Rush Yards": 8,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 22,
+        "Receptions": 26,
+        "Rec TDs": 10,
+        "Rec Yards": 22
+      }
+    },
+    "KC": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 6,
+        "Rush TDs": 1,
+        "Rush Attempts": 6,
+        "Rushing Yards": 6,
+        "Rushing TDs": 1,
+        "Receiving Yards": 9,
+        "Receptions": 13,
+        "Rec TDs": 10
+      },
+      "WR": {
+        "Receiving Yards": 9,
+        "Receptions": 13,
+        "Rec TDs": 10,
+        "Rec Yards": 9,
+        "Rush Yards": 6,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 9,
+        "Receptions": 13,
+        "Rec TDs": 10,
+        "Rec Yards": 9
+      }
+    },
+    "LA": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 15,
+        "Rush TDs": 1,
+        "Rush Attempts": 15,
+        "Rushing Yards": 15,
+        "Rushing TDs": 1,
+        "Receiving Yards": 24,
+        "Receptions": 24,
+        "Rec TDs": 10
+      },
+      "WR": {
+        "Receiving Yards": 24,
+        "Receptions": 24,
+        "Rec TDs": 10,
+        "Rec Yards": 24,
+        "Rush Yards": 15,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 24,
+        "Receptions": 24,
+        "Rec TDs": 10,
+        "Rec Yards": 24
+      }
+    },
+    "LAC": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 7,
+        "Rush TDs": 1,
+        "Rush Attempts": 7,
+        "Rushing Yards": 7,
+        "Rushing TDs": 1,
+        "Receiving Yards": 10,
+        "Receptions": 11,
+        "Rec TDs": 2
+      },
+      "WR": {
+        "Receiving Yards": 10,
+        "Receptions": 11,
+        "Rec TDs": 2,
+        "Rec Yards": 10,
+        "Rush Yards": 7,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 10,
+        "Receptions": 11,
+        "Rec TDs": 2,
+        "Rec Yards": 10
+      }
+    },
+    "LV": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 14,
+        "Rush TDs": 1,
+        "Rush Attempts": 14,
+        "Rushing Yards": 14,
+        "Rushing TDs": 1,
+        "Receiving Yards": 29,
+        "Receptions": 29,
+        "Rec TDs": 23
+      },
+      "WR": {
+        "Receiving Yards": 29,
+        "Receptions": 29,
+        "Rec TDs": 23,
+        "Rec Yards": 29,
+        "Rush Yards": 14,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 29,
+        "Receptions": 29,
+        "Rec TDs": 23,
+        "Rec Yards": 29
+      }
+    },
+    "MIA": {
+      "QB": {
+        "Passing Yards": 31,
+        "Pass TDs": 1,
+        "Pass Completions": 31,
+        "Pass Attempts": 31
+      },
+      "RB": {
+        "Rush Yards": 27,
+        "Rush TDs": 1,
+        "Rush Attempts": 27,
+        "Rushing Yards": 27,
+        "Rushing TDs": 1,
+        "Receiving Yards": 3,
+        "Receptions": 4,
+        "Rec TDs": 23
+      },
+      "WR": {
+        "Receiving Yards": 3,
+        "Receptions": 4,
+        "Rec TDs": 23,
+        "Rec Yards": 3,
+        "Rush Yards": 27,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 3,
+        "Receptions": 4,
+        "Rec TDs": 23,
+        "Rec Yards": 3
+      }
+    },
+    "MIN": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 21,
+        "Rush TDs": 1,
+        "Rush Attempts": 21,
+        "Rushing Yards": 21,
+        "Rushing TDs": 1,
+        "Receiving Yards": 1,
+        "Receptions": 1,
+        "Rec TDs": 2
+      },
+      "WR": {
+        "Receiving Yards": 1,
+        "Receptions": 1,
+        "Rec TDs": 2,
+        "Rec Yards": 1,
+        "Rush Yards": 21,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 1,
+        "Receptions": 1,
+        "Rec TDs": 2,
+        "Rec Yards": 1
+      }
+    },
+    "NE": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 28,
+        "Rush TDs": 1,
+        "Rush Attempts": 28,
+        "Rushing Yards": 28,
+        "Rushing TDs": 1,
+        "Receiving Yards": 17,
+        "Receptions": 13,
+        "Rec TDs": 23
+      },
+      "WR": {
+        "Receiving Yards": 17,
+        "Receptions": 13,
+        "Rec TDs": 23,
+        "Rec Yards": 17,
+        "Rush Yards": 28,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 17,
+        "Receptions": 13,
+        "Rec TDs": 23,
+        "Rec Yards": 17
+      }
+    },
+    "NO": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 1,
+        "Rush TDs": 1,
+        "Rush Attempts": 1,
+        "Rushing Yards": 1,
+        "Rushing TDs": 1,
+        "Receiving Yards": 6,
+        "Receptions": 7,
+        "Rec TDs": 18
+      },
+      "WR": {
+        "Receiving Yards": 6,
+        "Receptions": 7,
+        "Rec TDs": 18,
+        "Rec Yards": 6,
+        "Rush Yards": 1,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 6,
+        "Receptions": 7,
+        "Rec TDs": 18,
+        "Rec Yards": 6
+      }
+    },
+    "NYG": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 22,
+        "Rush TDs": 28,
+        "Rush Attempts": 22,
+        "Rushing Yards": 22,
+        "Rushing TDs": 28,
+        "Receiving Yards": 30,
+        "Receptions": 31,
+        "Rec TDs": 17
+      },
+      "WR": {
+        "Receiving Yards": 30,
+        "Receptions": 31,
+        "Rec TDs": 17,
+        "Rec Yards": 30,
+        "Rush Yards": 22,
+        "Rush TDs": 28
+      },
+      "TE": {
+        "Receiving Yards": 30,
+        "Receptions": 31,
+        "Rec TDs": 17,
+        "Rec Yards": 30
+      }
+    },
+    "NYJ": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 18,
+        "Rush TDs": 29,
+        "Rush Attempts": 18,
+        "Rushing Yards": 18,
+        "Rushing TDs": 29,
+        "Receiving Yards": 21,
+        "Receptions": 6,
+        "Rec TDs": 10
+      },
+      "WR": {
+        "Receiving Yards": 21,
+        "Receptions": 6,
+        "Rec TDs": 10,
+        "Rec Yards": 21,
+        "Rush Yards": 18,
+        "Rush TDs": 29
+      },
+      "TE": {
+        "Receiving Yards": 21,
+        "Receptions": 6,
+        "Rec TDs": 10,
+        "Rec Yards": 21
+      }
+    },
+    "PHI": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 26,
+        "Rush TDs": 1,
+        "Rush Attempts": 26,
+        "Rushing Yards": 26,
+        "Rushing TDs": 1,
+        "Receiving Yards": 19,
+        "Receptions": 19,
+        "Rec TDs": 8
+      },
+      "WR": {
+        "Receiving Yards": 19,
+        "Receptions": 19,
+        "Rec TDs": 8,
+        "Rec Yards": 19,
+        "Rush Yards": 26,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 19,
+        "Receptions": 19,
+        "Rec TDs": 8,
+        "Rec Yards": 19
+      }
+    },
+    "PIT": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -981,26 +853,26 @@
         "Rush Attempts": 2,
         "Rushing Yards": 2,
         "Rushing TDs": 1,
-        "Receiving Yards": 7,
-        "Receptions": 13,
-        "Rec TDs": 14
+        "Receiving Yards": 31,
+        "Receptions": 32,
+        "Rec TDs": 9
       },
       "WR": {
-        "Receiving Yards": 7,
-        "Receptions": 13,
-        "Rec TDs": 14,
-        "Rec Yards": 7,
+        "Receiving Yards": 31,
+        "Receptions": 32,
+        "Rec TDs": 9,
+        "Rec Yards": 31,
         "Rush Yards": 2,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 7,
-        "Receptions": 13,
-        "Rec TDs": 14,
-        "Rec Yards": 7
+        "Receiving Yards": 31,
+        "Receptions": 32,
+        "Rec TDs": 9,
+        "Rec Yards": 31
       }
     },
-    "Titans Logo": {
+    "SEA": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -1008,31 +880,127 @@
         "Pass Attempts": 1
       },
       "RB": {
-        "Rush Yards": 32,
-        "Rush TDs": 29,
-        "Rush Attempts": 32,
-        "Rushing Yards": 32,
-        "Rushing TDs": 29,
-        "Receiving Yards": 29,
-        "Receptions": 28,
-        "Rec TDs": 14
+        "Rush Yards": 4,
+        "Rush TDs": 1,
+        "Rush Attempts": 4,
+        "Rushing Yards": 4,
+        "Rushing TDs": 1,
+        "Receiving Yards": 12,
+        "Receptions": 17,
+        "Rec TDs": 10
       },
       "WR": {
-        "Receiving Yards": 29,
-        "Receptions": 28,
-        "Rec TDs": 14,
-        "Rec Yards": 29,
-        "Rush Yards": 32,
+        "Receiving Yards": 12,
+        "Receptions": 17,
+        "Rec TDs": 10,
+        "Rec Yards": 12,
+        "Rush Yards": 4,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 12,
+        "Receptions": 17,
+        "Rec TDs": 10,
+        "Rec Yards": 12
+      }
+    },
+    "SF": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 10,
+        "Rush TDs": 1,
+        "Rush Attempts": 10,
+        "Rushing Yards": 10,
+        "Rushing TDs": 1,
+        "Receiving Yards": 16,
+        "Receptions": 18,
+        "Rec TDs": 6
+      },
+      "WR": {
+        "Receiving Yards": 16,
+        "Receptions": 18,
+        "Rec TDs": 6,
+        "Rec Yards": 16,
+        "Rush Yards": 10,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 16,
+        "Receptions": 18,
+        "Rec TDs": 6,
+        "Rec Yards": 16
+      }
+    },
+    "TB": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 2,
+        "Rush TDs": 1,
+        "Rush Attempts": 2,
+        "Rushing Yards": 2,
+        "Rushing TDs": 1,
+        "Receiving Yards": 8,
+        "Receptions": 16,
+        "Rec TDs": 18
+      },
+      "WR": {
+        "Receiving Yards": 8,
+        "Receptions": 16,
+        "Rec TDs": 18,
+        "Rec Yards": 8,
+        "Rush Yards": 2,
+        "Rush TDs": 1
+      },
+      "TE": {
+        "Receiving Yards": 8,
+        "Receptions": 16,
+        "Rec TDs": 18,
+        "Rec Yards": 8
+      }
+    },
+    "TEN": {
+      "QB": {
+        "Passing Yards": 1,
+        "Pass TDs": 1,
+        "Pass Completions": 1,
+        "Pass Attempts": 1
+      },
+      "RB": {
+        "Rush Yards": 30,
+        "Rush TDs": 29,
+        "Rush Attempts": 30,
+        "Rushing Yards": 30,
+        "Rushing TDs": 29,
+        "Receiving Yards": 27,
+        "Receptions": 20,
+        "Rec TDs": 10
+      },
+      "WR": {
+        "Receiving Yards": 27,
+        "Receptions": 20,
+        "Rec TDs": 10,
+        "Rec Yards": 27,
+        "Rush Yards": 30,
         "Rush TDs": 29
       },
       "TE": {
-        "Receiving Yards": 29,
-        "Receptions": 28,
-        "Rec TDs": 14,
-        "Rec Yards": 29
+        "Receiving Yards": 27,
+        "Receptions": 20,
+        "Rec TDs": 10,
+        "Rec Yards": 27
       }
     },
-    "Commanders Logo": {
+    "WAS": {
       "QB": {
         "Passing Yards": 1,
         "Pass TDs": 1,
@@ -1045,23 +1013,23 @@
         "Rush Attempts": 31,
         "Rushing Yards": 31,
         "Rushing TDs": 1,
-        "Receiving Yards": 23,
-        "Receptions": 12,
-        "Rec TDs": 22
+        "Receiving Yards": 18,
+        "Receptions": 13,
+        "Rec TDs": 23
       },
       "WR": {
-        "Receiving Yards": 23,
-        "Receptions": 12,
-        "Rec TDs": 22,
-        "Rec Yards": 23,
+        "Receiving Yards": 18,
+        "Receptions": 13,
+        "Rec TDs": 23,
+        "Rec Yards": 18,
         "Rush Yards": 31,
         "Rush TDs": 1
       },
       "TE": {
-        "Receiving Yards": 23,
-        "Receptions": 12,
-        "Rec TDs": 22,
-        "Rec Yards": 23
+        "Receiving Yards": 18,
+        "Receptions": 13,
+        "Rec TDs": 23,
+        "Rec Yards": 18
       }
     }
   }

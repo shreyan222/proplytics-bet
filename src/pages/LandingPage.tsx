@@ -5,15 +5,42 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowRight, BarChart3, Target, TrendingUp, Zap, ChartBar, Users, Clock, Shield, Flame } from "lucide-react";
+import { ArrowRight, BarChart3, Target, TrendingUp, Zap, ChartBar, Users, Clock, Shield, Flame, X, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { SEO } from "@/components/SEO";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const demoRef = useRef(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when clicking outside and handle body scroll
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isMobileMenuOpen) {
+        const target = event.target as Element;
+        if (!target.closest('.mobile-menu-container')) {
+          setIsMobileMenuOpen(false);
+        }
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent body scroll when mobile menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Restore body scroll when mobile menu is closed
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const features = [
     {
@@ -129,16 +156,21 @@ const LandingPage = () => {
                >
                  Why Us
                </a>
-               <a 
-                 href="#pricing" 
-                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                 onClick={(e) => {
-                   e.preventDefault();
-                   document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
-                 }}
+               <button
+                 type="button"
+                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                 onClick={() => navigate('/pricing')}
                >
                  Pricing
-               </a>
+               </button>
+               <Button 
+                 size="sm" 
+                 variant="outline"
+                 onClick={() => navigate('/pricing')}
+                 className="border-primary/40"
+               >
+                 Get Pro
+               </Button>
                <Button 
                  size="sm" 
                  onClick={() => navigate('/auth')}
@@ -149,16 +181,105 @@ const LandingPage = () => {
              </div>
              
              {/* Mobile menu button */}
-             <div className="md:hidden">
-               <Button variant="ghost" size="sm">
-                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                 </svg>
+             <div className="md:hidden mobile-menu-container">
+               <Button 
+                 variant="ghost" 
+                 size="sm"
+                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                 className="relative z-50"
+               >
+                 {isMobileMenuOpen ? (
+                   <X className="w-5 h-5" />
+                 ) : (
+                   <Menu className="w-5 h-5" />
+                 )}
                </Button>
              </div>
            </div>
          </nav>
        </header>
+
+       {/* Mobile Menu Dropdown */}
+       {isMobileMenuOpen && (
+         <motion.div
+           initial={{ opacity: 0, y: -20 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: -20 }}
+           className="md:hidden fixed top-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border/40 shadow-lg mobile-menu-container"
+         >
+           <div className="container mx-auto px-4 py-6">
+             <div className="flex flex-col space-y-4">
+               <a 
+                 href="#features" 
+                 className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-2"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   setIsMobileMenuOpen(false);
+                   document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Features
+               </a>
+               <a 
+                 href="#demo" 
+                 className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-2"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   setIsMobileMenuOpen(false);
+                   document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Demo
+               </a>
+               <a 
+                 href="#why" 
+                 className="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-2"
+                 onClick={(e) => {
+                   e.preventDefault();
+                   setIsMobileMenuOpen(false);
+                   document.getElementById('why')?.scrollIntoView({ behavior: 'smooth' });
+                 }}
+               >
+                 Why Us
+               </a>
+               <button
+                 type="button"
+                 className="text-left text-lg font-medium text-muted-foreground hover:text-foreground transition-colors py-2 w-full"
+                 onClick={() => {
+                   setIsMobileMenuOpen(false);
+                   navigate('/pricing');
+                 }}
+               >
+                 Pricing
+               </button>
+               <div className="pt-4 border-t border-border/40 flex flex-col gap-2">
+                 <Button 
+                   size="lg" 
+                   variant="outline"
+                   className="w-full"
+                   onClick={() => {
+                     setIsMobileMenuOpen(false);
+                     navigate('/pricing');
+                   }}
+                 >
+                   Get Pro
+                 </Button>
+                 <Button 
+                   size="lg" 
+                   className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+                   onClick={() => {
+                     setIsMobileMenuOpen(false);
+                     navigate('/auth');
+                   }}
+                 >
+                   Get Started
+                   <ArrowRight className="ml-2 h-5 w-5" />
+                 </Button>
+               </div>
+             </div>
+           </div>
+         </motion.div>
+       )}
 
        {/* Hero Section */}
        <section className="relative py-20 overflow-hidden">
@@ -182,10 +303,10 @@ const LandingPage = () => {
                          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
                <Button 
                  size="lg" 
-                 className="px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-                 onClick={() => navigate('/auth')}
+                 className="px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+                 onClick={() => navigate('/pricing')}
                >
-                 Get Started
+                 Get Pro
                  <ArrowRight className="ml-2 h-5 w-5" />
                </Button>
                <Button 
@@ -194,7 +315,7 @@ const LandingPage = () => {
                  className="px-8 py-4 text-lg font-semibold rounded-2xl border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
                  onClick={() => navigate('/auth')}
                >
-                 View Live Props
+                 Sign in
                </Button>
              </div>
           </div>
@@ -440,33 +561,32 @@ const LandingPage = () => {
          </div>
        </section>
 
-               {/* Pricing Section */}
-        <section id="pricing" className="py-20 bg-muted/30">
+               {/* Pricing CTA Section */}
+        <section id="pricing-preview" className="py-20 bg-muted/30">
          <div className="container mx-auto px-4">
            <div className="text-center mb-16">
              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-               Start Winning Today
+               Proplytics Pro
              </h2>
              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-               Access our complete suite of sports prop analytics tools at no cost
+               Full dashboard, analytics, and real-time prop tools — subscribe with Stripe, then sign in with the same email.
              </p>
            </div>
            
            <div className="max-w-4xl mx-auto">
              <Card className="border-0 shadow-2xl rounded-3xl bg-gradient-to-br from-green-50 via-background to-blue-50 relative overflow-hidden">
-               {/* Free Badge */}
                <div className="absolute top-6 right-6">
-                 <Badge className="bg-green-500 text-white px-4 py-2 text-sm font-semibold rounded-full">
-                   🎯 FREE
+                 <Badge className="bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold rounded-full">
+                   Subscription
                  </Badge>
                </div>
                
                <CardHeader className="text-center pt-12 pb-8">
-                 <CardTitle className="text-5xl font-black text-foreground mb-4">
-                   $0
+                 <CardTitle className="text-3xl md:text-4xl font-black text-foreground mb-4">
+                   Premium access
                  </CardTitle>
-                 <CardDescription className="text-2xl font-semibold text-muted-foreground">
-                   Complete Access
+                 <CardDescription className="text-xl font-medium text-muted-foreground">
+                   Monthly plan • Cancel anytime in Stripe
                  </CardDescription>
                </CardHeader>
                
@@ -478,7 +598,7 @@ const LandingPage = () => {
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                        </svg>
                      </div>
-                     <span className="text-lg text-foreground">Unlimited Prop Analysis</span>
+                     <span className="text-lg text-foreground">Unlimited prop analysis & tracker</span>
                    </div>
                    
                    <div className="flex items-center gap-3">
@@ -487,7 +607,7 @@ const LandingPage = () => {
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                        </svg>
                      </div>
-                     <span className="text-lg text-foreground">Real-Time Data Updates</span>
+                     <span className="text-lg text-foreground">Real-time data updates</span>
                    </div>
                    
                    <div className="flex items-center gap-3">
@@ -496,7 +616,7 @@ const LandingPage = () => {
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                        </svg>
                      </div>
-                     <span className="text-lg text-foreground">Advanced Analytics Dashboard</span>
+                     <span className="text-lg text-foreground">NBA & NFL coverage</span>
                    </div>
                    
                    <div className="flex items-center gap-3">
@@ -505,25 +625,7 @@ const LandingPage = () => {
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                        </svg>
                      </div>
-                     <span className="text-lg text-foreground">Dual-League Coverage (NBA, NFL)</span>
-                   </div>
-                   
-                   <div className="flex items-center gap-3">
-                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                       </svg>
-                     </div>
-                     <span className="text-lg text-foreground">Historical Performance Tracking</span>
-                   </div>
-                   
-                   <div className="flex items-center gap-3">
-                     <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                       </svg>
-                     </div>
-                     <span className="text-lg text-foreground">No Hidden Fees or Subscriptions</span>
+                     <span className="text-lg text-foreground">Secure checkout with Stripe</span>
                    </div>
                  </div>
                  
@@ -531,13 +633,13 @@ const LandingPage = () => {
                    <Button 
                      size="lg" 
                      className="px-12 py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
-                     onClick={() => navigate('/auth')}
+                     onClick={() => navigate('/pricing')}
                    >
-                     Get Started Free
+                     View plans & subscribe
                      <ArrowRight className="ml-3 h-6 w-6" />
                    </Button>
                    <p className="text-sm text-muted-foreground mt-4">
-                     No credit card required • Instant access
+                     Already subscribed? <button type="button" className="underline text-foreground" onClick={() => navigate('/auth')}>Sign in</button>
                    </p>
                  </div>
                </CardContent>
