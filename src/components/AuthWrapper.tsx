@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
-import { useSubscriptionAccess } from '@/hooks/useSubscriptionAccess';
 import { useNavigate } from 'react-router-dom';
 import { FloatingHelp } from './FloatingHelp';
 
@@ -11,7 +10,6 @@ interface AuthWrapperProps {
 
 export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const { user, loading } = useSupabaseAuth();
-  const { loading: subscriptionLoading, hasAccess } = useSubscriptionAccess();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,13 +18,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
     }
   }, [user, loading, navigate]);
 
-  useEffect(() => {
-    if (!loading && !subscriptionLoading && user && !hasAccess) {
-      navigate('/pricing?reason=subscription_required');
-    }
-  }, [user, loading, subscriptionLoading, hasAccess, navigate]);
-
-  if (loading || subscriptionLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -39,17 +31,6 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
 
   if (!user) {
     // Will redirect via useEffect, show loading state
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!hasAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
