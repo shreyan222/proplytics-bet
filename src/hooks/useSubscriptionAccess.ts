@@ -1,6 +1,7 @@
  import { useEffect, useState } from 'react';
  import { supabase } from '@/integrations/supabase/client';
  import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+ import { GetPropsInvokeResponse } from '@/hooks/useGetProps';
  
  export function useSubscriptionAccess() {
    const { user, loading: authLoading } = useSupabaseAuth();
@@ -20,30 +21,31 @@
      setChecking(true);
  
      (async () => {
-       if (!user.email) {
+       const { data, error } = await supabase.functions.invoke<GetPropsInvokeResponse>('get-props', {
+         body: {
+           table: 'props',
+           limitFree: 1,
+           select: 'id',
+         },
+       });
+ 
+       if (cancelled) return;
+ 
+       if (error) {
+         console.error('Subscription access check failed', error);
          setHasAccess(false);
          setChecking(false);
          return;
        }
  
-       const normalizedEmail = user.email.toLowerCase().trim();
- 
-       const { data: premiumUser } = await supabase
-         .from('premium_users')
-         .select('email')
-         .ilike('email', normalizedEmail)
-         .maybeSingle();
- 
-       if (cancelled) return;
- 
-       setHasAccess(!!premiumUser);
+       setHasAccess(!!data?.isPremium);
        setChecking(false);
      })();
  
      return () => {
        cancelled = true;
      };
-   }, [user, authLoading, user?.id, user?.email]);
+   }, [user, authLoading, user?.id]);
  
    const loading = authLoading || (!!user && checking);
  
