@@ -116,7 +116,7 @@ serve(async (req) => {
   const { data: premiumRow, error: premiumErr } = await admin
     .from('premium_users')
     .select('email')
-    .eq('email', email)
+    .ilike('email', email)
     .maybeSingle()
 
   if (premiumErr) {
