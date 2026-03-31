@@ -157,118 +157,118 @@ export const PropsFilters: React.FC<PropsFiltersProps> = ({
                   onClick={() => onViewModeChange('cards')}
                   className={`px-3 ${viewMode === 'cards' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 >
-                  <Grid className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Filter Controls */}
-        {allProps.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No props data available. Filters will appear once data is loaded.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
-          {/* Team Filter */}
-          <Select disabled={locked} onValueChange={(value) => handleFilterChange('teams', [value])}>
-            <SelectTrigger className="bg-background text-foreground border-border">
-              <SelectValue placeholder="Team" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableTeams.length > 0 ? (
-                availableTeams.map((team) => (
-                  <SelectItem key={team} value={team} className="text-foreground hover:bg-muted">{team}</SelectItem>
-                ))
-              ) : (
-                <SelectItem value="" disabled className="text-muted-foreground">No teams available</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-
-          {/* Stat Type Filter */}
-          <Select disabled={locked} onValueChange={(value) => handleFilterChange('stat_types', [value])}>
-            <SelectTrigger className="bg-background text-foreground border-border">
-              <SelectValue placeholder="Stat Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableStatTypes.length > 0 ? (
-                availableStatTypes.map((stat) => (
-                  <SelectItem key={stat} value={stat} className="text-foreground hover:bg-muted">{stat}</SelectItem>
-                ))
-              ) : (
-                <SelectItem value="" disabled className="text-muted-foreground">No stat types available</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-
-          {/* Odds Type Filter */}
-          <Select disabled={locked} onValueChange={(value) => handleFilterChange('odds_types', [value])}>
-            <SelectTrigger className="bg-background text-foreground border-border">
-              <SelectValue placeholder="Odds Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableOddsTypes.length > 0 ? (
-                availableOddsTypes.map((odds) => (
-                  <SelectItem key={odds} value={odds} className="text-foreground hover:bg-muted">{odds}</SelectItem>
-                ))
-              ) : (
-                <SelectItem value="" disabled className="text-muted-foreground">No odds types available</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-
-          {/* Position Filter */}
-          <Select disabled={locked} onValueChange={(value) => handleFilterChange('positions', [value])}>
-            <SelectTrigger className="bg-background text-foreground border-border">
-              <SelectValue placeholder="Position" />
-            </SelectTrigger>
-            <SelectContent>
-              {availablePositions.length > 0 ? (
-                availablePositions.map((position) => (
-                  <SelectItem key={position} value={position} className="text-foreground hover:bg-muted">{position}</SelectItem>
-                ))
-              ) : (
-                <SelectItem value="" disabled className="text-muted-foreground">No positions available</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-
-          {/* Sample Size Filter */}
-          <Select disabled={locked} onValueChange={(value) => handleFilterChange('sample_sizes', [parseInt(value, 10)])}>
-            <SelectTrigger className="bg-background text-foreground border-border">
-              <SelectValue placeholder="Sample Size" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableSampleSizes.length > 0 ? (
-                availableSampleSizes.map((size) => (
-                  <SelectItem key={size} value={size.toString()} className="text-foreground hover:bg-muted">{size}</SelectItem>
-                ))
-              ) : (
-                <SelectItem value="" disabled className="text-muted-foreground">No sample sizes available</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-
-          {/* Clear Filters */}
-          <Button
-            variant="outline"
-            onClick={onClearFilters}
-            disabled={locked || activeFiltersCount === 0}
-            className="flex items-center gap-2 text-foreground border-border hover:bg-muted"
-          >
-            <Filter className="h-4 w-4" />
-            Clear
-            {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="ml-1 bg-muted text-muted-foreground">
-                {activeFiltersCount}
-              </Badge>
-            )}
-          </Button>
-        </div>
-        )}
-
+                   <Grid className="h-4 w-4" />
+                 </Button>
+               </div>
+             )}
+           </div>
+         </div>
+ 
+         {/* Filter Controls */}
+         {allProps.length === 0 ? (
+           <div className="text-center py-8 text-muted-foreground">
+             <p>No props data available. Filters will appear once data is loaded.</p>
+           </div>
+         ) : (
+           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+           {/* Team Filter */}
+           <Select disabled={locked} onValueChange={(value) => handleFilterChange('teams', [value])}>
+             <SelectTrigger className="bg-background text-foreground border-border">
+               <SelectValue placeholder="Team" />
+             </SelectTrigger>
+             <SelectContent>
+               {availableTeams.length > 0 ? (
+                 availableTeams.map((team) => (
+                   <SelectItem key={team} value={team} className="text-foreground hover:bg-muted">{team}</SelectItem>
+                 ))
+               ) : (
++                <SelectItem value="__no_teams" disabled className="text-muted-foreground">No teams available</SelectItem>
+               )}
+             </SelectContent>
+           </Select>
+ 
+           {/* Stat Type Filter */}
+           <Select disabled={locked} onValueChange={(value) => handleFilterChange('stat_types', [value])}>
+             <SelectTrigger className="bg-background text-foreground border-border">
+               <SelectValue placeholder="Stat Type" />
+             </SelectTrigger>
+             <SelectContent>
+               {availableStatTypes.length > 0 ? (
+                 availableStatTypes.map((stat) => (
+                   <SelectItem key={stat} value={stat} className="text-foreground hover:bg-muted">{stat}</SelectItem>
+                 ))
+               ) : (
++                <SelectItem value="__no_stats" disabled className="text-muted-foreground">No stat types available</SelectItem>
+               )}
+             </SelectContent>
+           </Select>
+ 
+           {/* Odds Type Filter */}
+           <Select disabled={locked} onValueChange={(value) => handleFilterChange('odds_types', [value])}>
+             <SelectTrigger className="bg-background text-foreground border-border">
+               <SelectValue placeholder="Odds Type" />
+             </SelectTrigger>
+             <SelectContent>
+               {availableOddsTypes.length > 0 ? (
+                 availableOddsTypes.map((odds) => (
+                   <SelectItem key={odds} value={odds} className="text-foreground hover:bg-muted">{odds}</SelectItem>
+                 ))
+               ) : (
++                <SelectItem value="__no_odds" disabled className="text-muted-foreground">No odds types available</SelectItem>
+               )}
+             </SelectContent>
+           </Select>
+ 
+           {/* Position Filter */}
+           <Select disabled={locked} onValueChange={(value) => handleFilterChange('positions', [value])}>
+             <SelectTrigger className="bg-background text-foreground border-border">
+               <SelectValue placeholder="Position" />
+             </SelectTrigger>
+             <SelectContent>
+               {availablePositions.length > 0 ? (
+                 availablePositions.map((position) => (
+                   <SelectItem key={position} value={position} className="text-foreground hover:bg-muted">{position}</SelectItem>
+                 ))
+               ) : (
++                <SelectItem value="__no_positions" disabled className="text-muted-foreground">No positions available</SelectItem>
+               )}
+             </SelectContent>
+           </Select>
+ 
+           {/* Sample Size Filter */}
+           <Select disabled={locked} onValueChange={(value) => handleFilterChange('sample_sizes', [parseInt(value, 10)])}>
+             <SelectTrigger className="bg-background text-foreground border-border">
+               <SelectValue placeholder="Sample Size" />
+             </SelectTrigger>
+             <SelectContent>
+               {availableSampleSizes.length > 0 ? (
+                 availableSampleSizes.map((size) => (
+                   <SelectItem key={size} value={size.toString()} className="text-foreground hover:bg-muted">{size}</SelectItem>
+                 ))
+               ) : (
++                <SelectItem value="__no_samples" disabled className="text-muted-foreground">No sample sizes available</SelectItem>
+               )}
+             </SelectContent>
+           </Select>
+ 
+           {/* Clear Filters */}
+           <Button
+             variant="outline"
+             onClick={onClearFilters}
+             disabled={locked || activeFiltersCount === 0}
+             className="flex items-center gap-2 text-foreground border-border hover:bg-muted"
+           >
+             <Filter className="h-4 w-4" />
+             Clear
+             {activeFiltersCount > 0 && (
+               <Badge variant="secondary" className="ml-1 bg-muted text-muted-foreground">
+                 {activeFiltersCount}
+               </Badge>
+             )}
+           </Button>
+         </div>
+         )}
+ 
         {/* Active Filters */}
         {!locked && activeFiltersCount > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
