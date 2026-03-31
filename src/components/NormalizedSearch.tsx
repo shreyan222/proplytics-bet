@@ -128,7 +128,7 @@ export const NormalizedSearch: React.FC = () => {
             <span className="text-xl">{getPropTypeIcon(propType)}</span>
             <span className="text-white font-semibold">{propType}</span>
             <Badge variant="secondary" className="ml-2">
-              {Object.values(oddTypes).reduce((sum, props) => sum + props.length, 0)} props
+              {Object.values(oddTypes).reduce((sum, props) => sum   props.length, 0)} props
             </Badge>
           </div>
         </AccordionTrigger>
@@ -243,204 +243,121 @@ export const NormalizedSearch: React.FC = () => {
               size="sm"
               onClick={() => setShowFilters(!showFilters)}
               className="border-slate-600 text-slate-300 hover:bg-slate-700"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
-            
-            {hasFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-red-400 hover:text-red-300 hover:bg-red-600/20"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Clear Filters
-              </Button>
-            )}
-          </div>
-
-          {/* Filters Panel */}
-          {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-800/30 rounded-lg border border-slate-600">
-              {/* Prop Type Filter */}
-              <div>
-                <label className="text-sm text-slate-400 mb-2 block">Prop Type</label>
-                <Select
-                  value={filters.prop_type?.[0] || ''}
-                  onValueChange={(value) => updateFilters({ prop_type: value ? [value] : undefined })}
-                >
-                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                    <SelectValue placeholder="All Prop Types" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
-                    <SelectItem value="">All Prop Types</SelectItem>
-                    {availableFilters.prop_types.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Odd Type Filter */}
-              <div>
-                <label className="text-sm text-slate-400 mb-2 block">Odd Type</label>
-                <Select
-                  value={filters.odd_type?.[0] || ''}
-                  onValueChange={(value) => updateFilters({ odd_type: value ? [value] : undefined })}
-                >
-                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                    <SelectValue placeholder="All Odd Types" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
-                    <SelectItem value="">All Odd Types</SelectItem>
-                    {availableFilters.odd_types.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Team Filter */}
-              <div>
-                <label className="text-sm text-slate-400 mb-2 block">Team</label>
-                <Select
-                  value={filters.team?.[0] || ''}
-                  onValueChange={(value) => updateFilters({ team: value ? [value] : undefined })}
-                >
-                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                    <SelectValue placeholder="All Teams" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
-                    <SelectItem value="">All Teams</SelectItem>
-                    {availableFilters.teams.map((team) => (
-                      <SelectItem key={team} value={team}>{team}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* League Filter */}
-              <div>
-                <label className="text-sm text-slate-400 mb-2 block">League</label>
-                <Select
-                  value={filters.league?.[0] || ''}
-                  onValueChange={(value) => updateFilters({ league: value ? [value] : undefined })}
-                >
-                  <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                    <SelectValue placeholder="All Leagues" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-600">
-                    <SelectItem value="">All Leagues</SelectItem>
-                    {availableFilters.leagues.map((league) => (
-                      <SelectItem key={league} value={league}>{league}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Search Results */}
-      {searchQuery.trim() && (
-        <div className="space-y-4">
-          {/* Results Summary */}
-          <div className="flex items-center justify-between">
-            <div className="text-white">
-              {hasResults ? (
-                <span>Found {totalResults} props for "{searchQuery}"</span>
-              ) : (
-                <span>No props found for "{searchQuery}"</span>
-              )}
-            </div>
-            
-            {hasFilters && (
-              <div className="text-sm text-slate-400">
-                Filters applied: {Object.keys(filters).length}
-              </div>
-            )}
-          </div>
-
-          {/* Loading State */}
-          {isLoading && (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-              <p className="text-slate-400">Searching props...</p>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && (
-            <Card className="glass-card border border-red-600">
-              <CardContent className="p-6 text-center">
-                <p className="text-red-400 mb-4">Error searching props: {error.message}</p>
-                <Button variant="outline" onClick={() => window.location.reload()}>
-                  Try Again
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Results */}
-          {!isLoading && !error && hasResults && (
-            <div className="space-y-4">
-              {searchResults.map(renderPlayerGroup)}
-            </div>
-          )}
-
-          {/* No Results */}
-          {!isLoading && !error && !hasResults && searchQuery.trim() && (
-            <Card className="glass-card border border-slate-700">
-              <CardContent className="p-8 text-center">
-                <Search className="h-12 w-12 text-slate-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No props found</h3>
-                <p className="text-slate-400 mb-4">
-                  No props found for "{searchQuery}". Try adjusting your search or filters.
-                </p>
-                <Button variant="outline" onClick={() => setSearchQuery('')}>
-                  Clear Search
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
-
-      {/* Search Instructions */}
-      {!searchQuery.trim() && (
-        <Card className="glass-card border border-slate-700">
-          <CardContent className="p-8 text-center">
-            <Search className="h-16 w-16 text-slate-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Search for Player Props</h3>
-            <p className="text-slate-400 mb-4">
-              Enter a player name above to see all available props grouped by type and odds category.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-500">
-              <div>
-                <div className="font-medium text-slate-300 mb-1">Example Searches</div>
-                <div>• Caleb Williams</div>
-                <div>• LeBron James</div>
-                <div>• Josh Allen</div>
-              </div>
-              <div>
-                <div className="font-medium text-slate-300 mb-1">Prop Types</div>
-                <div>• Passing Yards</div>
-                <div>• Rushing TDs</div>
-                <div>• Receiving Yards</div>
-              </div>
-              <div>
-                <div className="font-medium text-slate-300 mb-1">Odds Categories</div>
-                <div>• Standard</div>
-                <div>• Alt Lines</div>
-                <div>• Goblin/Demon</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-};
+             >
+               <Filter className="h-4 w-4 mr-2" />
+               {showFilters ? 'Hide' : 'Show'} Filters
+             </Button>
+             
+             {hasFilters && (
+               <Button
+                 variant="ghost"
+                 size="sm"
+                 onClick={clearFilters}
+                 className="text-red-400 hover:text-red-300 hover:bg-red-600/20"
+               >
+                 <X className="h-4 w-4 mr-2" />
+                 Clear Filters
+               </Button>
+             )}
+           </div>
+ 
+           {/* Filters Panel */}
+           {showFilters && (
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-800/30 rounded-lg border border-slate-600">
+               {/* Prop Type Filter */}
+               <div>
+                 <label className="text-sm text-slate-400 mb-2 block">Prop Type</label>
+                 <Select
+                   value={filters.prop_type?.[0] || 'all'}
+                   onValueChange={(value) => updateFilters({ prop_type: value === 'all' ? undefined : [value] })}
+                 >
+                   <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                     <SelectValue placeholder="All Prop Types" />
+                   </SelectTrigger>
+                   <SelectContent className="bg-slate-800 border-slate-600">
+                     <SelectItem value="all">All Prop Types</SelectItem>
+                     {availableFilters.prop_types.map((type) => (
+                       <SelectItem key={type} value={type}>{type}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
+ 
+               {/* Odd Type Filter */}
+               <div>
+                 <label className="text-sm text-slate-400 mb-2 block">Odd Type</label>
+                 <Select
+                   value={filters.odd_type?.[0] || 'all'}
+                   onValueChange={(value) => updateFilters({ odd_type: value === 'all' ? undefined : [value] })}
+                 >
+                   <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                     <SelectValue placeholder="All Odd Types" />
+                   </SelectTrigger>
+                   <SelectContent className="bg-slate-800 border-slate-600">
+                     <SelectItem value="all">All Odd Types</SelectItem>
+                     {availableFilters.odd_types.map((type) => (
+                       <SelectItem key={type} value={type}>{type}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
+ 
+               {/* Team Filter */}
+               <div>
+                 <label className="text-sm text-slate-400 mb-2 block">Team</label>
+                 <Select
+                   value={filters.team?.[0] || 'all'}
+                   onValueChange={(value) => updateFilters({ team: value === 'all' ? undefined : [value] })}
+                 >
+                   <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                     <SelectValue placeholder="All Teams" />
+                   </SelectTrigger>
+                   <SelectContent className="bg-slate-800 border-slate-600">
+                     <SelectItem value="all">All Teams</SelectItem>
+                     {availableFilters.teams.map((team) => (
+                       <SelectItem key={team} value={team}>{team}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
+ 
+               {/* League Filter */}
+               <div>
+                 <label className="text-sm text-slate-400 mb-2 block">League</label>
+                 <Select
+                   value={filters.league?.[0] || 'all'}
+                   onValueChange={(value) => updateFilters({ league: value === 'all' ? undefined : [value] })}
+                 >
+                   <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                     <SelectValue placeholder="All Leagues" />
+                   </SelectTrigger>
+                   <SelectContent className="bg-slate-800 border-slate-600">
+                     <SelectItem value="all">All Leagues</SelectItem>
+                     {availableFilters.leagues.map((league) => (
+                       <SelectItem key={league} value={league}>{league}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
+             </div>
+           )}
+         </CardContent>
+       </Card>
+ 
+       {/* Search Results */}
+       {searchQuery.trim() && (
+         <div className="space-y-4">
+           {/* Results Summary */}
+           <div className="flex items-center justify-between">
+             <div className="text-white">
+               {hasResults ? (
+                 <span>Found {totalResults} props for "{searchQuery}"</span>
+               ) : (
+                 <span>No props found for "{searchQuery}"</span>
+               )}
+             </div>
+             
+             {hasFilters && (
+ 
+EOF
+)
