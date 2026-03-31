@@ -27,7 +27,6 @@
  function mapRowToProp(row: any): Prop {
    const homeTeamAbbr = row.game?.home_team?.abbreviation || row.home_team || 'TBD';
    const awayTeamAbbr = row.game?.away_team?.abbreviation || row.away_team || 'TBD';
-@@ -63,50 +64,60 @@ function mapRowToProp(row: any): Prop {
      h2h_score: Number(row.h2h_score || 0),
      l5_score: Number(row.l5_score || 0),
      sample_size: row.sample_size || 0,
