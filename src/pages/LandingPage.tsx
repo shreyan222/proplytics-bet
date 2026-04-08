@@ -669,7 +669,7 @@ const LandingPage = () => {
                 <a href="#" className="hover:text-white transition-colors text-gray-300">Privacy</a>
               </div>
               <p className="text-sm text-gray-400">
-                © 2024 Proplytics. All rights reserved.
+                © 2026 Proplytics. All rights reserved.
               </p>
             </div>
           </div>
