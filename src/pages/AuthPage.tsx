@@ -182,11 +182,6 @@ export const AuthPage: React.FC = () => {
               >
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </Button>
-              <div>
-                <Button variant="link" className="text-sm text-muted-foreground" onClick={() => navigate('/pricing')}>
-                  Subscribe to Pro
-                </Button>
-              </div>
             </div>
           </CardContent>
         </Card>

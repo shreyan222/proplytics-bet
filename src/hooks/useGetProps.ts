@@ -7,7 +7,6 @@ export type GetPropsTable = 'props' | 'prop_yday';
 
 export type GetPropsInvokeBody = {
   table: GetPropsTable;
-  limitFree?: number;
   orderBy?: { column: string; ascending?: boolean }[];
   filters?: {
     eq?: Record<string, string | number | boolean | null>;
@@ -20,8 +19,6 @@ export type GetPropsInvokeBody = {
 
 export type GetPropsInvokeResponse = {
   data: any[];
-  isPremium: boolean;
-  locked: boolean;
 };
 
 function mapRowToProp(row: any): Prop {
@@ -56,8 +53,6 @@ function mapRowToProp(row: any): Prop {
 
 export type UseGetPropsResult = {
   props: Prop[];
-  isPremium: boolean;
-  locked: boolean;
 };
 
 export function useGetProps(
@@ -75,8 +70,6 @@ export function useGetProps(
       if (!user) {
         return {
           props: [],
-          isPremium: false,
-          locked: true,
         };
       }
 
@@ -96,8 +89,6 @@ export function useGetProps(
 
       return {
         props: rows.map(mapRowToProp),
-        isPremium: data?.isPremium ?? false,
-        locked: data?.locked ?? true,
       };
     },
     retry: 2,

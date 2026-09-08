@@ -40,7 +40,6 @@ export const PlayerDetail: React.FC = () => {
   );
 
   const playerProps = data?.props ?? [];
-  const locked = data?.locked ?? true;
   
   // Enhance player props with calculated values if missing
   const enhancedPlayerProps = playerProps.map(prop => {
@@ -201,11 +200,6 @@ export const PlayerDetail: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {locked && (
-            <div className="m-4 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
-              Subscribe to view all props and unlock filters.
-            </div>
-          )}
           <PropsTable props={enhancedPlayerProps} viewMode="table" />
         </CardContent>
       </Card>

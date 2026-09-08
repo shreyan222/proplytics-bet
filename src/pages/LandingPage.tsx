@@ -156,21 +156,6 @@ const LandingPage = () => {
                >
                  Why Us
                </a>
-               <button
-                 type="button"
-                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                 onClick={() => navigate('/pricing')}
-               >
-                 Pricing
-               </button>
-               <Button 
-                 size="sm" 
-                 variant="outline"
-                 onClick={() => navigate('/pricing')}
-                 className="border-primary/40"
-               >
-                 Get Pro
-               </Button>
                <Button 
                  size="sm" 
                  onClick={() => navigate('/auth')}
@@ -242,28 +227,7 @@ const LandingPage = () => {
                >
                  Why Us
                </a>
-               <button
-                 type="button"
-                 className="text-left text-lg font-medium text-muted-foreground hover:text-foreground transition-colors py-2 w-full"
-                 onClick={() => {
-                   setIsMobileMenuOpen(false);
-                   navigate('/pricing');
-                 }}
-               >
-                 Pricing
-               </button>
                <div className="pt-4 border-t border-border/40 flex flex-col gap-2">
-                 <Button 
-                   size="lg" 
-                   variant="outline"
-                   className="w-full"
-                   onClick={() => {
-                     setIsMobileMenuOpen(false);
-                     navigate('/pricing');
-                   }}
-                 >
-                   Get Pro
-                 </Button>
                  <Button 
                    size="lg" 
                    className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
@@ -304,9 +268,9 @@ const LandingPage = () => {
                <Button 
                  size="lg" 
                  className="px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
-                 onClick={() => navigate('/pricing')}
+                 onClick={() => navigate('/auth')}
                >
-                 Get Pro
+                 Create free account
                  <ArrowRight className="ml-2 h-5 w-5" />
                </Button>
                <Button 
@@ -561,15 +525,15 @@ const LandingPage = () => {
          </div>
        </section>
 
-               {/* Pricing CTA Section */}
-        <section id="pricing-preview" className="py-20 bg-muted/30">
+               {/* Account CTA Section */}
+        <section id="get-started" className="py-20 bg-muted/30">
          <div className="container mx-auto px-4">
            <div className="text-center mb-16">
              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-               Proplytics Pro
+               Start using Proplytics
              </h2>
              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-               Full dashboard, analytics, and real-time prop tools — subscribe with Stripe, then sign in with the same email.
+               Create an account to access the full dashboard, analytics, and real-time prop tools.
              </p>
            </div>
            
@@ -577,16 +541,16 @@ const LandingPage = () => {
              <Card className="border-0 shadow-2xl rounded-3xl bg-gradient-to-br from-green-50 via-background to-blue-50 relative overflow-hidden">
                <div className="absolute top-6 right-6">
                  <Badge className="bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold rounded-full">
-                   Subscription
+                   Free access
                  </Badge>
                </div>
                
                <CardHeader className="text-center pt-12 pb-8">
                  <CardTitle className="text-3xl md:text-4xl font-black text-foreground mb-4">
-                   Premium access
+                   Full access
                  </CardTitle>
                  <CardDescription className="text-xl font-medium text-muted-foreground">
-                   Monthly plan • Cancel anytime in Stripe
+                   Available to every signed-in user
                  </CardDescription>
                </CardHeader>
                
@@ -625,7 +589,7 @@ const LandingPage = () => {
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                        </svg>
                      </div>
-                     <span className="text-lg text-foreground">Secure checkout with Stripe</span>
+                     <span className="text-lg text-foreground">One account for every feature</span>
                    </div>
                  </div>
                  
@@ -633,13 +597,13 @@ const LandingPage = () => {
                    <Button 
                      size="lg" 
                      className="px-12 py-4 text-xl font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
-                     onClick={() => navigate('/pricing')}
+                     onClick={() => navigate('/auth')}
                    >
-                     View plans & subscribe
+                     Create your account
                      <ArrowRight className="ml-3 h-6 w-6" />
                    </Button>
                    <p className="text-sm text-muted-foreground mt-4">
-                     Already subscribed? <button type="button" className="underline text-foreground" onClick={() => navigate('/auth')}>Sign in</button>
+                     Already have an account? <button type="button" className="underline text-foreground" onClick={() => navigate('/auth')}>Sign in</button>
                    </p>
                  </div>
                </CardContent>

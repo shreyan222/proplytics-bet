@@ -17,7 +17,6 @@ type Json =
 
 type GetPropsRequest = {
   table: string
-  limitFree?: number
   orderBy?: { column: string; ascending?: boolean }[]
   filters?: {
     eq?: Record<string, string | number | boolean | null>
@@ -30,8 +29,6 @@ type GetPropsRequest = {
 
 type GetPropsResponse = {
   data: unknown[]
-  isPremium: boolean
-  locked: boolean
 }
 
 function jsonResponse(body: Json, init?: ResponseInit) {
@@ -43,10 +40,6 @@ function jsonResponse(body: Json, init?: ResponseInit) {
       ...(init?.headers ?? {}),
     },
   })
-}
-
-function normalizeEmail(email: string) {
-  return email.toLowerCase().trim()
 }
 
 function isAllowedTable(table: string) {
@@ -104,29 +97,9 @@ serve(async (req) => {
     return jsonResponse({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const email = user.email ? normalizeEmail(user.email) : ''
-  if (!email) {
-    return jsonResponse({ error: 'User email missing' }, { status: 400 })
-  }
-
   const admin = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false },
   })
-
-  const { data: premiumRow, error: premiumErr } = await admin
-    .from('premium_users')
-    .select('email')
-    .ilike('email', email)
-    .maybeSingle()
-
-  if (premiumErr) {
-    console.error('premium_users lookup failed', premiumErr)
-    return jsonResponse({ error: 'Premium lookup failed' }, { status: 500 })
-  }
-
-  const isPremium = !!premiumRow
-  const locked = !isPremium
-  const limitFree = typeof payload.limitFree === 'number' && payload.limitFree > 0 ? payload.limitFree : 10
 
   const select = payload.select?.trim()
     ? payload.select
@@ -175,10 +148,6 @@ serve(async (req) => {
     for (const [k, v] of Object.entries(f.lte)) query = query.lte(k, v as any)
   }
 
-  if (locked) {
-    query = query.limit(limitFree)
-  }
-
   const { data, error } = await query
   if (error) {
     console.error('get-props query failed', { table, error })
@@ -187,10 +156,7 @@ serve(async (req) => {
 
   const response: GetPropsResponse = {
     data: data ?? [],
-    isPremium,
-    locked,
   }
 
   return jsonResponse(response)
 })
-

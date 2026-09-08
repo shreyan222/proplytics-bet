@@ -17,7 +17,7 @@ export const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<PropFilters>({});
   
-  const { props: allProps, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
+  const { props: allProps, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
 
   // Calculate stats based on selected leagues
   const totalProps = allProps.length;
@@ -36,8 +36,6 @@ export const Dashboard = () => {
         return false;
       }
     }
-
-    if (locked) return true;
 
     // Team filter
     if (filters.teams && filters.teams.length > 0) {
@@ -220,7 +218,6 @@ export const Dashboard = () => {
               onClearFilters={handleClearFilters}
               totalProps={totalProps}
               filteredProps={filteredProps.length}
-              locked={locked}
               onViewModeChange={setViewMode}
               viewMode={viewMode}
               searchQuery={searchQuery}

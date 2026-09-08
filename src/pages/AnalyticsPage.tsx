@@ -13,13 +13,12 @@ import { Button } from '@/components/ui/button';
 
 export const AnalyticsPage: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<('NBA' | 'NFL')[]>(['NBA']);
-  const { props, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   
   const [filters, setFilters] = useState<PropFilters>({});
 
   // Simple filtering logic for now
   const filteredProps = props.filter(prop => {
-    if (locked) return true;
     if (filters.teams && filters.teams.length > 0 && !filters.teams.includes(prop.team)) return false;
     if (filters.positions && filters.positions.length > 0 && !filters.positions.includes(prop.position)) return false;
     if (filters.stat_types && filters.stat_types.length > 0 && !filters.stat_types.includes(prop.stat_type)) return false;
@@ -92,7 +91,6 @@ export const AnalyticsPage: React.FC = () => {
         onClearFilters={clearFilters}
         totalProps={props.length}
         filteredProps={filteredProps.length}
-        locked={locked}
         searchQuery={''}
         onSearchChange={updateSearchQuery}
         allProps={props}

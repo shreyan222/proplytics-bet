@@ -51,7 +51,5 @@ export const useMultiLeagueProps = (leagues: ('NBA' | 'NFL')[] = ['NBA']) => {
     error,
     refetch,
     leagueDisplay: getSelectedLeaguesDisplay(leagues),
-    isPremium: data?.isPremium ?? false,
-    locked: data?.locked ?? true,
   };
 };
