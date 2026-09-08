@@ -253,65 +253,31 @@ export type Database = {
           id?: string
           l5_array?: number[]
           l5_avg?: number
-          l5_score?: number
           line_score?: number
-          odds_type?: string
-          player_id?: string
-          sample_size?: number
-          sorting_score?: number
-          stat_type?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "props_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "props_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      stripe_subscriptions: {
-        Row: {
-          id: string
-          user_id: string | null
-          customer_email: string
-          stripe_customer_id: string
-          stripe_subscription_id: string | null
-          status: string
-          current_period_end: string | null
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id?: string | null
-          customer_email: string
-          stripe_customer_id: string
-          stripe_subscription_id?: string | null
-          status?: string
-          current_period_end?: string | null
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string | null
-          customer_email?: string
-          stripe_customer_id?: string
-          stripe_subscription_id?: string | null
-          status?: string
-          current_period_end?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
+           odds_type?: string
+           player_id?: string
+           sample_size?: number
+           sorting_score?: number
+           stat_type?: string
+           updated_at?: string | null
+         }
+         Relationships: [
+           {
+             foreignKeyName: "props_game_id_fkey"
+             columns: ["game_id"]
+             isOneToOne: false
+             referencedRelation: "games"
+             referencedColumns: ["id"]
+           },
+           {
+             foreignKeyName: "props_player_id_fkey"
+             columns: ["player_id"]
+             isOneToOne: false
+             referencedRelation: "players"
+             referencedColumns: ["id"]
+           },
+         ]
+       }
       teams: {
         Row: {
           abbreviation: string

@@ -31,7 +31,7 @@ export const RecapPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [filters, setFilters] = useState<PropFilters>({});
   const [searchQuery, setSearchQuery] = useState('');
-  const { props, isLoading, error, refetch, leagueDisplay, locked } = useMultiLeagueProps(selectedLeagues);
+  const { props, isLoading, error, refetch, leagueDisplay } = useMultiLeagueProps(selectedLeagues);
   const previousDate = (() => {
     const d = new Date(selectedDate);
     d.setDate(d.getDate() - 1);
@@ -45,7 +45,6 @@ export const RecapPage: React.FC = () => {
     refetch: refetchYesterday,
   } = useYesterdayProps(selectedDate, selectedLeagues);
   const yesterdayProps = yesterdayData?.props ?? [];
-  const lockedYesterday = yesterdayData?.locked ?? locked;
   const filteredYesterdayProps = useMemo(() => {
     return yesterdayProps.filter(prop => {
       if (searchQuery) {
@@ -56,8 +55,6 @@ export const RecapPage: React.FC = () => {
           return false;
         }
       }
-
-      if (lockedYesterday) return true;
 
       if (filters.teams && filters.teams.length > 0) {
         if (!filters.teams.includes(prop.team)) return false;
@@ -81,7 +78,7 @@ export const RecapPage: React.FC = () => {
 
       return true;
     });
-  }, [filters.odds_types, filters.positions, filters.stat_types, filters.teams, filters.sample_sizes, searchQuery, yesterdayProps, lockedYesterday]);
+  }, [filters.odds_types, filters.positions, filters.stat_types, filters.teams, filters.sample_sizes, searchQuery, yesterdayProps]);
 
   const handleFiltersChange = (newFilters: PropFilters) => {
     setFilters(newFilters);
@@ -363,7 +360,6 @@ export const RecapPage: React.FC = () => {
                       onClearFilters={handleClearFilters}
                       totalProps={yesterdayProps.length}
                       filteredProps={filteredYesterdayProps.length}
-                      locked={lockedYesterday}
                       searchQuery={searchQuery}
                       onSearchChange={setSearchQuery}
                       allProps={yesterdayProps}
