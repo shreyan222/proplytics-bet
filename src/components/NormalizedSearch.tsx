@@ -88,13 +88,13 @@ export const NormalizedSearch: React.FC = () => {
           </div>
         </div>
       </div>
-
+      
       <div className="flex items-center gap-4">
         <div className="text-center">
           <div className="text-sm text-slate-400">Line</div>
           <div className="text-xl font-bold text-blue-400">{prop.line}</div>
         </div>
-
+        
         <div className="text-center">
           <div className="text-sm text-slate-400">Odds</div>
           <div className="text-lg font-semibold text-white">{prop.odds}</div>
@@ -109,7 +109,7 @@ export const NormalizedSearch: React.FC = () => {
           </div>
         )}
 
-        <Badge
+        <Badge 
           variant={getOddTypeBadgeVariant(prop.odd_type)}
           className={getOddTypeBadgeColor(prop.odd_type)}
         >
@@ -156,7 +156,7 @@ export const NormalizedSearch: React.FC = () => {
   // Render player group
   const renderPlayerGroup = (group: GroupedProps) => (
     <Card key={group.player} className="glass-card border border-slate-700">
-      <CardHeader
+      <CardHeader 
         className="cursor-pointer hover:bg-slate-700/30 transition-colors"
         onClick={() => togglePlayer(group.player)}
       >
@@ -170,7 +170,7 @@ export const NormalizedSearch: React.FC = () => {
               </div>
             </div>
           </div>
-
+          
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-blue-400 border-blue-400">
               {group.total_props} props
@@ -183,7 +183,7 @@ export const NormalizedSearch: React.FC = () => {
           </div>
         </div>
       </CardHeader>
-
+      
       {expandedPlayers.has(group.player) && (
         <CardContent className="pt-0">
           <div className="space-y-4">
@@ -216,7 +216,7 @@ export const NormalizedSearch: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-slate-800/50 border-slate-600 text-white placeholder-slate-400 h-12"
             />
-
+            
             {/* Player Suggestions */}
             {playerSuggestions.length > 0 && searchQuery.trim() && (
               <div className="absolute top-full left-0 right-0 mt-1 glass-card border border-slate-600 rounded-lg max-h-60 overflow-y-auto z-50">
@@ -247,7 +247,7 @@ export const NormalizedSearch: React.FC = () => {
                <Filter className="h-4 w-4 mr-2" />
                {showFilters ? 'Hide' : 'Show'} Filters
              </Button>
-
+             
              {hasFilters && (
                <Button
                  variant="ghost"
@@ -260,7 +260,7 @@ export const NormalizedSearch: React.FC = () => {
                </Button>
              )}
            </div>
-
+ 
            {/* Filters Panel */}
            {showFilters && (
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-800/30 rounded-lg border border-slate-600">
@@ -282,7 +282,7 @@ export const NormalizedSearch: React.FC = () => {
                    </SelectContent>
                  </Select>
                </div>
-
+ 
                {/* Odd Type Filter */}
                <div>
                  <label className="text-sm text-slate-400 mb-2 block">Odd Type</label>
@@ -301,7 +301,7 @@ export const NormalizedSearch: React.FC = () => {
                    </SelectContent>
                  </Select>
                </div>
-
+ 
                {/* Team Filter */}
                <div>
                  <label className="text-sm text-slate-400 mb-2 block">Team</label>
@@ -320,7 +320,7 @@ export const NormalizedSearch: React.FC = () => {
                    </SelectContent>
                  </Select>
                </div>
-
+ 
                {/* League Filter */}
                <div>
                  <label className="text-sm text-slate-400 mb-2 block">League</label>
@@ -343,7 +343,7 @@ export const NormalizedSearch: React.FC = () => {
            )}
          </CardContent>
        </Card>
-
+ 
        {/* Search Results */}
        {searchQuery.trim() && (
          <div className="space-y-4">
@@ -356,8 +356,8 @@ export const NormalizedSearch: React.FC = () => {
                  <span>No props found for "{searchQuery}"</span>
                )}
              </div>
-
+             
              {hasFilters && (
-
+ 
 EOF
 )
